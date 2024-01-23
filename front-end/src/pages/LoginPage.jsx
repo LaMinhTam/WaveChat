@@ -11,15 +11,14 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { handleLoginWithGoogle } from "../utils/handleLoginWithGoogle";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { setConfirmationResult } from "../store/authSlice";
-import { setOpenModal } from "../store/commonSlice";
 import PhoneInput from "react-phone-input-2";
+import { setUser } from "../store/authSlice";
+import { useEffect } from "react";
 
 const schema = yup.object({
     password: yup
@@ -44,41 +43,67 @@ const LoginPage = () => {
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const isVerified = useSelector((state) => state.common.isVerified);
+
+    useEffect(() => {
+        if (localStorage.getItem("accessToken")) navigate("/");
+    }, [navigate]);
+
     const handleSignIn = async (values) => {
         if (!isValid) return;
-        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-        const userData = userDoc.data();
-
-        // Check the password
-        const passwordIsValid = await bcrypt.compare(
-            values.password,
-            userData.password
-        );
-        if (!passwordIsValid) {
-            toast.error("Password is incorrect");
-        } else {
-            let verify = new RecaptchaVerifier(
-                "recaptcha-container",
-                {
-                    size: "invisible",
-                },
-                auth
+        try {
+            const usersCollection = collection(db, "users");
+            const q = query(
+                usersCollection,
+                where("phone", "==", values.phone)
             );
-            const formatPh = "+" + values.phone;
 
-            const confirmationResult = await signInWithPhoneNumber(
-                auth,
-                formatPh,
-                verify
+            const querySnapshot = await getDocs(q);
+            let userData;
+            querySnapshot.forEach((doc) => {
+                userData = doc.data();
+            });
+
+            // Check the password
+            const passwordIsValid = await bcrypt.compare(
+                values.password,
+                userData.password
             );
-            dispatch(setConfirmationResult(confirmationResult));
-            dispatch(setOpenModal(true));
-            if (isVerified) {
-                toast.success("Login successfully");
-                reset({});
-                navigate("/");
+            console.log(passwordIsValid);
+            if (!passwordIsValid) {
+                toast.error("Password is incorrect");
+            } else {
+                let verify = new RecaptchaVerifier(
+                    "recaptcha-container",
+                    {
+                        size: "invisible",
+                    },
+                    auth
+                );
+                const formatPh = "+" + values.phone;
+
+                const confirmationResult = await signInWithPhoneNumber(
+                    auth,
+                    formatPh,
+                    verify
+                );
+                // get the otp code from prompt
+                const otp = window.prompt("Enter OTP");
+                // create credential from otp and verification id
+                if (otp) {
+                    const credential = await confirmationResult.confirm(otp);
+                    // get the user
+                    const user = credential.user;
+                    dispatch(setUser(user));
+                    localStorage.setItem("accessToken", user.accessToken);
+                    toast.success("Login successfully");
+                    reset({});
+                    navigate("/");
+                } else {
+                    toast.error("Login failed, please try again later");
+                }
             }
+        } catch (error) {
+            toast.error("Login failed, please try again later");
         }
     };
     const { value: showPassword, handleToggleValue: handleTogglePassword } =

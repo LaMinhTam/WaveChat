@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 // import { useSelector } from "react-redux";
 import bcrypt from "bcryptjs";
+import { useEffect } from "react";
 
 const schema = yup.object({
     name: yup.string().required("This field is required"),
@@ -66,30 +67,38 @@ const RegisterPage = () => {
             // get the otp code from prompt
             const otp = window.prompt("Enter OTP");
             // create credential from otp and verification id
-            const credential = await confirmationResult.confirm(otp);
-            // get the user
-            const user = credential.user;
-            dispatch(setUser(user));
-            const hashedPassword = await bcrypt.hash(values.password, 10);
-            await setDoc(doc(db, "users", auth.currentUser.uid), {
-                id: auth.currentUser.uid,
-                name: values.name,
-                phone: values.phone,
-                password: hashedPassword,
-                avatar: "https://source.unsplash.com/random",
-                createdAt: serverTimestamp(),
-            });
-            toast.success("Sign up successfully");
-            navigate("/");
-            reset({});
+            if (otp) {
+                const credential = await confirmationResult.confirm(otp);
+                // get the user
+                const user = credential.user;
+                dispatch(setUser(user));
+                localStorage.setItem("accessToken", user.accessToken);
+                const hashedPassword = await bcrypt.hash(values.password, 10);
+                await setDoc(doc(db, "users", auth.currentUser.uid), {
+                    id: auth.currentUser.uid,
+                    name: values.name,
+                    phone: values.phone,
+                    password: hashedPassword,
+                    avatar: "https://source.unsplash.com/random",
+                    createdAt: serverTimestamp(),
+                });
+                toast.success("Sign up successfully");
+                navigate("/");
+                reset({});
+            } else {
+                toast.error("Sign up failed, please check your OTP code");
+            }
         } catch (error) {
-            console.log(error);
+            toast.error("Sign up failed, please try again later");
         }
     };
     const { value: acceptTerm, handleToggleValue: handleToggleTerm } =
         useToggleValue();
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
         useToggleValue();
+    useEffect(() => {
+        if (localStorage.getItem("accessToken")) navigate("/");
+    }, [navigate]);
     return (
         <LayoutAuthentication heading="SignUp">
             <div id="recaptcha-container"></div>
