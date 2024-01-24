@@ -15,3 +15,7 @@
 .ReactModal__Body--open {
     overflow: hidden;
 }
+
+.react-tel-input .form-control {
+    @apply dark:bg-darkBG dark:text-white;
+}

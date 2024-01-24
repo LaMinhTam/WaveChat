@@ -1,15 +1,16 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/auth-context";
 
 const DashboardPage = () => {
     const navigate = useNavigate();
-    const accessToken = localStorage.getItem("accessToken");
+    const { userInfo } = useAuth();
 
     useEffect(() => {
-        if (!accessToken) {
+        if (!userInfo || !userInfo.accessToken) {
             navigate("/login");
         }
-    }, [accessToken, navigate]);
+    }, [navigate, userInfo]);
 
     return <span>DashboardPage</span>;
 };

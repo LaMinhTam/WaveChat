@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import "react-phone-input-2/lib/style.css";
+import { AuthProvider } from "./contexts/auth-context.jsx";
 
 const router = createBrowserRouter([
     {
@@ -25,9 +26,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
-        <App>
-            <RouterProvider router={router}></RouterProvider>
-        </App>
-        <ToastContainer bodyClassName="font-primary text-sm"></ToastContainer>
+        <AuthProvider>
+            <App>
+                <RouterProvider router={router}></RouterProvider>
+            </App>
+            <ToastContainer bodyClassName="font-primary text-sm"></ToastContainer>
+        </AuthProvider>
     </Provider>
 );

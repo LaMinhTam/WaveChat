@@ -14,14 +14,11 @@ import { IconEyeToggle } from "../components/icons";
 import Checkbox from "../components/checkbox";
 import { handleLoginWithGoogle } from "../utils/handleLoginWithGoogle";
 import PhoneInput from "react-phone-input-2";
-import { auth, db } from "../utils/firebaseConfig";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { setUser } from "../store/authSlice";
 import { toast } from "react-toastify";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-// import { useSelector } from "react-redux";
-import bcrypt from "bcryptjs";
 import { useEffect } from "react";
+import handleSendOTP from "../utils/handleSendOTP";
+import { setIsRegister, setOpenModal } from "../store/commonSlice";
+import { useAuth } from "../contexts/auth-context";
 
 const schema = yup.object({
     name: yup.string().required("This field is required"),
@@ -42,52 +39,19 @@ const RegisterPage = () => {
     const {
         handleSubmit,
         control,
-        formState: { isValid, errors },
-        reset,
+        formState: { isValid, errors, isSubmitting },
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { setConfirmationResult, setValues, userInfo } = useAuth();
     const handleSignUp = async (values) => {
         if (!isValid) return;
         try {
-            let verify = new RecaptchaVerifier(
-                "recaptcha-container",
-                {
-                    size: "invisible",
-                },
-                auth
-            );
-            const formatPh = "+" + values.phone;
-
-            const confirmationResult = await signInWithPhoneNumber(
-                auth,
-                formatPh,
-                verify
-            );
-            // get the otp code from prompt
-            const otp = window.prompt("Enter OTP");
-            // create credential from otp and verification id
-            if (otp) {
-                const credential = await confirmationResult.confirm(otp);
-                // get the user
-                const user = credential.user;
-                dispatch(setUser(user));
-                localStorage.setItem("accessToken", user.accessToken);
-                const hashedPassword = await bcrypt.hash(values.password, 10);
-                await setDoc(doc(db, "users", auth.currentUser.uid), {
-                    id: auth.currentUser.uid,
-                    name: values.name,
-                    phone: values.phone,
-                    password: hashedPassword,
-                    avatar: "https://source.unsplash.com/random",
-                    createdAt: serverTimestamp(),
-                });
-                toast.success("Sign up successfully");
-                navigate("/");
-                reset({});
-            } else {
-                toast.error("Sign up failed, please check your OTP code");
-            }
+            const confirmationResult = await handleSendOTP(values.phone);
+            setConfirmationResult(confirmationResult);
+            dispatch(setIsRegister(true));
+            setValues(values);
+            dispatch(setOpenModal(true));
         } catch (error) {
             toast.error("Sign up failed, please try again later");
         }
@@ -97,8 +61,8 @@ const RegisterPage = () => {
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
         useToggleValue();
     useEffect(() => {
-        if (localStorage.getItem("accessToken")) navigate("/");
-    }, [navigate]);
+        if (userInfo || userInfo.accessToken) navigate("/");
+    }, [navigate, userInfo]);
     return (
         <LayoutAuthentication heading="SignUp">
             <div id="recaptcha-container"></div>
@@ -113,7 +77,7 @@ const RegisterPage = () => {
             </p>
             <ButtonGoogle
                 text="Sign up with google"
-                onClick={() => handleLoginWithGoogle(navigate, dispatch)}
+                onClick={() => handleLoginWithGoogle(navigate)}
             ></ButtonGoogle>
             <p className="mb-4 text-xs font-normal text-center lg:text-sm lg:mb-8 text-text2 dark:text-white">
                 Or sign up with phone number
@@ -143,7 +107,8 @@ const RegisterPage = () => {
                                 placeholder="Enter your phone number"
                                 containerClass="relative"
                                 inputClass="w-full min-w-[460px] px-6 py-4 text-sm font-medium border rounded-xl
-                                placeholder:text-text4 dark:placeholder:text-text2 dark:text-white bg-transparent"
+                                placeholder:text-text4 dark:placeholder:text-text2 dark:text-text2"
+                                buttonClass=""
                             />
                         )}
                     />
@@ -182,7 +147,12 @@ const RegisterPage = () => {
                         </p>
                     </Checkbox>
                 </div>
-                <Button className="w-full" kind="primary" type="submit">
+                <Button
+                    className="w-full"
+                    kind="primary"
+                    type="submit"
+                    isLoading={isSubmitting}
+                >
                     Create my account
                 </Button>
             </form>

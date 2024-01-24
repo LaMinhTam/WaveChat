@@ -12,13 +12,14 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { handleLoginWithGoogle } from "../utils/handleLoginWithGoogle";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "../utils/firebaseConfig";
+import { db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
 import { toast } from "react-toastify";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import PhoneInput from "react-phone-input-2";
-import { setUser } from "../store/authSlice";
 import { useEffect } from "react";
+import handleSendOTP from "../utils/handleSendOTP";
+import { setIsLogin, setOpenModal } from "../store/commonSlice";
+import { useAuth } from "../contexts/auth-context";
 
 const schema = yup.object({
     password: yup
@@ -38,15 +39,15 @@ const LoginPage = () => {
     const {
         handleSubmit,
         control,
-        reset,
-        formState: { isValid, errors },
+        formState: { isValid, errors, isSubmitting },
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { setConfirmationResult, userInfo } = useAuth();
 
     useEffect(() => {
-        if (localStorage.getItem("accessToken")) navigate("/");
-    }, [navigate]);
+        if (userInfo || userInfo.accessToken) navigate("/");
+    }, [navigate, userInfo]);
 
     const handleSignIn = async (values) => {
         if (!isValid) return;
@@ -72,35 +73,10 @@ const LoginPage = () => {
             if (!passwordIsValid) {
                 toast.error("Password is incorrect");
             } else {
-                let verify = new RecaptchaVerifier(
-                    "recaptcha-container",
-                    {
-                        size: "invisible",
-                    },
-                    auth
-                );
-                const formatPh = "+" + values.phone;
-
-                const confirmationResult = await signInWithPhoneNumber(
-                    auth,
-                    formatPh,
-                    verify
-                );
-                // get the otp code from prompt
-                const otp = window.prompt("Enter OTP");
-                // create credential from otp and verification id
-                if (otp) {
-                    const credential = await confirmationResult.confirm(otp);
-                    // get the user
-                    const user = credential.user;
-                    dispatch(setUser(user));
-                    localStorage.setItem("accessToken", user.accessToken);
-                    toast.success("Login successfully");
-                    reset({});
-                    navigate("/");
-                } else {
-                    toast.error("Login failed, please try again later");
-                }
+                const confirmationResult = await handleSendOTP(values.phone);
+                setConfirmationResult(confirmationResult);
+                dispatch(setIsLogin(true));
+                dispatch(setOpenModal(true));
             }
         } catch (error) {
             toast.error("Login failed, please try again later");
@@ -122,7 +98,7 @@ const LoginPage = () => {
             </p>
             <ButtonGoogle
                 text="Sign in with google"
-                onClick={() => handleLoginWithGoogle(navigate, dispatch)}
+                onClick={() => handleLoginWithGoogle(navigate)}
             ></ButtonGoogle>
             <form onSubmit={handleSubmit(handleSignIn)}>
                 <FormGroup>
@@ -139,7 +115,7 @@ const LoginPage = () => {
                                 placeholder="Enter your phone number"
                                 containerClass="relative"
                                 inputClass="w-full min-w-[460px] px-6 py-4 text-sm font-medium border rounded-xl
-                                placeholder:text-text4 dark:placeholder:text-text2 dark:text-white bg-transparent"
+                                placeholder:text-text4 dark:placeholder:text-text2 bg-transparent"
                             />
                         )}
                     />
@@ -166,7 +142,12 @@ const LoginPage = () => {
                         </span>
                     </div>
                 </FormGroup>
-                <Button kind="primary" className="w-full" type="submit">
+                <Button
+                    kind="primary"
+                    className="w-full"
+                    type="submit"
+                    isLoading={isSubmitting}
+                >
                     Sign In
                 </Button>
             </form>

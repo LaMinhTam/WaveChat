@@ -1,15 +1,13 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleAuthProvider } from "./firebaseConfig";
-import { setAccessToken, setUser } from "../store/authSlice";
+import { toast } from "react-toastify";
 
-export const handleLoginWithGoogle = async (navigate, dispatch) => {
+export const handleLoginWithGoogle = async (navigate) => {
     try {
-        const result = await signInWithPopup(auth, googleAuthProvider);
-        dispatch(setUser(result.user));
-        dispatch(setAccessToken(result.user.accessToken));
-        localStorage.setItem("accessToken", result.user.accessToken);
+        await signInWithPopup(auth, googleAuthProvider);
+        toast.success("Login successfully");
         navigate("/");
     } catch (error) {
-        console.error(error);
+        toast.error("Login failed, please try again later");
     }
 };
