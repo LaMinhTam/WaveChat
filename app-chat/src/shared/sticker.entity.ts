@@ -1,34 +1,22 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Column, Entity } from 'typeorm';
 import { BaseModel } from './base-model.entity';
 
-@Schema({
-  timestamps: {
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-  },
-  toJSON: {
-    // getters: true,
-    // virtuals: true,
-  },
-})
-// @Entity('sticker')
-export class Sticker extends BaseModel {
-  // @Prop({
-  //   type: 'string',
+@Entity('sticker')
+export class StickerEntity extends BaseModel {
+  // @Column({
+  //   type: 'bigint',
   //   nullable: true,
   // })
   // category_sticker_id: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'text',
   })
   media: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'varchar',
     array: true,
   })
   tag: string[];
 }
-
-export const StickerSchema = SchemaFactory.createForClass(Sticker);

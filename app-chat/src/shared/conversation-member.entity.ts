@@ -1,48 +1,33 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Column, Entity } from 'typeorm';
 import { BaseModel } from './base-model.entity';
 import { CONVERSATION_MEMBER_PERMISSION } from 'src/enum/conversation.enum';
-import { Types } from 'mongoose';
 
-@Schema({
-  timestamps: {
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-  },
-  toJSON: {
-    // getters: true,
-    // virtuals: true,
-  },
-})
-// @Entity('conversation_member')
-export class ConversationMember extends BaseModel {
-  @Prop({
-    type: String,
+@Entity('conversation_member')
+export class ConversationMemberEntity extends BaseModel {
+  @Column({
+    type: 'bigint',
   })
   conversation_id: string;
 
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'User',
+  @Column({
+    type: 'bigint',
   })
-  user_id: Types.ObjectId;
+  user_id: string;
 
-  @Prop({
-    type: Number,
+  @Column({
+    type: 'smallint',
   })
   permission: CONVERSATION_MEMBER_PERMISSION;
 
-  @Prop({
-    type: String,
+  @Column({
+    type: 'bigint',
     default: 0,
   })
   message_pre_id: string;
 
-  @Prop({
-    type: String,
+  @Column({
+    type: 'bigint',
     default: 0,
   })
   message_last_id: string;
 }
-
-export const ConversationMemberSchema =
-  SchemaFactory.createForClass(ConversationMember);

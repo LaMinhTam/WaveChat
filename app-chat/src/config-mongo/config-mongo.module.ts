@@ -1,36 +1,38 @@
 import { Module } from '@nestjs/common';
 import { ConfigMongoService } from './config-mongo.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule as ConfigNest } from '@nestjs/config';
-
-import { MongooseModule } from '@nestjs/mongoose';
 import {
-  CategorySticker,
-  CategoryStickerSchema,
-  Conversation,
-  ConversationMember,
-  ConversationMemberSchema,
-  ConversationMemberWaitingConfirm,
-  ConversationMemberWaitingConfirmSchema,
-  ConversationSchema,
-  Message,
-  MessageSchema,
-  Sticker,
-  StickerSchema,
-  User,
-  UserSchema,
+  CategoryStickerEntity,
+  ConversationEntity,
+  ConversationMemberEntity,
+  ConversationMemberWaitingConfirmEntity,
+  MessageEntity,
+  StickerEntity,
+  UserEntity,
 } from 'src/shared';
 
 @Module({
   imports: [
-    ConfigNest.forRoot({}),
+    ConfigNest.forRoot(),
 
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigMongoService) =>
-        await configService.createMongooseOptions(),
-      inject: [ConfigMongoService],
+    TypeOrmModule.forRoot({
+      type: 'mongodb',
+      host: 'localhost',
+      port: 27017,
+      database: 'app-chat',
+      entities: [
+        CategoryStickerEntity,
+        ConversationEntity,
+        ConversationMemberEntity,
+        ConversationMemberWaitingConfirmEntity,
+        MessageEntity,
+        StickerEntity,
+        UserEntity,
+      ],
+      retryWrites: true,
+      w: 'majority',
     }),
-
     // TypeOrmModule.forRoot({
     //   type: 'postgres',
     //   host: 'localhost',
@@ -39,51 +41,18 @@ import {
     //   port: 5432,
     //   database: 'app-chat',
     //   entities: [
-    //     CategorySticker,
-    //     Conversation,
-    //     ConversationMember,
-    //     ConversationMemberWaitingConfirm,
-    //     Message,
-    //     Sticker,
-    //     User,
+    //     CategoryStickerEntity,
+    //     ConversationEntity,
+    //     ConversationMemberEntity,
+    //     ConversationMemberWaitingConfirmEntity,
+    //     MessageEntity,
+    //     StickerEntity,
+    //     UserEntity,
     //   ],
     //   autoLoadEntities: true,
     //   synchronize: true,
     // }),
-
-    MongooseModule.forFeature([
-      {
-        name: User.name,
-        schema: UserSchema,
-      },
-      {
-        name: CategorySticker.name,
-        schema: CategoryStickerSchema,
-      },
-      {
-        name: ConversationMember.name,
-        schema: ConversationMemberSchema,
-      },
-      {
-        name: ConversationMemberWaitingConfirm.name,
-        schema: ConversationMemberWaitingConfirmSchema,
-      },
-      {
-        name: Conversation.name,
-        schema: ConversationSchema,
-      },
-
-      {
-        name: Sticker.name,
-        schema: StickerSchema,
-      },
-      {
-        name: Message.name,
-        schema: MessageSchema,
-      },
-    ]),
   ],
   providers: [ConfigMongoService],
-  exports: [ConfigMongoService],
 })
 export class ConfigModule {}

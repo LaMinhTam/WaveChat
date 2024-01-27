@@ -1,75 +1,63 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
-import { MESSAGE_STATUS, MESSAGE_TYPE } from 'src/enum/message.enum';
+import { Column, Entity } from 'typeorm';
 import { BaseModel } from './base-model.entity';
+import { MESSAGE_STATUS, MESSAGE_TYPE } from 'src/enum/message.enum';
 
-@Schema({
-  timestamps: {
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-  },
-  toJSON: {
-    // getters: true,
-    // virtuals: true,
-  },
-})
-// @Entity('message')
-export class Message extends BaseModel {
-  @Prop({
-    type: 'string',
+@Entity('message')
+export class MessageEntity extends BaseModel {
+  @Column({
+    type: 'bigint',
   })
   conversation_id: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'bigint',
   })
   user_id: string;
 
-  @Prop({
-    type: mongoose.Schema.Types.Mixed,
+  @Column({
+    type: 'json',
     nullable: true,
   })
   user_target: any[];
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'text',
     nullable: true,
   })
   message: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'text',
     nullable: true,
   })
   media: string[];
 
-  @Prop({
-    type: mongoose.Schema.Types.Mixed,
+  @Column({
+    type: 'json',
     nullable: true,
   })
   sticker: any;
 
-  @Prop({
-    type: 'number',
+  @Column({
+    type: 'int',
     default: 0,
   })
   no_of_reaction: number;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'bigint',
     nullable: true,
   })
   message_reply_id: string;
 
-  @Prop({
-    type: 'number',
+  @Column({
+    type: 'smallint',
   })
   type: MESSAGE_TYPE;
 
-  @Prop({
-    type: 'number',
+  @Column({
+    type: 'smallint',
     default: MESSAGE_STATUS.ACTIVE,
   })
   status: MESSAGE_STATUS;
 }
-export const MessageSchema = SchemaFactory.createForClass(Message);

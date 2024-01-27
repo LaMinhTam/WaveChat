@@ -1,113 +1,112 @@
+import { Column, Entity } from 'typeorm';
 import { BaseModel } from './base-model.entity';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Timestamp } from 'mongodb';
-import { Role, USER_STATUS } from 'src/enum';
+import { USER_STATUS } from '../enum/user.enum';
 
-@Schema({
-  collection: 'users',
-  timestamps: {
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-  },
-  toJSON: {
-    // getters: true,
-    // virtuals: true,
-  },
-})
-export class User extends BaseModel {
-  @Prop({
-    type: 'string',
+@Entity('user')
+export class UserEntity extends BaseModel {
+  @Column({
+    type: 'varchar',
     nullable: true,
-    default: '',
   })
   avatar: string;
 
-  @Prop({
-    type: 'string',
-    default: '',
+  @Column({
+    type: 'varchar',
   })
   full_name: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'varchar',
     nullable: true,
-    default: '',
   })
   nick_name: string;
 
-  @Prop({
-    type: 'string',
-    nullable: false,
-    default: '',
-  })
-  password: string;
-
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'varchar',
     nullable: true,
-    default: '',
   })
   address: string;
 
-  @Prop({
-    type: 'string',
+  // @Column({
+  //   type: 'double precision',
+  //   nullable: true,
+  // })
+  // lat: number;
+
+  // @Column({
+  //   type: 'double precision',
+  //   nullable: true,
+  // })
+  // lng: number;
+
+  // @Column({
+  //   type: 'int',
+  //   default: 0,
+  // })
+  // no_of_follow: number;
+
+  @Column({
+    type: 'text',
     nullable: true,
-    default: '',
   })
   cover: string;
 
-  @Prop({
-    type: 'string',
-    default: '',
+  @Column({
+    type: 'varchar',
   })
   phone: string;
 
-  @Prop({
-    type: 'number',
+  @Column({
+    type: 'smallint',
     default: 0,
   })
   gender: number;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'varchar',
     nullable: true,
-    default: '',
   })
   birthday: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'text',
     nullable: true,
-    default: '',
   })
   description: string;
 
-  @Prop({
-    type: 'string',
+  @Column({
+    type: 'varchar',
     nullable: true,
-    default: '',
   })
   email: string;
 
-  @Prop({
-    type: Timestamp,
-    nullable: true,
-    default: '',
-  })
-  last_connect: number;
+  // @Column({
+  //   type: 'smallint',
+  //   default: BOOLEAN.FALSE,
+  // })
+  // is_enable_birthday: BOOLEAN;
 
-  @Prop({
-    type: 'number',
+  // @Column({
+  //   type: 'smallint',
+  //   default: BOOLEAN.FALSE,
+  // })
+  // is_enable_phone: BOOLEAN;
+
+  // @Column({
+  //   type: 'smallint',
+  //   default: BOOLEAN.FALSE,
+  // })
+  // is_enable_email: BOOLEAN;
+
+  @Column({
+    type: 'timestamp',
+    nullable: true,
+  })
+  last_connect: Date;
+
+  @Column({
+    type: 'smallint',
     default: USER_STATUS.ACTIVE,
   })
   status: USER_STATUS;
-
-  @Prop({
-    type: 'string',
-    default: Role.User,
-    enum: ['user', 'admin'],
-  })
-  role: Role;
 }
-
-export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,22 +1,29 @@
-import { Prop } from '@nestjs/mongoose';
-import * as moment from 'moment';
-import { Timestamp } from 'mongodb';
-import { Types } from 'mongoose';
+import {
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectIdColumn,
+} from 'typeorm';
 
-export class BaseModel {
-  _id: Types.ObjectId;
-
-  @Prop({
-    type: Timestamp,
-    nullable: true,
-    default: +moment(),
+export class BaseModel extends BaseEntity {
+  @ObjectIdColumn({
+    name: 'id',
+    generated: 'identity',
   })
-  created_at: number;
+  id: string;
 
-  @Prop({
-    type: Timestamp,
-    nullable: true,
-    default: +moment(),
+  @UpdateDateColumn({
+    type: 'timestamp',
   })
-  updated_at: number;
+  timestamp: Date;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+  })
+  updated_at: Date;
 }
