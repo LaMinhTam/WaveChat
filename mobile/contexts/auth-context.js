@@ -1,6 +1,7 @@
 import {onAuthStateChanged} from 'firebase/auth';
 import React from 'react';
 import {auth} from '../utils/firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext();
 
@@ -12,18 +13,35 @@ export function AuthProvider(props) {
   });
   const [userInfo, setUserInfo] = React.useState('');
   const [confirmationResult, setConfirmationResult] = React.useState(null); // Add this line
+  const [accessTokens, setAccessTokens] = React.useState({});
+
   React.useEffect(() => {
     onAuthStateChanged(auth, user => {
       setUserInfo(user);
     });
   }, []);
+
+  const storeAccessToken = async (userId, token) => {
+    try {
+      // Save the access token to AsyncStorage
+      await AsyncStorage.setItem(`accessToken_${userId}`, token);
+
+      // Update the accessTokens state
+      setAccessTokens(prevTokens => ({...prevTokens, [userId]: token}));
+    } catch (error) {
+      console.error('Error storing access token:', error);
+    }
+  };
+
   const contextValues = {
     values,
     userInfo,
     setValues,
     setUserInfo,
-    confirmationResult, // Add this line
-    setConfirmationResult, // And this line
+    confirmationResult,
+    setConfirmationResult,
+    accessTokens,
+    storeAccessToken,
   };
   return (
     <AuthContext.Provider

@@ -11,7 +11,6 @@ import {auth} from '../utils/firebaseConfig';
 import {configureStore} from '@reduxjs/toolkit';
 import {useAuth} from '../contexts/auth-context';
 import {doc, serverTimestamp, setDoc} from 'firebase/firestore';
-import BcryptReactNative from 'react-native-bcrypt';
 
 const OTPScreen = ({navigation}) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -44,7 +43,7 @@ const OTPScreen = ({navigation}) => {
       try {
         let otpString = newOtp.join('');
         await confirmationResult.confirm(otpString);
-        const hashedPassword = await bcrypt.hash(values.password, 10);
+        // const hashedPassword = await bcrypt.hash(values.password, 10);
 
         // await setDoc(doc(db, 'users', auth.currentUser.uid), {
         //   id: auth.currentUser.uid,
