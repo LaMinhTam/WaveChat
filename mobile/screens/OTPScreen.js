@@ -10,14 +10,15 @@ import {
 import {auth} from '../utils/firebaseConfig';
 import {configureStore} from '@reduxjs/toolkit';
 import {useAuth} from '../contexts/auth-context';
+import {doc, serverTimestamp, setDoc} from 'firebase/firestore';
+import BcryptReactNative from 'react-native-bcrypt';
 
 const OTPScreen = ({navigation}) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [resendTimer, setResendTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const timerIntervalRef = useRef(null);
-  const {confirmationResult, setConfirmationResult, setValues, userInfo} =
-    useAuth();
+  const {confirmationResult, values, userInfo} = useAuth();
 
   useEffect(() => {
     timerIntervalRef.current = setInterval(() => {
@@ -35,11 +36,29 @@ const OTPScreen = ({navigation}) => {
       refs[index + 1].focus();
     }
 
+    console.log(values);
+
     setOtp(newOtp);
 
     if (newOtp.every(digit => digit !== '')) {
-      await confirmationResult.confirm(newOtp);
-      navigation.navigate('Đăng nhập');
+      try {
+        let otpString = newOtp.join('');
+        await confirmationResult.confirm(otpString);
+        const hashedPassword = await bcrypt.hash(values.password, 10);
+
+        // await setDoc(doc(db, 'users', auth.currentUser.uid), {
+        //   id: auth.currentUser.uid,
+        //   name: values.name,
+        //   phone: values.phone,
+        //   password: hashedPassword,
+        //   avatar: 'https://source.unsplash.com/random',
+        //   createdAt: serverTimestamp(),
+        // });
+        // navigation.navigate('Đăng nhập');
+        console.log('done', hashedPassword);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -81,6 +100,7 @@ const OTPScreen = ({navigation}) => {
             keyboardType="numeric"
             maxLength={1}
             ref={input => (refs[index] = input)}
+            color="#000"
           />
         ))}
       </View>
@@ -114,15 +134,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     paddingHorizontal: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#000',
   },
   description: {
     textAlign: 'center',
     marginBottom: 20,
+    color: '#000',
   },
   otpContainer: {
     flexDirection: 'row',
@@ -142,6 +165,7 @@ const styles = StyleSheet.create({
   },
   resendTimerText: {
     textAlign: 'center',
+    color: '#000',
   },
   resendContainer: {
     flexDirection: 'row',
@@ -151,6 +175,7 @@ const styles = StyleSheet.create({
   },
   resendText: {
     textAlign: 'center',
+    color: '#000',
   },
   resendButton: {
     marginLeft: 5,

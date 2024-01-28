@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native';
 
-const PasswordField = ({placeholder, onChangeText}) => {
+const PasswordField = ({placeholder, onChangeText, value}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleShowPassword = () => {
@@ -21,6 +21,9 @@ const PasswordField = ({placeholder, onChangeText}) => {
         placeholder={placeholder}
         secureTextEntry={!showPassword}
         onChangeText={onChangeText}
+        placeholderTextColor={'#ccc'}
+        color={'#000'}
+        value={value}
       />
 
       <TouchableOpacity onPress={toggleShowPassword}>

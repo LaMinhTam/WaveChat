@@ -1,15 +1,13 @@
 import {RecaptchaVerifier, signInWithPhoneNumber} from 'firebase/auth';
-import {auth} from './firebaseConfig';
+import auth from '@react-native-firebase/auth';
+import {Firestore} from '@react-native-firebase/firestore';
 
-export default async function handleSendOTP(phone) {
-  let verify = new RecaptchaVerifier(
-    'recaptcha-container',
-    {
-      size: 'invisible',
-    },
-    auth,
-  );
-
-  const confirmationResult = await signInWithPhoneNumber(auth, phone, verify);
+export default async function handleSendOTP(phone, setConfirm) {
+  try {
+    confirmationResult = await auth().signInWithPhoneNumber(phone);
+    setConfirm(confirmationResult);
+  } catch (error) {
+    console.log(error);
+  }
   return confirmationResult;
 }

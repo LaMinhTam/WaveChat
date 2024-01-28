@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,31 +9,44 @@ import {
 } from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
-import {auth} from '../utils/firebaseConfig';
+// import {auth} from '../utils/firebaseConfig';
 import {useAuth} from '../contexts/auth-context';
-import handleSendOTP from '../utils/handleSendOTP';
+import auth, {firebase} from '@react-native-firebase/auth';
 
 const SignUp = ({navigation}) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('+84886700046');
+  const [username, setUsername] = useState('La Minh Tâm');
+  const [password, setPassword] = useState('123456789');
   const {setConfirmationResult, setValues, userInfo} = useAuth();
+  let [confirm, setConfirm] = useState(null);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // if user data exist
+        //clear previous user session
+      } else {
+      }
+    });
+  }, []);
+
+  console.log(
+    'Signing up with Phone:',
+    phoneNumber,
+    'Username:',
+    username,
+    'Password:',
+    password,
+  );
 
   const handleSignUp = async () => {
-    console.log(
-      'Signing up with Phone:',
-      phoneNumber,
-      'Username:',
-      username,
-      'Password:',
-      password,
-    );
     try {
-      await handleSendOTP(phoneNumber);
-      // console.log('this', confirmationResult.verificationId);
-      // setValues({name: username, phone: phoneNumber, password: password});
-      // setConfirmationResult(confirmationResult);
-      // navigation.navigate('OTPScreen');
+      confirm = await auth().signInWithPhoneNumber(phoneNumber);
+      setConfirm(confirm);
+      setConfirmationResult(confirm);
+      setValues({name: username, phone: phoneNumber, password: password});
+      navigation.navigate('Nhập mã xác thực');
+      console.log('confirm', confirm);
     } catch (error) {
       console.error('Error signing up:', error);
     }
@@ -44,9 +57,15 @@ const SignUp = ({navigation}) => {
       <View id="recaptcha-container"></View>
       <Text style={styles.label}>Số điện thoại</Text>
       <PhoneInput
-        onChangePhoneNumber={number => setPhoneNumber(number)}
+        onChangePhoneNumber={number => {
+          setPhoneNumber(number);
+        }}
         initialCountry="vn"
         style={styles.phoneInput}
+        textProps={{
+          color: '#000',
+          value: phoneNumber,
+        }}
       />
 
       <Text style={styles.label}>Tên đăng nhập</Text>
@@ -54,10 +73,17 @@ const SignUp = ({navigation}) => {
         style={styles.textInput}
         placeholder="Gồm 2-40 ký tự"
         onChangeText={text => setUsername(text)}
+        placeholderTextColor={'#ccc'}
+        color={'#000'}
+        value={username}
       />
 
       <Text style={styles.label}>Mật khẩu</Text>
-      <PasswordField placeholder="Mật khẩu" onChangeText={setPassword} />
+      <PasswordField
+        placeholder="Mật khẩu"
+        onChangeText={setPassword}
+        value={password}
+      />
 
       <TouchableOpacity style={styles.confirmButton} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Xác nhận</Text>
@@ -72,6 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     padding: 20,
+    backgroundColor: '#fff',
   },
   label: {
     alignSelf: 'flex-start',

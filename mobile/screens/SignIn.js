@@ -1,12 +1,5 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 
@@ -20,6 +13,9 @@ const SignIn = () => {
         onChangePhoneNumber={setPhone}
         initialCountry="vn"
         style={styles.phoneInput}
+        textProps={{
+          color: '#000',
+        }}
       />
 
       <PasswordField placeholder="Mật khẩu" onChangeText={setPassword} />

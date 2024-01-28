@@ -6,9 +6,9 @@ import {AuthProvider} from './contexts/auth-context';
 const App = () => {
   return (
     <Provider store={store}>
-      {/* <AuthProvider> */}
-      <LoginStackNavigator />
-      {/* </AuthProvider> */}
+      <AuthProvider>
+        <LoginStackNavigator />
+      </AuthProvider>
     </Provider>
   );
 };
