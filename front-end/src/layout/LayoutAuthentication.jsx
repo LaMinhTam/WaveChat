@@ -17,6 +17,7 @@ import React from "react";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
+import axios from "../api/axios";
 
 const LayoutAuthentication = ({ children, heading = "" }) => {
     const openModal = useSelector((state) => state.common.openModal);
@@ -31,19 +32,61 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
         setIsLoading(true);
         await handleVerifyOTP(confirmationResult, otpCode);
         if (isRegister) {
-            const hashedPassword = await bcrypt.hash(values.password, 10);
-            await setDoc(doc(db, "users", auth.currentUser.uid), {
-                id: auth.currentUser.uid,
-                name: values.name,
-                phone: values.phone,
-                password: hashedPassword,
-                avatar: "https://source.unsplash.com/random",
-                createdAt: serverTimestamp(),
-            });
-            toast.success("Sign up successfully");
+            try {
+                const hashedPassword = await bcrypt.hash(values.password, 10);
+                await setDoc(doc(db, "users", auth.currentUser.uid), {
+                    id: auth.currentUser.uid,
+                    name: values.name,
+                    phone: values.phone,
+                    password: hashedPassword,
+                    avatar: "https://source.unsplash.com/random",
+                    createdAt: serverTimestamp(),
+                });
+                const res = await axios.post("/auth/sign-up", {
+                    full_name: values.name,
+                    nick_name: values.name,
+                    phone: values.phone,
+                    password: values.password,
+                });
+                if (res.data.status === 200) {
+                    const resLogin = await axios.post("/auth/sign-in", {
+                        phone: values.phone,
+                        password: values.password,
+                    });
+                    if (res.data.status === 200) {
+                        localStorage.setItem(
+                            "app_chat_token",
+                            resLogin.data.data.access_token
+                        );
+                        toast.success("Sign up successfully");
+                    } else {
+                        toast.error(resLogin.data.data.message);
+                    }
+                } else {
+                    toast.error(res.data.data.response.message);
+                }
+            } catch (error) {
+                toast.error("Sign up failed, please try again later");
+            }
         }
         if (isLogin) {
-            toast.success("Login successfully");
+            try {
+                const res = await axios.post("/auth/sign-in", {
+                    phone: values.phone,
+                    password: values.password,
+                });
+                if (res.data.status === 200) {
+                    localStorage.setItem(
+                        "app_chat_token",
+                        res.data.data.access_token
+                    );
+                    toast.success("Sign in successfully");
+                } else {
+                    toast.error(res.data.data.message);
+                }
+            } catch (error) {
+                toast.error("Sign in failed, please try again later");
+            }
         }
         setIsLoading(false);
         navigate("/");

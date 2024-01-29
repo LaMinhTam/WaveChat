@@ -6,16 +6,12 @@ import { useEffect } from "react";
 import ReactModal from "react-modal";
 import ProfileModal from "../components/modal/ProfileModal";
 import { useChat } from "../contexts/chat-context";
-import { useSelector } from "react-redux";
 import ProfileDetailsModal from "../components/modal/ProfileDetailsModal";
 const LayoutDashboard = () => {
     useEffect(() => {
         document.body.style.overflow = "hidden";
     }, []);
-    const { show } = useChat();
-    const showProfileDetails = useSelector(
-        (state) => state.common.showProfileDetails
-    );
+    const { show, showProfileDetails } = useChat();
 
     return (
         <div className="min-h-screen bg-lite">
@@ -27,16 +23,14 @@ const LayoutDashboard = () => {
             >
                 <ProfileModal />
             </ReactModal>
-            {showProfileDetails && (
-                <ReactModal
-                    isOpen={showProfileDetails}
-                    overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+            <ReactModal
+                isOpen={showProfileDetails}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
                     flex justify-center items-center"
-                    className="modal-content w-full max-w-[400px] bg-white rounded outline-none relative"
-                >
-                    <ProfileDetailsModal />
-                </ReactModal>
-            )}
+                className="modal-content w-full max-w-[400px] bg-white rounded outline-none relative"
+            >
+                <ProfileDetailsModal />
+            </ReactModal>
             <Overlay></Overlay>
             <div className="flex items-start">
                 <DashboardSideBar></DashboardSideBar>

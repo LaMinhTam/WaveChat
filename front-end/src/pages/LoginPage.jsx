@@ -44,10 +44,11 @@ const LoginPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { setConfirmationResult, userInfo } = useAuth();
+    const token = localStorage.getItem("app_chat_token");
 
     useEffect(() => {
-        if (userInfo || userInfo.accessToken) navigate("/");
-    }, [navigate, userInfo]);
+        if (userInfo && token) navigate("/");
+    }, [navigate, token, userInfo]);
 
     const handleSignIn = async (values) => {
         if (!isValid) return;

@@ -5,10 +5,18 @@ const ChatContext = React.createContext();
 
 export function ChatProvider(props) {
     const { show, setShow, nodeRef } = useClickOutSide();
+    const {
+        show: showProfileDetails,
+        setShow: setShowProfileDetails,
+        nodeRef: profileDetailsRef,
+    } = useClickOutSide();
     const contextValues = {
         show,
         setShow,
         nodeRef,
+        showProfileDetails,
+        setShowProfileDetails,
+        profileDetailsRef,
     };
     return (
         <ChatContext.Provider

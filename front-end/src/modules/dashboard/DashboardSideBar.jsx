@@ -38,8 +38,7 @@ const sidebarLinks = [
 
 const DashboardSideBar = () => {
     // const dispatch = useDispatch();
-    const { setShow, show } = useChat();
-    console.log("DashboardSideBar ~ show:", show);
+    const { setShow } = useChat();
     return (
         <div className="flex flex-col w-[64px] min-h-screen items-center bg-primary text-lite">
             {sidebarLinks.map((item) => {

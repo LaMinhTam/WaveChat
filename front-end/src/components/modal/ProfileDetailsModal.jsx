@@ -1,13 +1,21 @@
+import { useChat } from "../../contexts/chat-context";
 import { IconCamera, IconClose, IconEdit } from "../icons";
 
 const ProfileDetailsModal = () => {
+    const { setShowProfileDetails, profileDetailsRef } = useChat();
     return (
-        <div className="w-[400px] h-full p-2 flex flex-col">
+        <div
+            className="w-[400px] h-full p-2 flex flex-col"
+            ref={profileDetailsRef}
+        >
             <div className="flex items-center w-full h-[48px]">
                 <span className="text-[16px] font-semibold mr-auto">
                     Thông tin tài khoản
                 </span>
-                <button className="flex items-center justify-center w-8 h-8 mb-1 rounded-full hover:bg-text3 hover:bg-opacity-10">
+                <button
+                    onClick={() => setShowProfileDetails(false)}
+                    className="flex items-center justify-center w-8 h-8 mb-1 rounded-full hover:bg-text3 hover:bg-opacity-10"
+                >
                     <IconClose />
                 </button>
             </div>

@@ -5,12 +5,13 @@ import { useAuth } from "../contexts/auth-context";
 const RequiredAuthPage = ({ children }) => {
     const navigate = useNavigate();
     const { userInfo } = useAuth();
+    const token = localStorage.getItem("app_chat_token");
 
     useEffect(() => {
-        if (!userInfo || !userInfo.accessToken) {
+        if (!userInfo || !token) {
             navigate("/login");
         }
-    }, [navigate, userInfo]);
+    }, [navigate, token, userInfo]);
     return <>{children}</>;
 };
 RequiredAuthPage.propTypes = {
