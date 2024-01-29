@@ -75,6 +75,8 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     phone: values.phone,
                     password: values.password,
                 });
+                console.log(values);
+                console.log(res);
                 if (res.data.status === 200) {
                     localStorage.setItem(
                         "app_chat_token",

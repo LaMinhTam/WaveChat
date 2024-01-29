@@ -11,9 +11,6 @@ import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { handleLoginWithGoogle } from "../utils/handleLoginWithGoogle";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../utils/firebaseConfig";
-import bcrypt from "bcryptjs";
 import { toast } from "react-toastify";
 import PhoneInput from "react-phone-input-2";
 import { useEffect } from "react";
@@ -43,7 +40,7 @@ const LoginPage = () => {
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setConfirmationResult, userInfo } = useAuth();
+    const { setConfirmationResult, userInfo, setValues } = useAuth();
     const token = localStorage.getItem("app_chat_token");
 
     useEffect(() => {
@@ -53,32 +50,15 @@ const LoginPage = () => {
     const handleSignIn = async (values) => {
         if (!isValid) return;
         try {
-            const usersCollection = collection(db, "users");
-            const q = query(
-                usersCollection,
-                where("phone", "==", values.phone)
-            );
-
-            const querySnapshot = await getDocs(q);
-            let userData;
-            querySnapshot.forEach((doc) => {
-                userData = doc.data();
+            const confirmationResult = await handleSendOTP(values.phone);
+            setConfirmationResult(confirmationResult);
+            dispatch(setIsLogin(true));
+            setValues({
+                name: "",
+                phone: values.phone,
+                password: values.password,
             });
-
-            // Check the password
-            const passwordIsValid = await bcrypt.compare(
-                values.password,
-                userData.password
-            );
-            console.log(passwordIsValid);
-            if (!passwordIsValid) {
-                toast.error("Password is incorrect");
-            } else {
-                const confirmationResult = await handleSendOTP(values.phone);
-                setConfirmationResult(confirmationResult);
-                dispatch(setIsLogin(true));
-                dispatch(setOpenModal(true));
-            }
+            dispatch(setOpenModal(true));
         } catch (error) {
             toast.error("Login failed, please try again later");
         }
