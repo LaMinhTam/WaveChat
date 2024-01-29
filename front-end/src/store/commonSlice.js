@@ -6,6 +6,7 @@ const commonSlice = createSlice({
         otpCode: "",
         isRegister: false,
         isLogin: false,
+        showProfileDetails: true,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -24,8 +25,17 @@ const commonSlice = createSlice({
             ...state,
             isLogin: action.payload,
         }),
+        setShowProfileDetails: (state, action) => ({
+            ...state,
+            showProfileDetails: action.payload,
+        }),
     },
 });
-export const { setOpenModal, setOtpCode, setIsRegister, setIsLogin } =
-    commonSlice.actions;
+export const {
+    setOpenModal,
+    setOtpCode,
+    setIsRegister,
+    setIsLogin,
+    setShowProfileDetails,
+} = commonSlice.actions;
 export default commonSlice.reducer;

@@ -19,3 +19,20 @@
 .react-tel-input .form-control {
     @apply dark:bg-darkBG dark:text-white;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scroll thumb */
+    height: 50%; /* Height of the scroll thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scroll thumb on hover */
+}
