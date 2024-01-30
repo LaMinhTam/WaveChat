@@ -1,6 +1,10 @@
 import PropTypes from "prop-types";
+import Friends from "./modules/friends/Friends";
 function App({ children }) {
-    return <div>{children}</div>;
+    return <div>
+        <Friends/>
+    
+    </div>;
 }
 
 App.propTypes = {
