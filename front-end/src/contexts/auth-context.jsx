@@ -5,6 +5,7 @@ import { auth } from "../utils/firebaseConfig";
 const AuthContext = React.createContext();
 
 export function AuthProvider(props) {
+    const [loading, setLoading] = React.useState(true);
     const [values, setValues] = React.useState({
         name: "",
         phone: "",
@@ -15,9 +16,11 @@ export function AuthProvider(props) {
     React.useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             setUserInfo(user);
+            setLoading(false);
         });
     }, []);
     const contextValues = {
+        loading,
         values,
         userInfo,
         setValues,

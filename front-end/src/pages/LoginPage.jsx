@@ -17,6 +17,8 @@ import { useEffect } from "react";
 import handleSendOTP from "../utils/handleSendOTP";
 import { setIsLogin, setOpenModal } from "../store/commonSlice";
 import { useAuth } from "../contexts/auth-context";
+import { getToken } from "../utils/auth";
+import { isTokenExpire } from "../utils/isTokenExpire";
 
 const schema = yup.object({
     password: yup
@@ -40,13 +42,16 @@ const LoginPage = () => {
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setConfirmationResult, userInfo, setValues } = useAuth();
-    const token = localStorage.getItem("app_chat_token");
+    const { setConfirmationResult, userInfo, setValues, loading } = useAuth();
+    const token = getToken();
 
     useEffect(() => {
-        if (userInfo && token) navigate("/");
-    }, [navigate, token, userInfo]);
-
+        if (token) {
+            if (!loading && userInfo && !isTokenExpire(token)) {
+                navigate("/");
+            }
+        }
+    }, [loading, navigate, token, userInfo]);
     const handleSignIn = async (values) => {
         if (!isValid) return;
         try {

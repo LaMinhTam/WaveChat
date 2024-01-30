@@ -19,6 +19,8 @@ import { useEffect } from "react";
 import handleSendOTP from "../utils/handleSendOTP";
 import { setIsRegister, setOpenModal } from "../store/commonSlice";
 import { useAuth } from "../contexts/auth-context";
+import { getToken } from "../utils/auth";
+import { isTokenExpire } from "../utils/isTokenExpire";
 
 const schema = yup.object({
     name: yup.string().required("This field is required"),
@@ -43,7 +45,7 @@ const RegisterPage = () => {
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setConfirmationResult, setValues, userInfo } = useAuth();
+    const { setConfirmationResult, setValues, userInfo, loading } = useAuth();
     const handleSignUp = async (values) => {
         if (!isValid) return;
         try {
@@ -60,10 +62,14 @@ const RegisterPage = () => {
         useToggleValue();
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
         useToggleValue();
-    const token = localStorage.getItem("app_chat_token");
+    const token = getToken();
     useEffect(() => {
-        if (userInfo && token) navigate("/");
-    }, [navigate, token, userInfo]);
+        if (token) {
+            if (!loading && userInfo && !isTokenExpire(token)) {
+                navigate("/");
+            }
+        }
+    }, [loading, navigate, token, userInfo]);
     return (
         <LayoutAuthentication heading="SignUp">
             <div id="recaptcha-container"></div>

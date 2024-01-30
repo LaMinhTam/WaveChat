@@ -1,9 +1,6 @@
-import { useAuth } from "../contexts/auth-context";
 import RequiredAuthPage from "./RequiredAuthPage";
 
 const DashboardPage = () => {
-    const { userInfo } = useAuth();
-    console.log(userInfo);
     return (
         <RequiredAuthPage>
             <div className="flex items-center justify-center translate-y-1/2">

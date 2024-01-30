@@ -2,19 +2,15 @@ import Overlay from "../components/common/Overlay";
 import DashboardSideBar from "../modules/dashboard/DashboardSideBar";
 import DashboardListChat from "../modules/dashboard/DashboardListChat";
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
 import ReactModal from "react-modal";
 import ProfileModal from "../components/modal/ProfileModal";
 import { useChat } from "../contexts/chat-context";
 import ProfileDetailsModal from "../components/modal/ProfileDetailsModal";
 const LayoutDashboard = () => {
-    useEffect(() => {
-        document.body.style.overflow = "hidden";
-    }, []);
     const { show, showProfileDetails } = useChat();
 
     return (
-        <div className="min-h-screen bg-lite">
+        <div className="h-screen min-h-screen overflow-hidden bg-lite">
             <ReactModal
                 isOpen={show}
                 overlayClassName="modal-overlay fixed inset-0 z-50 ml-16 mt-10 bg-lite shadow-lg p-2

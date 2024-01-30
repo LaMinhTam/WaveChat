@@ -18,6 +18,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
 import axios from "../api/axios";
+import { saveToken } from "../utils/auth";
 
 const LayoutAuthentication = ({ children, heading = "" }) => {
     const openModal = useSelector((state) => state.common.openModal);
@@ -54,10 +55,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                         password: values.password,
                     });
                     if (res.data.status === 200) {
-                        localStorage.setItem(
-                            "app_chat_token",
-                            resLogin.data.data.access_token
-                        );
+                        saveToken(resLogin.data.data.access_token);
                         toast.success("Sign up successfully");
                     } else {
                         toast.error(resLogin.data.data.message);
@@ -78,10 +76,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                 console.log(values);
                 console.log(res);
                 if (res.data.status === 200) {
-                    localStorage.setItem(
-                        "app_chat_token",
-                        res.data.data.access_token
-                    );
+                    saveToken(res.data.data.access_token);
                     toast.success("Sign in successfully");
                 } else {
                     toast.error(res.data.data.message);

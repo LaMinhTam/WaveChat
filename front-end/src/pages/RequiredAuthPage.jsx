@@ -2,16 +2,31 @@ import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context";
+import { getToken } from "../utils/auth";
+import { isTokenExpire } from "../utils/isTokenExpire";
 const RequiredAuthPage = ({ children }) => {
     const navigate = useNavigate();
-    const { userInfo } = useAuth();
-    const token = localStorage.getItem("app_chat_token");
+    const { loading, userInfo } = useAuth();
+    const token = getToken();
+    const checkExp = isTokenExpire(token);
+    console.log(checkExp);
 
     useEffect(() => {
-        if (!userInfo || !token) {
+        if (!token) {
             navigate("/login");
+        } else {
+            if (!loading && (checkExp || !userInfo.phoneNumber)) {
+                navigate("/login");
+            }
         }
-    }, [navigate, token, userInfo]);
+    }, [loading, checkExp, navigate, token, userInfo]);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center">Loading...</div>
+        );
+    }
+
     return <>{children}</>;
 };
 RequiredAuthPage.propTypes = {
