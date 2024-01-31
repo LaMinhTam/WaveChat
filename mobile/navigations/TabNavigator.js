@@ -5,6 +5,8 @@ import HomeScreen from '../screens/HomeScreen';
 import MeScreen from '../screens/MeScreen';
 import ContactScreen from '../screens/ContactScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import UserInformationScreen from '../screens/UserInformationScreen';
+import UserStackNavigator from './UserStackNavigator';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -53,7 +55,7 @@ const TabNavigator = () => {
           return (
             <View style={{flex: 1}}>
               <Text>
-                <Icon name="rocket" size={30} color="#900" />;
+                <Icon name={iconName} size={30} color={'#1DC071'} />;
               </Text>
               {count > 0 && (
                 <>
@@ -71,7 +73,11 @@ const TabNavigator = () => {
       })}>
       <Tab.Screen name="Tin nhắn" component={HomeScreen} />
       <Tab.Screen name="Bạn bè" component={ContactScreen} />
-      <Tab.Screen name="Cá nhân" component={MeScreen} />
+      <Tab.Screen
+        name="Cá nhân"
+        component={UserStackNavigator}
+        options={{headerShown: false}}
+      />
     </Tab.Navigator>
   );
 };

@@ -43,21 +43,6 @@ const LoginStackNavigator = () => {
         component={GenderDOBSelectionScreen}
         options={{title: 'Ngày sinh và giới tính'}}
       />
-      <Stack.Screen
-        name="Trang thông tin"
-        component={UserInformationSreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Cài đặt"
-        component={UserSettingListScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Chi tiết người dùng"
-        component={UserDetailScreen}
-        options={{headerShown: false}}
-      />
     </Stack.Navigator>
   );
 };
