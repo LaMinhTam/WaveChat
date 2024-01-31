@@ -6,23 +6,33 @@ import {Login} from '../apis/login';
 import {useAuth} from '../contexts/auth-context';
 import {getProfile} from '../apis/profile';
 
-const SignIn = () => {
-  const [phone, setPhone] = useState('0000000003');
-  const [password, setPassword] = useState('test1234');
-  const {accessTokens, storeAccessToken} = useAuth();
-  const handleSignIn = async () => {
-    const data = await Login(phone, password);
-    console.log(data.data);
-    storeAccessToken('accessToken', data.data.access_token);
+const SignIn = ({navigation}) => {
+
+  const navigateToUserInfo = () => {
+    navigation.navigate('Trang thông tin');
   };
 
-  const getProfileTest = async () => {
-    const data = await getProfile(
-      '65b37e24583f74cac4d603eb',
-      accessTokens.accessToken,
-    );
-    console.log('user profile ', data.data);
+  const [phone, setPhone] = useState('0367819442');
+  const [password, setPassword] = useState('123456');
+  const {userInfo, setUserInfo, accessTokens, storeAccessToken} = useAuth();
+  const handleSignIn = async () => {
+    const data = await Login(phone, password);
+    storeAccessToken('accessToken', data.data.access_token);
+    if (data.data.access_token) {
+      const dataUserFull = await getProfile(data.data._id, data.data.access_token);
+      console.log('user profile ', dataUserFull.data);
+      setUserInfo(dataUserFull.data); 
+      navigateToUserInfo(dataUserFull.data)
+    }
   };
+ 
+  // const getProfileTest = async () => {
+  //   const data = await getProfile(userInfo._id, accessTokens.accessToken);
+  //   console.log('user profile ', data.data);
+  //   return data.data
+  // };
+
+  
 
   return (
     <View style={styles.container}>
@@ -45,7 +55,7 @@ const SignIn = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
-      <Button title="test" onPress={() => getProfileTest()}></Button>
+      {/* <Button title="test" onPress={() => getProfileTest()}></Button> */}
     </View>
   );
 };
