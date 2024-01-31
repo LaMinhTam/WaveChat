@@ -18,7 +18,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
 import axios from "../api/axios";
-import { saveToken } from "../utils/auth";
+import { saveToken, saveUserId } from "../utils/auth";
 
 const LayoutAuthentication = ({ children, heading = "" }) => {
     const openModal = useSelector((state) => state.common.openModal);
@@ -55,6 +55,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                         password: values.password,
                     });
                     if (res.data.status === 200) {
+                        saveUserId(resLogin.data.data._id);
                         saveToken(resLogin.data.data.access_token);
                         toast.success("Sign up successfully");
                     } else {
@@ -73,9 +74,8 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     phone: values.phone,
                     password: values.password,
                 });
-                console.log(values);
-                console.log(res);
                 if (res.data.status === 200) {
+                    saveUserId(res.data.data._id);
                     saveToken(res.data.data.access_token);
                     toast.success("Sign in successfully");
                 } else {

@@ -1,21 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useChat } from "../../contexts/chat-context";
 import { IconCamera, IconClose, IconEdit } from "../icons";
 import Viewer from "react-viewer";
+import { useDispatch, useSelector } from "react-redux";
 import UpdateProfileModal from "./UpdateProfileModal";
+import { setShowUpdateProfile } from "../../store/commonSlice";
+import { axiosPrivate } from "../../api/axios";
+import { getToken, getUserId } from "../../utils/auth";
+import { setUserProfile } from "../../store/userSlice";
+import formatPhone from "../../utils/formatPhone";
 
 const ProfileDetailsModal = () => {
     const { setShowProfileDetails, profileDetailsRef } = useChat();
     const [isOpenAvatar, setIsOpenAvatar] = React.useState(false);
     const [isOpenBG, setIsOpenBG] = React.useState(false);
-    const [showEditModal, setShowEditModal] = React.useState(false);
+    const showUpdateProfile = useSelector(
+        (state) => state.common.showUpdateProfile
+    );
+    const id = getUserId();
+    const access_token = getToken();
+    const userProfile = useSelector((state) => state.user.userProfile);
+    const dispatch = useDispatch();
+    console.log(userProfile);
+    useEffect(() => {
+        async function fetchProfileData() {
+            const res = await axiosPrivate.get(`/user/profile?_id=${id}`);
+            dispatch(setUserProfile(res.data.data));
+        }
+        fetchProfileData();
+    }, [access_token, dispatch, id]);
     return (
-        <>
-            {!showEditModal && (
-                <div
-                    className="w-[400px] h-full p-2 flex flex-col"
-                    ref={profileDetailsRef}
-                >
+        <div ref={profileDetailsRef}>
+            {!showUpdateProfile && (
+                <div className="w-[400px] h-full p-2 flex flex-col">
                     <div className="flex items-center w-full h-[48px]">
                         <span className="text-[16px] font-semibold mr-auto">
                             Thông tin tài khoản
@@ -56,9 +73,14 @@ const ProfileDetailsModal = () => {
                         </button>
                         <div className="flex items-start justify-center gap-x-2">
                             <h3 className="text-lg font-medium">
-                                Võ Đình Thông
+                                {userProfile.nick_name}
                             </h3>
-                            <button>
+                            <button
+                                className="btn-showUpdateProfile"
+                                onClick={() =>
+                                    dispatch(setShowUpdateProfile(true))
+                                }
+                            >
                                 <IconEdit />
                             </button>
                         </div>
@@ -73,21 +95,26 @@ const ProfileDetailsModal = () => {
                                 <span className="text-sm text-text3">
                                     Giới tính
                                 </span>
-                                <span className="ml-[56px]">Nam</span>
+                                <span className="ml-[56px]">
+                                    {userProfile.gender === 0 ? "Nam" : "Nữ"}
+                                </span>
                             </div>
                             <div className="flex items-center">
                                 <span className="text-sm text-text3">
                                     Ngày sinh
                                 </span>
                                 <span className="ml-[45px]">
-                                    17 tháng 11, 2003
+                                    {userProfile.birthday}
                                 </span>
                             </div>
                             <div className="flex items-center">
                                 <span className="text-sm text-text3">
                                     Điện thoại
                                 </span>
-                                <span className="ml-10">+84 346 549 617</span>
+                                <span className="ml-10">
+                                    {userProfile.phone &&
+                                        formatPhone(userProfile.phone)}
+                                </span>
                             </div>
                         </div>
                         <p className="mb-2 text-sm font-normal text-text3">
@@ -96,8 +123,8 @@ const ProfileDetailsModal = () => {
                         </p>
                         <hr />
                         <button
-                            onClick={() => setShowEditModal(true)}
-                            className="mt-3 px-4 h-[32px] flex items-center justify-center w-full gap-x-2 text-[16px] font-semibold hover:bg-text3 hover:bg-opacity-10"
+                            className="btn-showUpdateProfile mt-3 px-4 h-[32px] flex items-center justify-center w-full gap-x-2 text-[16px] font-semibold hover:bg-text3 hover:bg-opacity-10"
+                            onClick={() => dispatch(setShowUpdateProfile(true))}
                         >
                             <IconEdit />
                             <span>Cập nhật</span>
@@ -119,8 +146,8 @@ const ProfileDetailsModal = () => {
                     />
                 </div>
             )}
-            {showEditModal && <UpdateProfileModal />}
-        </>
+            {showUpdateProfile && <UpdateProfileModal />}
+        </div>
     );
 };
 

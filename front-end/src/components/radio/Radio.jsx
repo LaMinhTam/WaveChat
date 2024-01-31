@@ -1,6 +1,13 @@
 import PropTypes from "prop-types";
 
-const Radio = ({ name, defaultChecked, value, checked, ...props }) => {
+const Radio = ({
+    name,
+    defaultChecked,
+    value,
+    checked,
+    onChange,
+    ...props
+}) => {
     return (
         <input
             type="radio"
@@ -8,6 +15,7 @@ const Radio = ({ name, defaultChecked, value, checked, ...props }) => {
             defaultChecked={defaultChecked}
             value={value}
             checked={checked}
+            onChange={onChange}
             {...props}
         />
     );
@@ -18,6 +26,7 @@ Radio.propTypes = {
     defaultChecked: PropTypes.bool,
     value: PropTypes.string.isRequired,
     checked: PropTypes.bool.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 
 export default Radio;
