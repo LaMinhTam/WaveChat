@@ -1,5 +1,6 @@
 import IconAddGroup from "./IconAddGroup";
 import IconAddUser from "./IconAddUser";
+import IconBack from "./IconBack";
 import IconCamera from "./IconCamera";
 import IconChat from "./IconChat";
 import IconClose from "./IconClose";
@@ -25,4 +26,5 @@ export {
     IconClose,
     IconEdit,
     IconCamera,
+    IconBack,
 };

@@ -15,7 +15,7 @@ const RequiredAuthPage = ({ children }) => {
         if (!token) {
             navigate("/login");
         } else {
-            if (!loading && (checkExp || !userInfo.phoneNumber)) {
+            if (!loading && (checkExp || !userInfo)) {
                 navigate("/login");
             }
         }
