@@ -1,14 +1,16 @@
-import PropTypes from "prop-types";
-import Friends from "./modules/friends/Friends";
+import PropTypes from 'prop-types'
+import Friends from './modules/friends/Friends'
+import { TabFriendsProvider } from './context/tabFriendsContext'
 function App({ children }) {
-    return <div>
-        <Friends/>
-    
-    </div>;
+	return (
+		<TabFriendsProvider>
+			<Friends />
+		</TabFriendsProvider>
+	)
 }
 
 App.propTypes = {
-    children: PropTypes.node.isRequired,
-};
+	children: PropTypes.node.isRequired,
+}
 
-export default App;
+export default App

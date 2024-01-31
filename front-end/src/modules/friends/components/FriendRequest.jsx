@@ -1,55 +1,117 @@
 import React, { useEffect, useState } from 'react'
-import Heading from './Heading'
-import FriendInfo from './FriendInfo'
+import Heading, { Heading2 } from './Heading'
 import axios from 'axios'
-
-
+import FriendReceived from './FriendReceived'
+import FriendSent from './FriendSent'
 
 const FriendRequest = () => {
+	const acceskey =
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWI5MTk2ZGYzYzY1ZWU0ZjVjZmNlYjYiLCJyb2xlIjoidXNlciIsImZ1bGxfbmFtZSI6InRodXl2eSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjY5NDk3MSwiZXhwIjoxNzA3Mjk5NzcxfQ.rlIyqdARfzuMXEqwayDSAivioF6W87bDV9tEoZ11Mgc'
+	const [friendrequests, setFriendRequests] = useState([])
+	const [requestssent, setRequestsent] = useState([])
 
-  const [requests, setRequest] = useState([])
+	useEffect(() => {
+		async function fetchFriendRequests(accessToken) {
+			try {
+				const res = await axios.get('http://localhost:3000/friend?type=2', {
+					headers: {
+						'Access-Control-Allow-Origin': '*',
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${accessToken}`,
+					},
+				})
 
-  // useEffect(() =>{
-    
-  //   async function fetchFriendList() {
-  //     const requestUrl = `http://localhost:3000/friend?type=2`;
-  //     const response = await fetch(requestUrl)
-  //     const responseJSON = await response.json()
-  //     console.log({responseJSON});
-  //   }
+				// Access the array of friend requests
+				const friendRequestsArray = Array.isArray(res.data.data) ? res.data.data : [res.data.data]
 
-  //   fetchFriendList()
-  // }, [])
+				console.log(friendRequestsArray)
+				return friendRequestsArray
+			} catch (error) {
+				console.error('Error fetching friend requests:', error)
+				return []
+			}
+		}
 
-  async function getRequests(accessToken){
-    const res = await axios.get('http://localhost:3000/friend?type=2', 
-    {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        
-        "Content-Type": 'application/json',
-        Authorization: `Bearer ${accessToken}`
-      }
-    }
-    )
-    return res.data
-  }
+		// Use the async function with await or .then()
+		async function fetchData() {
+			try {
+				const list = await fetchFriendRequests(acceskey)
+				setFriendRequests(list)
+			} catch (error) {
+				console.error('Error setting friend requests sent:', error)
+			}
+		}
 
-  console.log(getRequests('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWI5MTk2ZGYzYzY1ZWU0ZjVjZmNlYjYiLCJyb2xlIjoidXNlciIsImZ1bGxfbmFtZSI6InRodXl2eSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjYzMDEyMywiZXhwIjoxNzA3MjM0OTIzfQ.W_t5bsBSOYONxdjL6LNZBfsvtWjVWifueAUUQS01Xx0'));
+		fetchData()
+	}, [])
 
+	useEffect(() => {
+		async function fetchFriendRequests(accessToken) {
+			try {
+				const res = await axios.get('http://localhost:3000/friend?type=3', {
+					headers: {
+						'Access-Control-Allow-Origin': '*',
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${accessToken}`,
+					},
+				})
 
-  return (
-    <div>
-        <div className='p-4 fixed w-full border-solid border-b border-black-100'>
-            <Heading text="Lời mời kết bạn"/>
-            <div className='flex gap-2 flex-wrap'>
-                {/* <FriendInfo/>
-                <FriendInfo/>
-                <FriendInfo/> */}
-            </div>
-        </div>
-    </div>
-  )
+				// Access the array of friend requests
+				const friendRequestsArray = Array.isArray(res.data.data) ? res.data.data : [res.data.data]
+
+				console.log(friendRequestsArray)
+				return friendRequestsArray
+			} catch (error) {
+				console.error('Error fetching friend requests:', error)
+				return []
+			}
+		}
+
+		// Use the async function with await or .then()
+		async function fetchData() {
+			try {
+				const list = await fetchFriendRequests(acceskey)
+				setRequestsent(list)
+			} catch (error) {
+				console.error('Error setting friend requests sent:', error)
+			}
+		}
+
+		fetchData()
+	}, [])
+
+	return (
+		<div>
+			<div className=" fixed w-full border-solid border-b border-black-100"></div>
+			<div className="py-6 px-4 flex items-center border-solid border-b border-black-900 bg-white">
+				<Heading text="Lời mời kết bạn" />
+			</div>
+
+			<div className="flex gap-2 flex-wrap p-4">
+				<div className="w-full">
+					<Heading2 text={`Lời mời đã nhận (${friendrequests.length})`} />
+				</div>
+
+				<div className="w-full flex gap-4">
+					{friendrequests.map((request) => (
+						<FriendReceived request={request} key={request.user_id} />
+					))}
+				</div>
+			</div>
+
+			<div className="flex gap-2 flex-wrap p-4">
+				<div className="w-full">
+					<Heading2 text={`Lời mời đã gửi (${requestssent.length})`} />
+				</div>
+
+				<div className="w-full flex gap-4">
+					{requestssent.map((request) => (
+						<FriendSent request={request} key={request.user_id} />
+					))}
+				</div>
+			</div>
+		</div>
+	)
 }
 
 export default FriendRequest
