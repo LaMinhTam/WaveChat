@@ -32,12 +32,10 @@ const GenderDOBSelectionScreen = ({navigation, route}) => {
     });
     setSelectedDOB(date);
   };
-  console.log('select', accessToken);
 
   const navigateToNextScreen = async () => {
     try {
       const {_id, ...userInfoWithoutId} = userInfo;
-      console.log(accessToken);
       await updateProfile(userInfoWithoutId, accessToken);
       storeAccessToken('accessToken', accessToken);
     } catch (error) {

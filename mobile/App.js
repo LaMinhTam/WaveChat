@@ -4,13 +4,16 @@ import store from './store/configureStore';
 import LoginStackNavigator from './navigations/LoginStackNavigator';
 import {AuthProvider} from './contexts/auth-context';
 import {useAuth} from './contexts/auth-context';
-import HomeScreen from './screens/HomeScreen';
+import TabNavigator from './navigations/TabNavigator';
+import {NavigationContainer} from '@react-navigation/native';
 
 const App = () => {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <Main></Main>
+        <NavigationContainer>
+          <Main></Main>
+        </NavigationContainer>
       </AuthProvider>
     </Provider>
   );
@@ -19,7 +22,7 @@ const App = () => {
 const Main = () => {
   const {accessTokens} = useAuth();
   return (
-    <>{accessTokens.accessToken ? <HomeScreen /> : <LoginStackNavigator />}</>
+    <>{accessTokens.accessToken ? <TabNavigator /> : <LoginStackNavigator />}</>
   );
 };
 export default App;

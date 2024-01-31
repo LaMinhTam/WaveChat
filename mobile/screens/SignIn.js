@@ -4,21 +4,16 @@ import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
 import {useAuth} from '../contexts/auth-context';
-import {getProfile} from '../apis/profile';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
   const [password, setPassword] = useState('123456789');
-  const {userInfo, setUserInfo, accessTokens, storeAccessToken} = useAuth();
+  const {setUserInfo, storeAccessToken} = useAuth();
   const handleSignIn = async () => {
-    const data = await Login(phone, password);
+    const formattedPhoneNumber = '0' + phone.slice(3);
+    const data = await Login(formattedPhoneNumber, password);
     setUserInfo(data.data);
     storeAccessToken('accessToken', data.data.access_token);
-  };
-
-  const getProfileTest = async () => {
-    const data = await getProfile(userInfo._id, accessTokens.accessToken);
-    console.log('user profile ', data.data);
   };
 
   return (
@@ -42,7 +37,6 @@ const SignIn = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
-      <Button title="test" onPress={() => getProfileTest()}></Button>
     </View>
   );
 };
