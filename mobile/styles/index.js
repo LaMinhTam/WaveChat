@@ -1,9 +1,4 @@
-import {
-  CardStyleInterpolators,
-  TransitionPresets,
-  TransitionSpecs,
-} from '@react-navigation/stack';
-import React from 'react';
+import {TransitionPresets, TransitionSpecs} from '@react-navigation/stack';
 import {Dimensions, StyleSheet} from 'react-native';
 
 export const WINDOW_WIDTH = Dimensions.get('window').width;

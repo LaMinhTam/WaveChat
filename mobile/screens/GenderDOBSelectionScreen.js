@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import {useAuth} from '../contexts/auth-context';
-import {updateProfile} from '../apis/profile';
+import {updateProfile} from '../apis/user';
 
 const GenderDOBSelectionScreen = ({navigation, route}) => {
   const [selectedGender, setSelectedGender] = useState(0);

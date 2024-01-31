@@ -20,3 +20,13 @@ export async function updateProfile(userInfo, accessToken) {
   });
   return res.data;
 }
+
+export async function getFriends(accessToken) {
+  const res = await axios.get(waveChatApi.getFriends(), {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return res.data;
+}

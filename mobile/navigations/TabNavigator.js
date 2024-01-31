@@ -2,11 +2,11 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import MeScreen from '../screens/MeScreen';
 import ContactScreen from '../screens/ContactScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import UserInformationScreen from '../screens/UserInformationScreen';
 import UserStackNavigator from './UserStackNavigator';
+import ContactStackNavigator from './ContactStackNavigator';
+
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -16,14 +16,10 @@ const TabNavigator = () => {
         tabBarLabelStyle: {fontSize: 12},
         tabBarItemStyle: {height: 50},
         tabBarActiveTintColor: '#1DC071',
-        tabBarInactiveTintColor: 'grey',
         swipeEnabled: true,
         tabBarPressColor: '#f3e7fd',
 
-        // tabBarLabel: navigation.isFocused() ? route.name : "",
-        tabBarLabel: ({focused, color}) => {
-          return <Text style={{color}}>{route.name}</Text>;
-        },
+        tabBarLabel: navigation.isFocused() ? route.name : '',
 
         tabBarShowLabel: navigation.isFocused(),
         tabBarIcon: ({focused, color}) => {
@@ -37,7 +33,7 @@ const TabNavigator = () => {
 
               break;
             }
-            case 'Bạn bè': {
+            case 'Danh bạ': {
               iconName = 'address-book';
               //   count = friendRequests?.length || 0;
               break;
@@ -53,11 +49,16 @@ const TabNavigator = () => {
               break;
           }
           return (
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, marginTop: 4}}>
               <Text>
-                <Icon name={iconName} size={30} color={'#1DC071'} />;
+                <Icon
+                  name={iconName}
+                  size={24}
+                  color={focused ? '#1DC071' : 'grey'}
+                />
+                ;
               </Text>
-              {count > 0 && (
+              {/* {count > 0 && (
                 <>
                   <View style={styles.iconBadge}>
                     <Icon name="rightcircle" size={30} color="#900" />;
@@ -66,13 +67,13 @@ const TabNavigator = () => {
                     </Text>
                   </View>
                 </>
-              )}
+              )} */}
             </View>
           );
         },
       })}>
       <Tab.Screen name="Tin nhắn" component={HomeScreen} />
-      <Tab.Screen name="Bạn bè" component={ContactScreen} />
+      <Tab.Screen name="Danh bạ" component={ContactStackNavigator} />
       <Tab.Screen
         name="Cá nhân"
         component={UserStackNavigator}

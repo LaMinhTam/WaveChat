@@ -5,4 +5,5 @@ export const waveChatApi = {
   login: () => `${waveChatEndpoint}/auth/sign-in`,
   getProfile: id => `${waveChatEndpoint}/user/profile?_id=${id}`,
   updateProfile: () => `${waveChatEndpoint}/user/update`,
+  getFriends: () => `${waveChatEndpoint}/friend?type=4`,
 };
