@@ -7,6 +7,7 @@ import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 import OTPScreen from '../screens/OTPScreen';
 import GenderDOBSelectionScreen from '../screens/GenderDOBSelectionScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,14 +20,25 @@ const LoginStackNavigator = () => {
           component={AuthenScreen}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="Đăng nhập" component={SignIn} />
-        <Stack.Screen name="Tạo tài khoản" component={SignUp} />
         <Stack.Screen
-          name="Nhập mã xác thực"
-          component={OTPScreen}></Stack.Screen>
+          name="SignIn"
+          component={SignIn}
+          options={{title: 'Đăng nhập'}}
+        />
         <Stack.Screen
-          name="Ngày sinh và giới tính"
+          name="SignUp"
+          component={SignUp}
+          options={{title: 'Tạo tài khoản'}}
+        />
+        <Stack.Screen
+          name="OTPScreen"
+          component={OTPScreen}
+          options={{title: 'Nhập mã xác thực'}}
+        />
+        <Stack.Screen
+          name="GenderDOBSelectionScreen"
           component={GenderDOBSelectionScreen}
+          options={{title: 'Ngày sinh và giới tính'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

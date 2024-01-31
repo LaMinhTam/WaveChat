@@ -11,6 +11,7 @@ export function AuthProvider(props) {
     phone: '',
     password: '',
   });
+
   const [userInfo, setUserInfo] = React.useState('');
   const [confirmationResult, setConfirmationResult] = React.useState(null); // Add this line
   const [accessTokens, setAccessTokens] = React.useState({});

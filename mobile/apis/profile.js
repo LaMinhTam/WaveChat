@@ -10,3 +10,13 @@ export async function getProfile(id, accessToken) {
   });
   return res.data;
 }
+
+export async function updateProfile(userInfo, accessToken) {
+  const res = await axios.post(waveChatApi.updateProfile(), userInfo, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return res.data;
+}

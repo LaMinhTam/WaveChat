@@ -10,10 +10,10 @@ import {
 
 const AuthenScreen = ({navigation}) => {
   const navigateToSignIn = () => {
-    navigation.navigate('Đăng nhập');
+    navigation.navigate('SignIn');
   };
   const navigateToSignUp = () => {
-    navigation.navigate('Tạo tài khoản');
+    navigation.navigate('SignUp');
   };
 
   return (

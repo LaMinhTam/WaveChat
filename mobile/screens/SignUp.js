@@ -5,48 +5,29 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
-// import {auth} from '../utils/firebaseConfig';
 import {useAuth} from '../contexts/auth-context';
-import auth, {firebase} from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('+84886700046');
   const [username, setUsername] = useState('La Minh Tâm');
   const [password, setPassword] = useState('123456789');
-  const {setConfirmationResult, setValues, userInfo} = useAuth();
-  let [confirm, setConfirm] = useState(null);
+  const {setConfirmationResult, setValues, accessTokens} = useAuth();
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        // if user data exist
-        //clear previous user session
-      } else {
-      }
-    });
-  }, []);
-
-  console.log(
-    'Signing up with Phone:',
-    phoneNumber,
-    'Username:',
-    username,
-    'Password:',
-    password,
-  );
+    auth().signOut();
+    console.log(accessTokens.accessToken);
+  });
 
   const handleSignUp = async () => {
     try {
       confirm = await auth().signInWithPhoneNumber(phoneNumber);
-      setConfirm(confirm);
       setConfirmationResult(confirm);
       setValues({name: username, phone: phoneNumber, password: password});
-      navigation.navigate('Nhập mã xác thực');
-      console.log('confirm', confirm);
+      navigation.navigate('OTPScreen');
     } catch (error) {
       console.error('Error signing up:', error);
     }

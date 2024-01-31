@@ -7,24 +7,70 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {auth} from '../utils/firebaseConfig';
-import {configureStore} from '@reduxjs/toolkit';
 import {useAuth} from '../contexts/auth-context';
-import {doc, serverTimestamp, setDoc} from 'firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import {Login, authSignUp} from '../apis/authenApi';
+import firestore from '@react-native-firebase/firestore';
 
 const OTPScreen = ({navigation}) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [resendTimer, setResendTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const timerIntervalRef = useRef(null);
-  const {confirmationResult, values, userInfo} = useAuth();
+  const {confirmationResult, values, setUserInfo} = useAuth();
 
   useEffect(() => {
     timerIntervalRef.current = setInterval(() => {
       setResendTimer(prevTimer => (prevTimer > 0 ? prevTimer - 1 : 0));
     }, 1000);
 
-    return () => clearInterval(timerIntervalRef.current);
+    const subscriber = auth().onAuthStateChanged(function onAuthStateChanged(
+      user,
+    ) {
+      if (user) {
+        createUser = async () => {
+          var {name, phone, password} = values;
+          const formattedPhoneNumber = '0' + phone.slice(3);
+          const data = await authSignUp(name, formattedPhoneNumber, password);
+          if (data.status == 200) {
+            try {
+              const user = data.data;
+              setUserInfo(user);
+
+              firestore()
+                .collection('users')
+                .doc(user._id)
+                .set({
+                  id: user._id,
+                  name: user.full_name,
+                  phone: user.phone,
+                  password: user.password,
+                  avatar: 'https://source.unsplash.com/random',
+                  createdAt: user.created_at,
+                })
+                .then(() => {
+                  console.log('User added!');
+                });
+
+              const logUser = await Login(user.phone, password);
+
+              navigation.navigate('GenderDOBSelectionScreen', {
+                accessToken: logUser.data.access_token,
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          } else if (data.status == 400) {
+            Alert.alert('Lỗi', data.data.message);
+          }
+        };
+
+        createUser();
+      } else {
+      }
+    });
+
+    return () => clearInterval(timerIntervalRef.current), subscriber;
   }, []);
 
   const handleInputChange = async (index, value) => {
@@ -35,26 +81,12 @@ const OTPScreen = ({navigation}) => {
       refs[index + 1].focus();
     }
 
-    console.log(values);
-
     setOtp(newOtp);
 
     if (newOtp.every(digit => digit !== '')) {
       try {
         let otpString = newOtp.join('');
         await confirmationResult.confirm(otpString);
-        // const hashedPassword = await bcrypt.hash(values.password, 10);
-
-        // await setDoc(doc(db, 'users', auth.currentUser.uid), {
-        //   id: auth.currentUser.uid,
-        //   name: values.name,
-        //   phone: values.phone,
-        //   password: hashedPassword,
-        //   avatar: 'https://source.unsplash.com/random',
-        //   createdAt: serverTimestamp(),
-        // });
-        // navigation.navigate('Đăng nhập');
-        console.log('done', hashedPassword);
       } catch (error) {
         console.log(error);
       }

@@ -2,25 +2,22 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
-import {Login} from '../apis/login';
+import {Login} from '../apis/authenApi';
 import {useAuth} from '../contexts/auth-context';
 import {getProfile} from '../apis/profile';
 
 const SignIn = () => {
-  const [phone, setPhone] = useState('0000000003');
-  const [password, setPassword] = useState('test1234');
-  const {accessTokens, storeAccessToken} = useAuth();
+  const [phone, setPhone] = useState('+84886700046');
+  const [password, setPassword] = useState('123456789');
+  const {userInfo, setUserInfo, accessTokens, storeAccessToken} = useAuth();
   const handleSignIn = async () => {
     const data = await Login(phone, password);
-    console.log(data.data);
+    setUserInfo(data.data);
     storeAccessToken('accessToken', data.data.access_token);
   };
 
   const getProfileTest = async () => {
-    const data = await getProfile(
-      '65b37e24583f74cac4d603eb',
-      accessTokens.accessToken,
-    );
+    const data = await getProfile(userInfo._id, accessTokens.accessToken);
     console.log('user profile ', data.data);
   };
 

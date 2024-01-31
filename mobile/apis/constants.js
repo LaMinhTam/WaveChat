@@ -1,6 +1,8 @@
-const waveChatEndpoint = 'http://localhost:3000';
+const waveChatEndpoint = 'http://192.168.1.88:3000';
 
 export const waveChatApi = {
-  getProfile: id => `${waveChatEndpoint}/user/profile?_id=${id}`,
+  signUp: () => `${waveChatEndpoint}/auth/sign-up`,
   login: () => `${waveChatEndpoint}/auth/sign-in`,
+  getProfile: id => `${waveChatEndpoint}/user/profile?_id=${id}`,
+  updateProfile: () => `${waveChatEndpoint}/user/update`,
 };
