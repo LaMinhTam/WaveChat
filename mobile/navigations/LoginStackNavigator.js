@@ -5,9 +5,13 @@ import {globalScreenOptions} from '../styles';
 import AuthenScreen from '../screens/AuthenScreen';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
+import UserInformationSreen from '../screens/UserInformationScreen';
+import UserSettingListScreen from '../screens/UserSettingListScreen';
 import OTPScreen from '../screens/OTPScreen';
+import UserDetailScreen from '../screens/UserDetailScreen';
 import GenderDOBSelectionScreen from '../screens/GenderDOBSelectionScreen';
 import HomeScreen from '../screens/HomeScreen';
+import {useAuth} from '../contexts/auth-context';
 
 const Stack = createStackNavigator();
 
@@ -38,6 +42,21 @@ const LoginStackNavigator = () => {
         name="GenderDOBSelectionScreen"
         component={GenderDOBSelectionScreen}
         options={{title: 'Ngày sinh và giới tính'}}
+      />
+      <Stack.Screen
+        name="Trang thông tin"
+        component={UserInformationSreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Cài đặt"
+        component={UserSettingListScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Chi tiết người dùng"
+        component={UserDetailScreen}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
