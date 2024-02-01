@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
@@ -8,12 +8,20 @@ import {useAuth} from '../contexts/auth-context';
 const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
   const [password, setPassword] = useState('123456789');
+  const [errorMessage, setErrorMessage] = useState(''); // New state for error message
   const {setUserInfo, storeAccessToken} = useAuth();
+
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
     const data = await Login(formattedPhoneNumber, password);
-    setUserInfo(data.data);
-    storeAccessToken('accessToken', data.data.access_token);
+
+    if (data.status === 200) {
+      setErrorMessage('');
+      setUserInfo(data.data);
+      storeAccessToken('accessToken', data.data.access_token);
+    } else if (data.status === 401) {
+      setErrorMessage('Sai tài khoản hoặc mật khẩu');
+    }
   };
 
   return (
@@ -37,6 +45,10 @@ const SignIn = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
+
+      {errorMessage !== '' && (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      )}
     </View>
   );
 };
@@ -66,6 +78,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: 10,
   },
 });
 
