@@ -6,15 +6,28 @@ import UserInformationScreen from '../screens/UserInformationScreen';
 import {createStackNavigator} from '@react-navigation/stack';
 import ContactScreen from '../screens/ContactScreen';
 import {globalScreenOptions} from '../styles';
+import FriendRequest from '../screens/FriendRequest';
+import PhoneContacts from '../screens/PhoneContacts';
+import FriendRequestTabNavigator from './FriendRequestTabNavigator';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={globalScreenOptions}>
       <Stack.Screen
-        name="Trang thông tin"
+        name="ContactScreen"
         component={ContactScreen}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FriendRequest"
+        component={FriendRequestTabNavigator}
+        options={{title: 'Lời mời kết bạn'}}
+      />
+      <Stack.Screen
+        name="PhoneContacts"
+        component={PhoneContacts}
+        options={{title: 'Danh bạ máy'}}
       />
     </Stack.Navigator>
   );

@@ -50,14 +50,13 @@ const TabNavigator = () => {
           }
           return (
             <View style={{flex: 1, marginTop: 4}}>
-              <Text>
+              <View>
                 <Icon
                   name={iconName}
                   size={24}
                   color={focused ? '#1DC071' : 'grey'}
                 />
-                ;
-              </Text>
+              </View>
               {/* {count > 0 && (
                 <>
                   <View style={styles.iconBadge}>
@@ -73,7 +72,11 @@ const TabNavigator = () => {
         },
       })}>
       <Tab.Screen name="Tin nhắn" component={HomeScreen} />
-      <Tab.Screen name="Danh bạ" component={ContactStackNavigator} />
+      <Tab.Screen
+        name="Danh bạ"
+        component={ContactStackNavigator}
+        options={{headerShown: false}}
+      />
       <Tab.Screen
         name="Cá nhân"
         component={UserStackNavigator}

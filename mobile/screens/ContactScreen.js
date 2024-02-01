@@ -8,13 +8,13 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {MAIN_COLOR, commonStyle} from '../styles';
+import {MAIN_COLOR} from '../styles';
 import {getFriends} from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
 
 const Separator = () => <View style={styles.separator} />;
 
-const FriendScreen = () => {
+const FriendScreen = ({navigation}) => {
   const {accessTokens} = useAuth();
 
   const [data, setData] = useState([]);
@@ -25,7 +25,7 @@ const FriendScreen = () => {
 
   const fetchFriends = async () => {
     try {
-      const friendsData = await getFriends(accessTokens.accessToken);
+      const friendsData = await getFriends(4, accessTokens.accessToken);
       setData(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
@@ -63,7 +63,11 @@ const FriendScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('FriendRequest');
+          }}>
           <View
             style={[styles.buttonIconContainer, {backgroundColor: MAIN_COLOR}]}>
             <Icon name="user-plus" size={20} color="#fff" />
@@ -71,7 +75,11 @@ const FriendScreen = () => {
           <Text style={styles.buttonText}>Lời mời kết bạn</Text>
         </TouchableOpacity>
         <Separator />
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('PhoneContacts');
+          }}>
           <View
             style={[styles.buttonIconContainer, {backgroundColor: MAIN_COLOR}]}>
             <Icon name="address-book" size={20} color="#fff" />

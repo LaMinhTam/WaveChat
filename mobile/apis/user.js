@@ -21,8 +21,8 @@ export async function updateProfile(userInfo, accessToken) {
   return res.data;
 }
 
-export async function getFriends(accessToken) {
-  const res = await axios.get(waveChatApi.getFriends(), {
+export async function getFriends(type, accessToken) {
+  const res = await axios.get(waveChatApi.getFriends(type), {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
