@@ -3,6 +3,7 @@ import Heading, { Heading2 } from './Heading'
 import axios from 'axios'
 import FriendReceived from './FriendReceived'
 import FriendSent from './FriendSent'
+import DraftsIcon from '@mui/icons-material/Drafts'
 
 const FriendRequest = () => {
 	const acceskey =
@@ -83,7 +84,8 @@ const FriendRequest = () => {
 	return (
 		<div>
 			<div className=" fixed w-full border-solid border-b border-black-100"></div>
-			<div className="py-6 px-4 flex items-center border-solid border-b border-black-900 bg-white">
+			<div className="flex gap-3 py-6 px-4 flex items-center border-solid border-b border-black-900 bg-white">
+				<DraftsIcon />
 				<Heading text="Lời mời kết bạn" />
 			</div>
 

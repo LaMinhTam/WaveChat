@@ -11,4 +11,15 @@ const Button = ({ text }) => {
 	)
 }
 
+const ButtonBlue = ({ text }) => {
+	return (
+		<div className="flex justify-center items-center bg-blue-100 w-full p-2 rounded-md hover:bg-blue-200 text-blue-700">
+			<button>
+				<Heading text={text} />
+			</button>
+		</div>
+	)
+}
+
 export default Button
+export { ButtonBlue }

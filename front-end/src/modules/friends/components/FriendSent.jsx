@@ -61,9 +61,7 @@ const FriendSent = ({ request }) => {
 					<p>26/11/20 - Từ...</p>
 				</div>
 			</div>
-			<div className="p-5 border-solid border border-black-800">
-				<p>Hêhhehe</p>
-			</div>
+
 			<div className="flex gap-1 py-2">
 				<Button text={'Thu hồi lời mời'} />
 			</div>
