@@ -12,6 +12,7 @@ import IconLight from "./IconLight";
 import IconLogout from "./IconLogout";
 import IconSearch from "./IconSearch";
 import IconSetting from "./IconSetting";
+import IconSplit from "./IconSplit";
 export {
     IconEyeToggle,
     IconLight,
@@ -27,4 +28,5 @@ export {
     IconEdit,
     IconCamera,
     IconBack,
+    IconSplit,
 };
