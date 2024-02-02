@@ -24,7 +24,7 @@ const SideBarFriends = () => {
 				<GroupAddIcon />
 			</div>
 
-			<div className="py-4">
+			<div className="">
 				<div
 					className={`p-4 flex items-center gap-4 hover:bg-gray-200 ${
 						currentTab === 'Danh sách bạn bè' ? ' bg-blue-100' : ''
