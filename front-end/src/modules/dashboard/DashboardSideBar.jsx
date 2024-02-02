@@ -1,4 +1,4 @@
-// import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     IconChat,
     IconContact,
@@ -7,6 +7,7 @@ import {
     IconSetting,
 } from "../../components/icons";
 import { useChat } from "../../contexts/chat-context";
+import { setCurrentTab } from "../../store/chatSlice";
 
 const sidebarLinks = [
     {
@@ -37,8 +38,9 @@ const sidebarLinks = [
 ];
 
 const DashboardSideBar = () => {
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const { setShow } = useChat();
+    const currentTab = useSelector((state) => state.chat.currentTab);
     return (
         <div className="flex flex-col w-[64px] min-h-screen items-center bg-primary text-lite">
             {sidebarLinks.map((item) => {
@@ -69,11 +71,26 @@ const DashboardSideBar = () => {
                             <span>{item.icon}</span>
                         </button>
                     );
-                } else {
+                } else if (
+                    item.title === "Light/Dark" ||
+                    item.title === "Logout"
+                ) {
                     return (
                         <button
                             key={item.title}
                             className="w-[64px] h-[64px] flex items-center justify-center"
+                        >
+                            <span>{item.icon}</span>
+                        </button>
+                    );
+                } else {
+                    return (
+                        <button
+                            key={item.title}
+                            className={`w-[64px] h-[64px] flex items-center justify-center ${
+                                currentTab === item.title ? "bg-secondary" : ""
+                            }`}
+                            onClick={() => dispatch(setCurrentTab(item.title))}
                         >
                             <span>{item.icon}</span>
                         </button>

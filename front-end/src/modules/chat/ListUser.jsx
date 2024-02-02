@@ -1,19 +1,5 @@
 import { useState } from "react";
-import DashboardSearch from "./DashboardSearch";
 import { IconHorizontalMore } from "../../components/icons";
-
-const DashboardListChat = () => {
-    return (
-        <div className="flex flex-col w-[344px]">
-            <DashboardSearch />
-            <div className="flex flex-col items-center w-full h-screen overflow-scroll border border-text4 custom-scrollbar">
-                {Array.from({ length: 27 }).map((item, index) => (
-                    <ListUser key={index} />
-                ))}
-            </div>
-        </div>
-    );
-};
 
 const ListUser = () => {
     const [isHover, setIsHover] = useState(false);
@@ -45,4 +31,4 @@ const ListUser = () => {
     );
 };
 
-export default DashboardListChat;
+export default ListUser;

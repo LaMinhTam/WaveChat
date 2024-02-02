@@ -1,6 +1,8 @@
+import { useSelector } from "react-redux";
 import { IconAddGroup, IconAddUser, IconSearch } from "../../components/icons";
 
 const DashboardSearch = () => {
+    const currentTab = useSelector((state) => state.chat.currentTab);
     return (
         <div className="flex flex-col min-w-[334px] w-full border border-text4">
             <div className="flex flex-col w-full pl-4">
@@ -24,17 +26,19 @@ const DashboardSearch = () => {
                         </button>
                     </div>
                 </div>
-                <div className="flex items-center text-sm gap-x-5">
-                    <button
-                        className="flex text-primary after:w-10
+                {currentTab === "Chat" && (
+                    <div className="flex items-center text-sm gap-x-5">
+                        <button
+                            className="flex text-primary after:w-10
                     after:h-[2px] after:bg-primary after:left-[80px] after:top-[82px] after:absolute"
-                    >
-                        <span>Tất cả</span>
-                    </button>
-                    <button className="">
-                        <span>Chưa đọc</span>
-                    </button>
-                </div>
+                        >
+                            <span>Tất cả</span>
+                        </button>
+                        <button className="">
+                            <span>Chưa đọc</span>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
