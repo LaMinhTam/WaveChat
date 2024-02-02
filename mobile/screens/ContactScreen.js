@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles';
 import {getFriends} from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
+import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -108,6 +109,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
+    color: PRIMARY_TEXT_COLOR,
   },
   line: {
     height: 4,
@@ -128,6 +130,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     marginLeft: 10,
+    color: PRIMARY_TEXT_COLOR,
   },
   separator: {
     height: 4,

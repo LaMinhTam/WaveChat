@@ -30,3 +30,17 @@ export async function getFriends(type, accessToken) {
   });
   return res.data;
 }
+
+export async function findUserByPhoneNumber(phoneNumber, accessToken) {
+  const res = await axios.post(
+    waveChatApi.findUserByPhoneNumber(),
+    {phoneNumber},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+  return res.data;
+}
