@@ -10,8 +10,22 @@ import store from "./store/configureStore.js";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
+import DashboardPage from "./pages/DashboardPage.jsx";
+import "react-phone-input-2/lib/style.css";
+import { AuthProvider } from "./contexts/auth-context.jsx";
+import LayoutDashboard from "./layout/LayoutDashboard.jsx";
+import { ChatProvider } from "./contexts/chat-context.jsx";
 
 const router = createBrowserRouter([
+    {
+        element: <LayoutDashboard />,
+        children: [
+            {
+                path: "/",
+                element: <DashboardPage />,
+            },
+        ],
+    },
     { path: "/register", element: <RegisterPage /> },
     { path: "/login", element: <LoginPage /> },
     { path: "*", element: <NotFoundPage /> },
@@ -19,9 +33,13 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
-        <App>
-            <RouterProvider router={router}></RouterProvider>
-        </App>
-        <ToastContainer bodyClassName="font-primary text-sm"></ToastContainer>
+        <AuthProvider>
+            <ChatProvider>
+                <App>
+                    <RouterProvider router={router}></RouterProvider>
+                </App>
+                <ToastContainer bodyClassName="font-primary text-sm"></ToastContainer>
+            </ChatProvider>
+        </AuthProvider>
     </Provider>
 );

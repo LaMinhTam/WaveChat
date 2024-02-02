@@ -1,15 +1,14 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import friendSlice from "./friendSlice";
+import { configureStore, combineReducers } from '@reduxjs/toolkit'
+import commonSlice from './commonSlice'
+import userSlice from './userSlice'
 
 const reducer = combineReducers({
-    friends: friendSlice
-});
+	common: commonSlice,
+	user: userSlice,
+})
 
 const store = configureStore({
-    reducer,
+	reducer,
+})
 
-});
-
-
-
-export default store;
+export default store

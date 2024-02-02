@@ -1,12 +1,9 @@
 import PropTypes from 'prop-types'
-import Friends from './modules/friends/Friends'
-import { TabFriendsProvider } from './context/tabFriendsContext'
+import Modal from 'react-modal'
+Modal.setAppElement('#root')
+Modal.defaultStyles = {}
 function App({ children }) {
-	return (
-		<TabFriendsProvider>
-			<Friends />
-		</TabFriendsProvider>
-	)
+	return <div>{children}</div>
 }
 
 App.propTypes = {

@@ -1,3 +1,71 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-primary text-base font-normal mx-auto text-text1;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+    }
+    input {
+        outline: none;
+    }
+}
+.ReactModal__Body--open {
+    overflow: hidden;
+}
+
+.react-tel-input .form-control {
+    @apply dark:bg-darkBG dark:text-white;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scroll thumb */
+    height: 50%; /* Height of the scroll thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scroll thumb on hover */
+}
+
+.react-viewer-canvas {
+    background: #000;
+}
+
+.react-viewer-showTotal,
+.react-viewer-navbar {
+    visibility: hidden;
+}
+
+input[type="radio"] {
+    --s: 1em; /* control the size */
+    --c: #2979ff; /* the active color */
+
+    height: var(--s);
+    aspect-ratio: 1;
+    border: calc(var(--s) / 8) solid #939393;
+    padding: calc(var(--s) / 8);
+    background: radial-gradient(farthest-side, var(--c) 94%, #0000) 50%/0 0
+        no-repeat content-box;
+    border-radius: 50%;
+    outline-offset: calc(var(--s) / 10);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    font-size: inherit;
+    transition: 0.3s;
+}
+input[type="radio"]:checked {
+    border-color: var(--c);
+    background-size: 100% 100%;
+}
