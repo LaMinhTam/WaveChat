@@ -32,9 +32,7 @@ const FriendSent = ({ request }) => {
 		// Use the async function with await or .then()
 		async function fetchData() {
 			try {
-				const data = await fetchUser(
-					'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWI5MTk2ZGYzYzY1ZWU0ZjVjZmNlYjYiLCJyb2xlIjoidXNlciIsImZ1bGxfbmFtZSI6InRodXl2eSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjY5NDk3MSwiZXhwIjoxNzA3Mjk5NzcxfQ.rlIyqdARfzuMXEqwayDSAivioF6W87bDV9tEoZ11Mgc'
-				)
+				const data = await fetchUser(getToken())
 				setUser(data)
 			} catch (error) {
 				console.error('Error setting friend requests:', error)

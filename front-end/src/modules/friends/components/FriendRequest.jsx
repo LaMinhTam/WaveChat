@@ -4,10 +4,11 @@ import axios from 'axios'
 import FriendReceived from './FriendReceived'
 import FriendSent from './FriendSent'
 import DraftsIcon from '@mui/icons-material/Drafts'
+import { getToken } from '../../../utils/auth'
 
 const FriendRequest = () => {
-	const acceskey =
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWI5MTk2ZGYzYzY1ZWU0ZjVjZmNlYjYiLCJyb2xlIjoidXNlciIsImZ1bGxfbmFtZSI6InRodXl2eSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjY5NDk3MSwiZXhwIjoxNzA3Mjk5NzcxfQ.rlIyqdARfzuMXEqwayDSAivioF6W87bDV9tEoZ11Mgc'
+	const acceskey = getToken()
+
 	const [friendrequests, setFriendRequests] = useState([])
 	const [requestssent, setRequestsent] = useState([])
 
