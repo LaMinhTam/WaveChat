@@ -3,16 +3,18 @@ import {View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
+import { getProfile } from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
 
 const SignIn = () => {
-  const [phone, setPhone] = useState('+84886700046');
-  const [password, setPassword] = useState('123456789');
-  const {setUserInfo, storeAccessToken} = useAuth();
+  const [phone, setPhone] = useState('+84367819442');
+  const [password, setPassword] = useState('123456');
+  const {userInfo ,setUserInfo ,storeAccessToken} = useAuth();
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
     const data = await Login(formattedPhoneNumber, password);
-    setUserInfo(data.data);
+    const profile = await getProfile(data.data._id, data.data.access_token);
+    setUserInfo(profile.data);
     storeAccessToken('accessToken', data.data.access_token);
   };
 

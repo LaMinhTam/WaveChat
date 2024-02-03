@@ -4,11 +4,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   Image,
   ImageBackground,
 } from 'react-native';
-import {useRoute} from '@react-navigation/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -27,9 +25,7 @@ const UserInformationScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../assets/img/bia.jpg')}
-        style={styles.coverPage}>
+      <ImageBackground source={{uri: userInfo.cover}} style={styles.coverPage}>
         <View
           style={{
             display: 'flex',
@@ -60,10 +56,7 @@ const UserInformationScreen = ({navigation}) => {
         </View>
       </ImageBackground>
       <View style={styles.profileContainer}>
-        <Image
-          source={require('../assets/img/giiahuy.jpeg')}
-          style={styles.avatar}
-        />
+        <Image source={{uri: userInfo.avatar}} style={styles.avatar} />
         <Text style={styles.name}>{userInfo.full_name}</Text>
       </View>
     </View>

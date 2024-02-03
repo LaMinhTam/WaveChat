@@ -1,10 +1,10 @@
-import {View, Text} from 'react-native';
 import React from 'react';
 import UserDetailScreen from '../screens/UserDetailScreen';
 import UserSettingListScreen from '../screens/UserSettingListScreen';
 import UserInformationScreen from '../screens/UserInformationScreen';
 import {createStackNavigator} from '@react-navigation/stack';
 import {globalScreenOptions} from '../styles';
+import UserModificationScreen from '../screens/UserModificationScreen';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
@@ -25,6 +25,9 @@ const UserStackNavigator = () => {
         component={UserDetailScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="Chỉnh sửa thông tin"
+        component={UserModificationScreen}/>
     </Stack.Navigator>
   );
 };

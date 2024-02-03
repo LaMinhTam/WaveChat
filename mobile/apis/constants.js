@@ -1,4 +1,4 @@
-const waveChatEndpoint = 'http://192.168.1.88:3000';
+const waveChatEndpoint = 'http://192.168.1.10:3000';
 
 export const waveChatApi = {
   signUp: () => `${waveChatEndpoint}/auth/sign-up`,

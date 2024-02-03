@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,16 +9,18 @@ import {
 } from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAuth} from '../contexts/auth-context';
 
 const UserDetailScreen = ({navigation}) => {
-  const {userInfo, setUserInfo} = useAuth();
+  const {userInfo, setUserInfo, accessTokens, setAccessTokens} = useAuth();
 
   const getGender = () => {
     return userInfo.gender === 1 ? 'Nam' : 'Nữ';
   };
 
+  const navigateModificationScreen = () => {
+    navigation.navigate('Chỉnh sửa thông tin');
+  };
   const handleModify = () => {
     // Handle modify button press
   };
@@ -28,7 +29,7 @@ const UserDetailScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.imageSection}>
         <ImageBackground
-          source={require('../assets/img/bia.jpg')}
+          source={{uri: userInfo.cover}}
           style={styles.coverPage}
           resizeMode="cover">
           <View
@@ -57,7 +58,7 @@ const UserDetailScreen = ({navigation}) => {
           </View>
           <View style={styles.profileContainer}>
             <Image
-              source={require('../assets/img/giiahuy.jpeg')}
+              source={{uri: userInfo.avatar}}
               style={styles.avatar}
             />
             <Text style={styles.name}>{userInfo.full_name}</Text>
@@ -88,7 +89,7 @@ const UserDetailScreen = ({navigation}) => {
           <Text style={styles.label}>Điện thoại</Text>
           <Text style={styles.content}>{userInfo.phone}</Text>
         </View>
-        <TouchableOpacity style={styles.btnModify}>
+        <TouchableOpacity style={styles.btnModify} onPress={navigateModificationScreen }>
           <Text style={{color: '#000', fontSize: 20, fontWeight: '500'}}>
             Chỉnh sửa
           </Text>
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: '#eef0f1',
   },
   imageSection: {
     flex: 1,
@@ -151,8 +152,9 @@ const styles = StyleSheet.create({
   },
   // Thông tin cá nhân
   peronalInfo: {
+    backgroundColor: '#fff',
     flex: 2,
-    margin: 15,
+    padding: 15,
   },
   // Dòng
   row: {
@@ -177,7 +179,6 @@ const styles = StyleSheet.create({
   },
   // Button chỉnh sửa
   btnModify: {
-    flex: 1,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -190,7 +191,6 @@ const styles = StyleSheet.create({
   // Phần còn lại
   footer: {
     flex: 1.5,
-    backgroundColor: '#eef0f1',
   },
 });
 
