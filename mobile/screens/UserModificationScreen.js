@@ -51,6 +51,7 @@ const UserModificationScreen = ({navigation}) => {
   const handleUpdateProfile = async () => {
     setUserInfo({...userInfo, full_name: userName, gender: checked === 'Nam' ? 1 : 0, birthday: birthday});
     const data = await updateProfile(userInfo, accessTokens.accessToken);
+    console.log(accessTokens);
     if (data.status === 200) {
       navigation.goBack();
     }
