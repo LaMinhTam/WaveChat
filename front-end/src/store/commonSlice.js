@@ -8,6 +8,8 @@ const commonSlice = createSlice({
         isLogin: false,
         showUpdateProfile: false,
         showUpdateAvatar: false,
+        showConversation: false,
+        activeName: "",
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -34,6 +36,14 @@ const commonSlice = createSlice({
             ...state,
             showUpdateAvatar: action.payload,
         }),
+        setShowConversation: (state, action) => ({
+            ...state,
+            showConversation: action.payload,
+        }),
+        setActiveName: (state, action) => ({
+            ...state,
+            activeName: action.payload,
+        }),
     },
 });
 export const {
@@ -43,5 +53,7 @@ export const {
     setIsLogin,
     setShowUpdateProfile,
     setShowUpdateAvatar,
+    setShowConversation,
+    setActiveName,
 } = commonSlice.actions;
 export default commonSlice.reducer;

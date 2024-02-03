@@ -1,5 +1,5 @@
 // import DashboardWelcome from "../modules/dashboard/DashboardWelcome";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Conversation from "../modules/chat/Conversation";
 import { getToken, getUserId } from "../utils/auth";
 import RequiredAuthPage from "./RequiredAuthPage";
@@ -11,6 +11,9 @@ const DashboardPage = () => {
     const id = getUserId();
     const access_token = getToken();
     const dispatch = useDispatch();
+    const showConversation = useSelector(
+        (state) => state.common.showConversation
+    );
     useEffect(() => {
         async function fetchProfileData() {
             const res = await axiosPrivate.get(`/user/profile?_id=${id}`);
@@ -21,7 +24,7 @@ const DashboardPage = () => {
     return (
         <RequiredAuthPage>
             {/* <DashboardWelcome /> */}
-            <Conversation />
+            {showConversation && <Conversation />}
         </RequiredAuthPage>
     );
 };

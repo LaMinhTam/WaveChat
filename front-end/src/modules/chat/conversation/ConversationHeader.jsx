@@ -1,13 +1,13 @@
 import { IconAddGroup, IconSplit } from "../../../components/icons";
 import PropTypes from "prop-types";
 
-const ConversationHeader = ({ name, status }) => {
+const ConversationHeader = ({ name, status, avatar }) => {
     return (
         <div className="flex items-center justify-center px-4 min-h-[68px] bg-lite shadow-md">
             <div className="flex items-center justify-center mr-auto gap-x-2">
                 <div className="w-[48px] h-[48px] rounded-full">
                     <img
-                        src="https://source.unsplash.com/random"
+                        src={avatar}
                         alt=""
                         className="object-cover w-full h-full rounded-full"
                     />
@@ -30,6 +30,7 @@ const ConversationHeader = ({ name, status }) => {
 ConversationHeader.propTypes = {
     name: PropTypes.string,
     status: PropTypes.string,
+    avatar: PropTypes.string,
 };
 
 export default ConversationHeader;

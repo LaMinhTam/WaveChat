@@ -5,7 +5,7 @@ import ReactModal from "react-modal";
 import ProfileModal from "../components/modal/ProfileModal";
 import { useChat } from "../contexts/chat-context";
 import ProfileDetailsModal from "../components/modal/ProfileDetailsModal";
-import ListChat from "../modules/chat/ListChat";
+import DashboardListOptions from "../modules/dashboard/DashboardListOptions";
 const LayoutDashboard = () => {
     const { show, showProfileDetails } = useChat();
 
@@ -32,7 +32,7 @@ const LayoutDashboard = () => {
                 <Overlay></Overlay>
                 <div className="flex items-start">
                     <DashboardSideBar></DashboardSideBar>
-                    <ListChat />
+                    <DashboardListOptions />
                     <div className="flex-1 w-full h-full min-h-screen">
                         <Outlet></Outlet>
                     </div>

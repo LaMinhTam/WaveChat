@@ -12,6 +12,12 @@
         outline: none;
     }
 }
+
+.custom-message__block {
+    min-width: min-content;
+    width: fit-content;
+}
+
 .ReactModal__Body--open {
     overflow: hidden;
 }
