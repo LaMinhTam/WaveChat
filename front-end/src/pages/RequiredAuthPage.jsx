@@ -9,7 +9,6 @@ const RequiredAuthPage = ({ children }) => {
     const { loading, userInfo } = useAuth();
     const token = getToken();
     const checkExp = isTokenExpire(token);
-    console.log(checkExp);
 
     useEffect(() => {
         if (!token) {

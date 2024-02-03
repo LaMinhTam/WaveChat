@@ -7,6 +7,7 @@ const commonSlice = createSlice({
         isRegister: false,
         isLogin: false,
         showUpdateProfile: false,
+        showUpdateAvatar: false,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -29,6 +30,10 @@ const commonSlice = createSlice({
             ...state,
             showUpdateProfile: action.payload,
         }),
+        setShowUpdateAvatar: (state, action) => ({
+            ...state,
+            showUpdateAvatar: action.payload,
+        }),
     },
 });
 export const {
@@ -37,5 +42,6 @@ export const {
     setIsRegister,
     setIsLogin,
     setShowUpdateProfile,
+    setShowUpdateAvatar,
 } = commonSlice.actions;
 export default commonSlice.reducer;

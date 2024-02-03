@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useChat } from "../../contexts/chat-context";
 import { IconCamera, IconClose, IconEdit } from "../icons";
 import Viewer from "react-viewer";
 import { useDispatch, useSelector } from "react-redux";
 import UpdateProfileModal from "./UpdateProfileModal";
-import { setShowUpdateProfile } from "../../store/commonSlice";
-import { axiosPrivate } from "../../api/axios";
-import { getToken, getUserId } from "../../utils/auth";
-import { setUserProfile } from "../../store/userSlice";
+import {
+    setShowUpdateAvatar,
+    setShowUpdateProfile,
+} from "../../store/commonSlice";
 import formatPhone from "../../utils/formatPhone";
+import ChangeAvatarModal from "./ChangeAvatarModal";
+import s3ImageUrl from "../../utils/s3ImageUrl";
 
 const ProfileDetailsModal = () => {
     const { setShowProfileDetails, profileDetailsRef } = useChat();
@@ -17,21 +19,15 @@ const ProfileDetailsModal = () => {
     const showUpdateProfile = useSelector(
         (state) => state.common.showUpdateProfile
     );
-    const id = getUserId();
-    const access_token = getToken();
+    const showUpdateAvatar = useSelector(
+        (state) => state.common.showUpdateAvatar
+    );
     const userProfile = useSelector((state) => state.user.userProfile);
     const dispatch = useDispatch();
-    console.log(userProfile);
-    useEffect(() => {
-        async function fetchProfileData() {
-            const res = await axiosPrivate.get(`/user/profile?_id=${id}`);
-            dispatch(setUserProfile(res.data.data));
-        }
-        fetchProfileData();
-    }, [access_token, dispatch, id]);
+    const avatar = s3ImageUrl(userProfile.avatar, userProfile._id);
     return (
         <div ref={profileDetailsRef}>
-            {!showUpdateProfile && (
+            {!showUpdateProfile && !showUpdateAvatar && (
                 <div className="w-[400px] h-full p-2 flex flex-col">
                     <div className="flex items-center w-full h-[48px]">
                         <span className="text-[16px] font-semibold mr-auto">
@@ -51,7 +47,7 @@ const ProfileDetailsModal = () => {
                         }}
                     >
                         <img
-                            src="/profile_bg_demo.jpg"
+                            src={avatar}
                             alt=""
                             className="object-cover w-full h-full"
                         />
@@ -59,7 +55,7 @@ const ProfileDetailsModal = () => {
                     <div className="flex items-center translate-y-[-0.75rem] gap-x-5">
                         <button className="relative w-20 h-20 ml-5 rounded-full">
                             <img
-                                src="/avatar_demo.jpg"
+                                src={avatar}
                                 alt=""
                                 className="object-cover w-full h-full rounded-full"
                                 onClick={() => {
@@ -67,7 +63,12 @@ const ProfileDetailsModal = () => {
                                 }}
                             />
 
-                            <button className="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#eaedf0]">
+                            <button
+                                className="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#eaedf0] btn_showUpdateAvatar hover:bg-opacity-90"
+                                onClick={() =>
+                                    dispatch(setShowUpdateAvatar(true))
+                                }
+                            >
                                 <IconCamera />
                             </button>
                         </button>
@@ -135,18 +136,19 @@ const ProfileDetailsModal = () => {
                         onClose={() => {
                             setIsOpenAvatar(false);
                         }}
-                        images={[{ src: "/avatar_demo.jpg", alt: "" }]}
+                        images={[{ src: avatar, alt: "" }]}
                     />
                     <Viewer
                         visible={isOpenBG}
                         onClose={() => {
                             setIsOpenBG(false);
                         }}
-                        images={[{ src: "/profile_bg_demo.jpg", alt: "" }]}
+                        images={[{ src: avatar, alt: "" }]}
                     />
                 </div>
             )}
             {showUpdateProfile && <UpdateProfileModal />}
+            {showUpdateAvatar && <ChangeAvatarModal />}
         </div>
     );
 };

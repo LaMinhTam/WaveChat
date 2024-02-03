@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@reduxjs/toolkit": "^2.0.1",
+    "aws-sdk": "^2.1550.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "firebase": "^9.14.0",

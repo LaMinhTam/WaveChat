@@ -27,7 +27,7 @@ const DashboardSearch = () => {
                     </div>
                 </div>
                 {currentTab === "Chat" && (
-                    <div className="flex items-center text-sm gap-x-5">
+                    <div className="flex items-center text-sm gap-x-5 line-clamp-1">
                         <button
                             className="flex text-primary after:w-10
                     after:h-[2px] after:bg-primary after:left-[80px] after:top-[82px] after:absolute"
