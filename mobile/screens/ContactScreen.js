@@ -12,17 +12,47 @@ import {MAIN_COLOR} from '../styles';
 import {getFriends} from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  selectCurrentConversation,
+  setCurrentConversation,
+} from '../store/chatSlice';
 
 const Separator = () => <View style={styles.separator} />;
 
-const FriendScreen = ({navigation}) => {
-  const {accessTokens} = useAuth();
-
+const FriendScreen = () => {
+  const {accessTokens, userInfo} = useAuth();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
   const [data, setData] = useState([]);
-
+  const currentConversation = useSelector(selectCurrentConversation);
   useEffect(() => {
     fetchFriends();
   }, []);
+
+  const handlePressFriend = friend => {
+    const currentConversation = {
+      conversation_id: friend.user_id,
+      members: [
+        {
+          _id: userInfo._id,
+          avatar: userInfo.avatar,
+          full_name: userInfo.full_name,
+        },
+        {
+          _id: friend.user_id,
+          avatar: friend.avatar,
+          full_name: friend.full_name,
+        },
+      ],
+      type: 2,
+    };
+    dispatch(setCurrentConversation(currentConversation));
+    navigation.navigate('Chat');
+  };
+
+  console.log(currentConversation);
 
   const fetchFriends = async () => {
     try {
@@ -50,12 +80,15 @@ const FriendScreen = ({navigation}) => {
       <View key={char}>
         <Text style={styles.sectionTitle}>{char}</Text>
         {friendsByCharacter[char].map(friend => (
-          <View key={friend.user_id} style={styles.friendRow}>
+          <TouchableOpacity
+            key={friend.user_id}
+            style={styles.friendRow}
+            onPress={() => handlePressFriend(friend)}>
             <Image source={{uri: friend.avatar}} style={styles.avatar} />
             <Text style={{color: '#000', fontSize: 16}}>
               {friend.full_name}
             </Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     ));

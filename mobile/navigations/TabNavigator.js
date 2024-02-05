@@ -1,15 +1,15 @@
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
-import ContactScreen from '../screens/ContactScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import UserStackNavigator from './UserStackNavigator';
 import ContactStackNavigator from './ContactStackNavigator';
-
+import ConversationStackNavigator from './ConversationStackNavigator';
+import {useIsFocused} from '@react-navigation/native';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const isFocused = useIsFocused();
   return (
     <Tab.Navigator
       screenOptions={({route, navigation}) => ({
@@ -21,7 +21,7 @@ const TabNavigator = () => {
 
         tabBarLabel: navigation.isFocused() ? route.name : '',
 
-        tabBarShowLabel: navigation.isFocused(),
+        tabBarShowLabel: isFocused,
         tabBarIcon: ({focused, color}) => {
           let iconName;
           let count = 0;
@@ -71,7 +71,11 @@ const TabNavigator = () => {
           );
         },
       })}>
-      <Tab.Screen name="Tin nhắn" component={HomeScreen} />
+      <Tab.Screen
+        name="Tin nhắn"
+        component={ConversationStackNavigator}
+        options={{headerShown: false}}
+      />
       <Tab.Screen
         name="Danh bạ"
         component={ContactStackNavigator}

@@ -4,21 +4,48 @@ import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
 import {useAuth} from '../contexts/auth-context';
+import {useDispatch} from 'react-redux';
+import {setSocket} from '../store/chatSlice';
+import io from 'socket.io-client';
+import HOST_IP from '../apis/host';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
   const [password, setPassword] = useState('123456789');
   const [errorMessage, setErrorMessage] = useState(''); // New state for error message
   const {setUserInfo, storeAccessToken} = useAuth();
+  const {accessTokens} = useAuth();
+  const dispatch = useDispatch();
 
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
     const data = await Login(formattedPhoneNumber, password);
 
     if (data.status === 200) {
+      const user = data.data;
+      const newSocket = io(`ws://${HOST_IP}:3000`, {
+        extraHeaders: {
+          Authorization: user.access_token,
+        },
+        query: {device: user._id},
+      });
+
+      newSocket.on('connect', () => {
+        console.log('Connected to WebSocket');
+      });
+
+      newSocket.on('disconnect', reason => {
+        console.log('Disconnected from WebSocket. Reason:', reason);
+      });
+
+      newSocket.on('message-text', incomingMessage => {
+        setMessages(prevMessages => [incomingMessage.message, ...prevMessages]);
+      });
+
+      dispatch(setSocket(newSocket));
       setErrorMessage('');
-      setUserInfo(data.data);
-      storeAccessToken('accessToken', data.data.access_token);
+      setUserInfo(user);
+      storeAccessToken('accessToken', user.access_token);
     } else if (data.status === 401) {
       setErrorMessage('Sai tài khoản hoặc mật khẩu');
     }
