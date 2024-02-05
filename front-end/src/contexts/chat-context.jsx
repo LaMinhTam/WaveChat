@@ -5,6 +5,8 @@ const ChatContext = React.createContext();
 
 export function ChatProvider(props) {
     const { show, setShow, nodeRef } = useClickOutSide();
+    const [conversationId, setConversationId] = React.useState("");
+    const [message, setMessage] = React.useState([]);
     const {
         show: showProfileDetails,
         setShow: setShowProfileDetails,
@@ -17,6 +19,10 @@ export function ChatProvider(props) {
         showProfileDetails,
         setShowProfileDetails,
         profileDetailsRef,
+        conversationId,
+        setConversationId,
+        message,
+        setMessage,
     };
     return (
         <ChatContext.Provider

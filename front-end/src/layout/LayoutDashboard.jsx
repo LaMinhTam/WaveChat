@@ -6,8 +6,25 @@ import ProfileModal from "../components/modal/ProfileModal";
 import { useChat } from "../contexts/chat-context";
 import ProfileDetailsModal from "../components/modal/ProfileDetailsModal";
 import DashboardListOptions from "../modules/dashboard/DashboardListOptions";
+import { getToken, getUserId } from "../utils/auth";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { axiosPrivate } from "../api/axios";
+import { setUserProfile } from "../store/userSlice";
+import { setCurrentUserName } from "../store/commonSlice";
 const LayoutDashboard = () => {
     const { show, showProfileDetails } = useChat();
+    const id = getUserId();
+    const access_token = getToken();
+    const dispatch = useDispatch();
+    useEffect(() => {
+        async function fetchProfileData() {
+            const res = await axiosPrivate.get(`/user/profile?_id=${id}`);
+            dispatch(setUserProfile(res.data.data));
+            dispatch(setCurrentUserName(res.data.data.nick_name));
+        }
+        fetchProfileData();
+    }, [access_token, dispatch, id]);
 
     return (
         <>

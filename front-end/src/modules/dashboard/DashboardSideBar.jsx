@@ -57,14 +57,10 @@ const DashboardSideBar = () => {
                                 }}
                             >
                                 <img
-                                    src={
-                                        userProfile?.avatar
-                                            ? s3ImageUrl(
-                                                  userProfile?.avatar,
-                                                  userProfile._id
-                                              )
-                                            : "https://source.unsplash.com/random"
-                                    }
+                                    src={s3ImageUrl(
+                                        userProfile?.avatar,
+                                        userProfile?._id
+                                    )}
                                     alt="profile"
                                     className="object-cover w-full h-full rounded-full"
                                 />

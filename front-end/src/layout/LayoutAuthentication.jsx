@@ -75,8 +75,8 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     password: values.password,
                 });
                 if (res.data.status === 200) {
-                    saveUserId(res.data.data._id);
-                    saveToken(res.data.data.access_token);
+                    saveUserId(res.data.data?._id);
+                    saveToken(res.data.data?.access_token);
                     toast.success("Sign in successfully");
                 } else {
                     toast.error(res.data.data.message);

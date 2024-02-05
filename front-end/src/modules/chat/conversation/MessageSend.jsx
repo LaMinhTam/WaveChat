@@ -1,12 +1,18 @@
-const MessageSend = () => {
+import PropTypes from "prop-types";
+import formatDate from "../../../utils/formatDate";
+// import formatDate from "../../../utils/formatDate";
+const MessageSend = ({ msg }) => {
     return (
         <div className="max-w-[75%] w-full h-full m-2 ml-auto">
             <div className="flex flex-col items-start justify-center p-3 ml-auto rounded gap-y-2 bg-tertiary custom-message__block">
-                <span>Hello</span>
-                <span>7:31</span>
+                <span>{msg?.message}</span>
+                <span>{formatDate(msg?.created_at)}</span>
             </div>
         </div>
     );
+};
+MessageSend.propTypes = {
+    msg: PropTypes.object,
 };
 
 export default MessageSend;
