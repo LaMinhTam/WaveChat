@@ -2,6 +2,7 @@ import DashboardSearch from "./DashboardSearch";
 import { useSelector } from "react-redux";
 import Member from "../chat/Member";
 import { v4 as uuidv4 } from "uuid";
+import SideBarFriends from "../friends/components/SidebarFriends";
 
 const DashboardListOptions = () => {
     const currentTab = useSelector((state) => state.chat.currentTab);
@@ -20,6 +21,7 @@ const DashboardListOptions = () => {
                     </div>
                 </div>
             )}
+            {currentTab === "Contact" && <SideBarFriends />}
         </div>
     );
 };
