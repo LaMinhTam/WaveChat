@@ -81,7 +81,27 @@ const FriendRequest = () => {
 
 		fetchData()
 	}, [])
+	const handleAccept = async (userId) => {
+		try {
+			// Make API call to accept friend request
+			await axios.post('http://localhost:3000/friend/accept?_id=', { user_id: userId });
+			// After accepting, remove the accepted request from the list
+			setFriendRequests(friendrequests.filter(request => request.user_id !== userId));
+		} catch (error) {
+			console.error('Error accepting friend request:', error);
+		}
+	};
 
+	const handleReject = async (userId) => {
+		try {
+			// Make API call to reject friend request
+			await axios.post('http://localhost:3000/friend/reject?_id=', { user_id: userId });
+			// After rejecting, remove the rejected request from the list
+			setFriendRequests(friendrequests.filter(request => request.user_id !== userId));
+		} catch (error) {
+			console.error('Error rejecting friend request:', error);
+		}
+	};
 	return (
 		<div>
 			<div className=" fixed w-full border-solid border-b border-black-100"></div>

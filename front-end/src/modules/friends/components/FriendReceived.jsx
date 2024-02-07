@@ -63,9 +63,9 @@ const FriendReceived = ({ request }) => {
 			</div>
 
 			<div className="flex gap-1 py-2">
-				<Button text={'Từ chối'} />
-				<ButtonBlue text={'Đồng ý'} />
-			</div>
+				<Button text={'Từ chối'} onClick={() => onReject(request.user_id)} />
+				<ButtonBlue text={'Đồng ý'} onClick={() => onAccept(request.user_id)} />
+		</div>
 		</div>
 	)
 }
