@@ -4,18 +4,17 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   Image,
   ImageBackground,
 } from 'react-native';
-import {useRoute} from '@react-navigation/native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAuth} from '../contexts/auth-context';
+import {PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 
 const UserInformationScreen = ({navigation}) => {
-  const {userInfo, setUserInfo} = useAuth();
+  const {userInfo} = useAuth();
 
   const navigateBack = () => {
     navigation.goBack();
@@ -27,9 +26,7 @@ const UserInformationScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground
-        source={require('../assets/img/bia.jpg')}
-        style={styles.coverPage}>
+      <ImageBackground source={{uri: userInfo.cover}} style={styles.coverPage}>
         <View
           style={{
             display: 'flex',
@@ -60,10 +57,7 @@ const UserInformationScreen = ({navigation}) => {
         </View>
       </ImageBackground>
       <View style={styles.profileContainer}>
-        <Image
-          source={require('../assets/img/giiahuy.jpeg')}
-          style={styles.avatar}
-        />
+        <Image source={{uri: userInfo.avatar}} style={styles.avatar} />
         <Text style={styles.name}>{userInfo.full_name}</Text>
       </View>
     </View>
@@ -73,16 +67,10 @@ const UserInformationScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: '#fff',
-    height: '100%',
-    position: 'relative',
+    backgroundColor: SECOND_COLOR,
   },
   coverPage: {
     flex: 1,
-    justifyContent: 'space-between',
-    width: '100%',
     height: '48%',
   },
   profileContainer: {
@@ -104,7 +92,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 20,
-    color: '#000',
+    color: PRIMARY_TEXT_COLOR,
   },
   touchAble: {
     padding: 10,

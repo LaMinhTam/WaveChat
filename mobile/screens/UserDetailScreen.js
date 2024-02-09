@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,69 +9,50 @@ import {
 } from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAuth} from '../contexts/auth-context';
+import {
+  BACKGROUND_COLOR,
+  PRIMARY_TEXT_COLOR,
+  SECOND_COLOR,
+} from '../styles/styles';
 
 const UserDetailScreen = ({navigation}) => {
-  const {userInfo, setUserInfo} = useAuth();
+  const {userInfo} = useAuth();
 
   const getGender = () => {
-    return userInfo.gender === 1 ? 'Nam' : 'Nữ';
+    return userInfo.gender === 0 ? 'Nam' : 'Nữ';
   };
 
-  const handleModify = () => {
-    // Handle modify button press
+  const navigateModificationScreen = () => {
+    navigation.navigate('Chỉnh sửa thông tin');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.imageSection}>
         <ImageBackground
-          source={require('../assets/img/bia.jpg')}
-          style={styles.coverPage}
-          resizeMode="cover">
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row-reverse',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{flexDirection: 'row-reverse'}}>
-              <TouchableOpacity style={styles.touchAble} onPress={{}}>
-                <EntypoIcon name="camera" size={20} color="#fff" />
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity
-                style={styles.touchAble}
-                onPress={() => {
-                  navigation.goBack();
-                }}>
-                <FeatherIcon
-                  name="arrow-left"
-                  size={20}
-                  color="#fff"></FeatherIcon>
-              </TouchableOpacity>
-            </View>
-          </View>
+          source={{uri: userInfo.cover}}
+          style={styles.coverPage}>
           <View style={styles.profileContainer}>
-            <Image
-              source={require('../assets/img/giiahuy.jpeg')}
-              style={styles.avatar}
-            />
+            <Image source={{uri: userInfo.avatar}} style={styles.avatar} />
             <Text style={styles.name}>{userInfo.full_name}</Text>
           </View>
         </ImageBackground>
       </View>
 
-      <View style={styles.peronalInfo}>
+      <View style={styles.personalInfo}>
         <View
           style={{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <Text style={{fontSize: 20, fontWeight: '500', color: '#000'}}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: '500',
+              color: PRIMARY_TEXT_COLOR,
+            }}>
             Thông tin cá nhân
           </Text>
         </View>
@@ -88,8 +68,16 @@ const UserDetailScreen = ({navigation}) => {
           <Text style={styles.label}>Điện thoại</Text>
           <Text style={styles.content}>{userInfo.phone}</Text>
         </View>
-        <TouchableOpacity style={styles.btnModify}>
-          <Text style={{color: '#000', fontSize: 20, fontWeight: '500'}}>
+        <TouchableOpacity
+          style={styles.btnModify}
+          onPress={navigateModificationScreen}>
+          <Text
+            style={{
+              color: '#000',
+              fontSize: 18,
+              fontWeight: '500',
+              paddingVertical: 5,
+            }}>
             Chỉnh sửa
           </Text>
           <EntypoIcon
@@ -98,9 +86,7 @@ const UserDetailScreen = ({navigation}) => {
             style={{color: '#000'}}></EntypoIcon>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.footer}></View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -108,25 +94,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: SECOND_COLOR,
   },
   imageSection: {
     flex: 1,
   },
   coverPage: {
     flex: 1,
-    justifyContent: 'space-between',
-    position: 'relative',
   },
   itemText: {
-    color: '#000',
+    color: PRIMARY_TEXT_COLOR,
     fontSize: 16,
     fontWeight: '500',
   },
   profileContainer: {
-    justifyContent: 'center',
     alignItems: 'center',
-    display: 'flex',
     flexDirection: 'row',
     position: 'absolute',
     bottom: 0,
@@ -144,53 +126,41 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '500',
   },
-
   touchAble: {
     padding: 10,
     color: '#fff',
   },
-  // Thông tin cá nhân
-  peronalInfo: {
+  personalInfo: {
+    backgroundColor: '#fff',
     flex: 2,
-    margin: 15,
+    padding: 15,
   },
-  // Dòng
   row: {
     flexDirection: 'row',
     display: 'flex',
     alignItems: 'center',
-    marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#CCC',
+    borderBottomColor: '#DFDFDF',
   },
-  // Label
   label: {
     fontSize: 16,
-    color: '#000',
+    color: PRIMARY_TEXT_COLOR,
     paddingVertical: 15,
   },
-  // Content
   content: {
     marginLeft: 70,
     fontSize: 16,
-    color: '#000',
+    color: PRIMARY_TEXT_COLOR,
   },
-  // Button chỉnh sửa
   btnModify: {
-    flex: 1,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row-reverse',
-    backgroundColor: '#eef0f1',
+    backgroundColor: BACKGROUND_COLOR,
     borderRadius: 70,
     marginTop: 15,
-  },
-
-  // Phần còn lại
-  footer: {
-    flex: 1.5,
-    backgroundColor: '#eef0f1',
+    gap: 10,
   },
 });
 
