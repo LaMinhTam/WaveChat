@@ -40,7 +40,7 @@ const UserModificationScreen = ({navigation}) => {
     hideDatePicker();
   };
 
-  const handleDateChange = value => {
+  const handleGenderChange = value => {
     setChecked(value);
   };
 
@@ -51,11 +51,10 @@ const UserModificationScreen = ({navigation}) => {
   const handleUpdateProfile = async () => {
     setUserInfo({...userInfo, full_name: userName, gender: checked === 'Nam' ? 1 : 0, birthday: birthday});
     const data = await updateProfile(userInfo, accessTokens.accessToken);
-    console.log(accessTokens);
+    console.log(userInfo);
     if (data.status === 200) {
       navigation.goBack();
     }
-    // setAccessTokens({...accessTokens, userInfo: data.data});
   };
 
   return (
@@ -92,7 +91,7 @@ const UserModificationScreen = ({navigation}) => {
             />
           </View>
           <View>
-            <RadioButton.Group onValueChange={handleDateChange}>
+            <RadioButton.Group onValueChange={handleGenderChange}>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
                 <RadioButton.Item

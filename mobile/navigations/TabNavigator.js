@@ -1,18 +1,83 @@
-import {View, Text} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import ContactScreen from '../screens/ContactScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import UserStackNavigator from './UserStackNavigator';
 import ContactStackNavigator from './ContactStackNavigator';
+import SearchScreen from '../screens/SearchScreen';
+import HeaderStackNavigator from './HeaderStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const [showHeaderLeft, setShowHeaderLeft] = useState(false);
+
+  const toggleHeaderLeft = () => {
+    setShowHeaderLeft(!showHeaderLeft);
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({route, navigation}) => ({
+        // Header config
+        headerStyle: {backgroundColor: '#1DC071'},
+        headerTintColor: '#fff',
+        headerTitle: () => (
+          <View>
+            <TouchableOpacity
+              onPress={() => {navigation.navigate('../screens/SearchScreen')}}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                backgroundColor: '#1DC071',
+                borderRadius: 15,
+              }}>
+              <TextInput
+                placeholder="Tìm kiếm"
+                placeholderTextColor="#f3e7fd"
+                style={{color: 'white', fontSize: 16}}
+                onFocus={() => {
+                  setShowHeaderLeft(true);
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        ),
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => {
+              toggleHeaderLeft();
+            }}>
+            <Icon
+              name="search"
+              size={24}
+              color="#fff"
+              style={{paddingHorizontal: '5%'}}
+            />
+          </TouchableOpacity>
+        ),
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Notification');
+            }}>
+            <Icon
+              name="plus"
+              size={24}
+              color="#fff"
+              style={{paddingHorizontal: '5%'}}
+            />
+          </TouchableOpacity>
+        ),
+
+        // Tab config
         tabBarLabelStyle: {fontSize: 12},
         tabBarItemStyle: {height: 50},
         tabBarActiveTintColor: '#1DC071',
@@ -79,8 +144,26 @@ const TabNavigator = () => {
         component={UserStackNavigator}
         options={{headerShown: false}}
       />
-    </Tab.Navigator>
+      <Tab.Screen name="Search" component={HeaderStackNavigator} options={{headerShown: false}}/>
+    </Tab.Navigator> 
   );
 };
+
+
+
+const styles = StyleSheet.create({
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    color: 'white',
+    fontSize: 16,
+  },
+});
 
 export default TabNavigator;
