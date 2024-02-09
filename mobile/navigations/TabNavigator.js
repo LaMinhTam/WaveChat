@@ -7,22 +7,18 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import UserStackNavigator from './UserStackNavigator';
 import ContactStackNavigator from './ContactStackNavigator';
 import SearchScreen from '../screens/SearchScreen';
 import HeaderStackNavigator from './HeaderStackNavigator';
-
+import ConversationStackNavigator from './ConversationStackNavigator';
+import {useIsFocused} from '@react-navigation/native';
+import {MAIN_COLOR} from '../styles/styles';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-  const [showHeaderLeft, setShowHeaderLeft] = useState(false);
-
-  const toggleHeaderLeft = () => {
-    setShowHeaderLeft(!showHeaderLeft);
-  };
-
+  const isFocused = useIsFocused();
   return (
     <Tab.Navigator
       screenOptions={({route, navigation}) => ({
@@ -80,13 +76,13 @@ const TabNavigator = () => {
         // Tab config
         tabBarLabelStyle: {fontSize: 12},
         tabBarItemStyle: {height: 50},
-        tabBarActiveTintColor: '#1DC071',
+        tabBarActiveTintColor: MAIN_COLOR,
         swipeEnabled: true,
         tabBarPressColor: '#f3e7fd',
-
+        tabBarHideOnKeyboard: true,
         tabBarLabel: navigation.isFocused() ? route.name : '',
 
-        tabBarShowLabel: navigation.isFocused(),
+        tabBarShowLabel: isFocused,
         tabBarIcon: ({focused, color}) => {
           let iconName;
           let count = 0;
@@ -115,14 +111,13 @@ const TabNavigator = () => {
           }
           return (
             <View style={{flex: 1, marginTop: 4}}>
-              <Text>
+              <View>
                 <Icon
                   name={iconName}
                   size={24}
                   color={focused ? '#1DC071' : 'grey'}
                 />
-                ;
-              </Text>
+              </View>
               {/* {count > 0 && (
                 <>
                   <View style={styles.iconBadge}>
@@ -137,8 +132,18 @@ const TabNavigator = () => {
           );
         },
       })}>
-      <Tab.Screen name="Tin nhắn" component={HomeScreen} />
-      <Tab.Screen name="Danh bạ" component={ContactStackNavigator} />
+      <Tab.Screen
+        name="Tin nhắn"
+        component={ConversationStackNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Danh bạ"
+        component={ContactStackNavigator}
+        options={{headerShown: false}}
+      />
       <Tab.Screen
         name="Cá nhân"
         component={UserStackNavigator}

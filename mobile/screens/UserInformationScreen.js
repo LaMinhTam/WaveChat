@@ -11,9 +11,10 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAuth} from '../contexts/auth-context';
+import {PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 
 const UserInformationScreen = ({navigation}) => {
-  const {userInfo, setUserInfo} = useAuth();
+  const {userInfo} = useAuth();
 
   const navigateBack = () => {
     navigation.goBack();
@@ -66,16 +67,10 @@ const UserInformationScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: '#fff',
-    height: '100%',
-    position: 'relative',
+    backgroundColor: SECOND_COLOR,
   },
   coverPage: {
     flex: 1,
-    justifyContent: 'space-between',
-    width: '100%',
     height: '48%',
   },
   profileContainer: {
@@ -97,7 +92,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 20,
-    color: '#000',
+    color: PRIMARY_TEXT_COLOR,
   },
   touchAble: {
     padding: 10,

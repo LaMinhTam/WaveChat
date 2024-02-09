@@ -14,14 +14,11 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {useAuth} from '../contexts/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {updateProfile} from '../apis/user';
-import {set} from 'firebase/database';
+import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 
 const UserModificationScreen = ({navigation}) => {
-  const {userInfo, setUserInfo, accessTokens, setAccessTokens} = useAuth();
+  const {userInfo, setUserInfo, accessTokens} = useAuth();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [checked, setChecked] = useState(userInfo.gender === 1 ? 'Nam' : 'Nữ');
-  const [userName, setUserName] = useState(userInfo.full_name);
-  const [birthday, setBirthday] = useState(userInfo.birthday);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -36,20 +33,24 @@ const UserModificationScreen = ({navigation}) => {
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
     let dob = `${day}/${month}/${year}`;
-    setBirthday(dob);
+    setUserInfo({...userInfo, birthday: dob});
     hideDatePicker();
   };
 
+<<<<<<< HEAD
   const handleGenderChange = value => {
     setChecked(value);
+=======
+  const handleDateChange = value => {
+    setUserInfo({...userInfo, gender: value === 'Nam' ? 0 : 1});
+>>>>>>> c32ea5732f74c94c3cae80fd0a84bb97bf5acb74
   };
 
   const handleInputChange = value => {
-    setUserName(value);
+    setUserInfo({...userInfo, full_name: value});
   };
 
   const handleUpdateProfile = async () => {
-    setUserInfo({...userInfo, full_name: userName, gender: checked === 'Nam' ? 1 : 0, birthday: birthday});
     const data = await updateProfile(userInfo, accessTokens.accessToken);
     console.log(userInfo);
     if (data.status === 200) {
@@ -61,27 +62,17 @@ const UserModificationScreen = ({navigation}) => {
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <Image source={{uri: userInfo.avatar}} style={styles.avatar} />
-        <View style={styles.inforContain}>
+        <View style={{flex: 1}}>
           <View style={styles.row}>
             <TextInput
               style={styles.input}
-              value={userName}
-              onChangeText={setUserName}
+              value={userInfo.full_name}
+              onChangeText={handleInputChange}
             />
-            <TouchableOpacity style={styles.row} onPress={handleInputChange}>
-              <EntypoIcon
-                name="pencil"
-                size={20}
-                style={{color: '#000'}}></EntypoIcon>
-            </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={showDatePicker} style={styles.row}>
-              <Text style={styles.name}> {birthday}</Text>
-              <EntypoIcon
-                name="pencil"
-                size={20}
-                style={{color: '#000'}}></EntypoIcon>
+              <Text style={styles.name}> {userInfo.birthday}</Text>
             </TouchableOpacity>
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -98,14 +89,14 @@ const UserModificationScreen = ({navigation}) => {
                   label="Nam"
                   value="Nam"
                   labelStyle={{fontSize: 20}}
-                  status={checked === 'Nam' ? 'checked' : 'unchecked'}
+                  status={userInfo.gender === 0 ? 'checked' : 'unchecked'}
                   color="#1dc071"
                   position="leading"
                 />
                 <RadioButton.Item
                   label="Nữ"
                   value="Nữ"
-                  status={checked === 'Nữ' ? 'checked' : 'unchecked'}
+                  status={userInfo.gender === 1 ? 'checked' : 'unchecked'}
                   labelStyle={{fontSize: 20}}
                   color="#1dc071"
                   position="leading"
@@ -116,15 +107,12 @@ const UserModificationScreen = ({navigation}) => {
         </View>
       </View>
       <View style={styles.btnSave}>
-        <TouchableOpacity
-          style={styles.submit}
-          onPress={handleUpdateProfile}>
+        <TouchableOpacity style={styles.submit} onPress={handleUpdateProfile}>
           <Text
             style={{
               color: '#fff',
               fontSize: 20,
               fontWeight: '500',
-              textTransform: 'uppercase',
             }}>
             Lưu
           </Text>
@@ -140,13 +128,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#eef0f1',
+    backgroundColor: BACKGROUND_COLOR,
   },
   profileContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: SECOND_COLOR,
     paddingHorizontal: 20,
   },
   avatar: {
@@ -167,41 +155,26 @@ const styles = StyleSheet.create({
     padding: 10,
     color: '#fff',
   },
-  inforContain: {
-    flex: 4,
-    display: 'flex',
-    flexDirection: 'column',
-  },
   row: {
     flexDirection: 'row',
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#CCC',
+    borderBottomWidth: 1,
+    borderBottomColor: '#DFDFDF',
   },
-
-  // Input
   input: {
     fontSize: 20,
     color: '#000',
   },
-  // Save button
   btnSave: {
-    backgroundColor: '#fff',
     flexDirection: 'row',
-    width: '100%',
-    height: '15%',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   submit: {
-    backgroundColor: '#1dc071',
+    backgroundColor: MAIN_COLOR,
     width: '90%',
     alignItems: 'center',
     padding: '2%',
     borderRadius: 80,
-    marginHorizontal: '5%',
   },
 });
 

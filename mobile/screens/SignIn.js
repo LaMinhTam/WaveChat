@@ -1,21 +1,32 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
-import { getProfile } from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
+import {getProfile} from '../apis/user';
 
 const SignIn = () => {
-  const [phone, setPhone] = useState('+84367819442');
-  const [password, setPassword] = useState('123456');
-  const {userInfo ,setUserInfo ,storeAccessToken} = useAuth();
+  const [phone, setPhone] = useState('+84886700046');
+  const [password, setPassword] = useState('123456789');
+  const [errorMessage, setErrorMessage] = useState('');
+  const {setUserInfo, storeAccessToken} = useAuth();
+
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
     const data = await Login(formattedPhoneNumber, password);
-    const profile = await getProfile(data.data._id, data.data.access_token);
-    setUserInfo(profile.data);
-    storeAccessToken('accessToken', data.data.access_token);
+
+    if (data.status === 200) {
+      user = data.data;
+      profile = null;
+      profile = await getProfile(user._id, user.access_token);
+      user = {...user, ...profile.data};
+
+      setUserInfo(user);
+      storeAccessToken('accessToken', user.access_token);
+    } else if (data.status === 401) {
+      setErrorMessage('Sai tài khoản hoặc mật khẩu');
+    }
   };
 
   return (
@@ -39,6 +50,10 @@ const SignIn = () => {
       <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
+
+      {errorMessage !== '' && (
+        <Text style={styles.errorMessage}>{errorMessage}</Text>
+      )}
     </View>
   );
 };
@@ -68,6 +83,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: 10,
   },
 });
 

@@ -8,24 +8,52 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {MAIN_COLOR, commonStyle} from '../styles';
+import {MAIN_COLOR} from '../styles';
 import {getFriends} from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
+import {PRIMARY_TEXT_COLOR} from '../styles/styles';
+import {useSocket} from '../contexts/SocketProvider';
 
 const Separator = () => <View style={styles.separator} />;
 
-const FriendScreen = () => {
-  const {accessTokens} = useAuth();
-
+const FriendScreen = ({navigation}) => {
+  const {accessTokens, userInfo} = useAuth();
+  const {setCurrentConversation, conversations} = useSocket();
   const [data, setData] = useState([]);
-
+  
   useEffect(() => {
     fetchFriends();
   }, []);
 
+  const handlePressFriend = friend => {
+    const existingConversation = conversations.find(conversation =>
+      conversation.members.some(member => member._id === friend.user_id),
+    );
+
+    const newConversation = {
+      name: friend.full_name,
+      avatar: friend.avatar,
+      members: [
+        {
+          _id: userInfo._id,
+          avatar: userInfo.avatar,
+          full_name: userInfo.full_name,
+        },
+        {
+          _id: friend.user_id,
+          avatar: friend.avatar,
+          full_name: friend.full_name,
+        },
+      ],
+      type: 2,
+    };
+    setCurrentConversation(existingConversation || newConversation);
+    navigation.navigate('ChatScreen');
+  };
+
   const fetchFriends = async () => {
     try {
-      const friendsData = await getFriends(accessTokens.accessToken);
+      const friendsData = await getFriends(4, accessTokens.accessToken);
       setData(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
@@ -49,12 +77,15 @@ const FriendScreen = () => {
       <View key={char}>
         <Text style={styles.sectionTitle}>{char}</Text>
         {friendsByCharacter[char].map(friend => (
-          <View key={friend.user_id} style={styles.friendRow}>
+          <TouchableOpacity
+            key={friend.user_id}
+            style={styles.friendRow}
+            onPress={() => handlePressFriend(friend)}>
             <Image source={{uri: friend.avatar}} style={styles.avatar} />
             <Text style={{color: '#000', fontSize: 16}}>
               {friend.full_name}
             </Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     ));
@@ -63,7 +94,11 @@ const FriendScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('FriendRequest');
+          }}>
           <View
             style={[styles.buttonIconContainer, {backgroundColor: MAIN_COLOR}]}>
             <Icon name="user-plus" size={20} color="#fff" />
@@ -71,7 +106,11 @@ const FriendScreen = () => {
           <Text style={styles.buttonText}>Lời mời kết bạn</Text>
         </TouchableOpacity>
         <Separator />
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('PhoneContacts');
+          }}>
           <View
             style={[styles.buttonIconContainer, {backgroundColor: MAIN_COLOR}]}>
             <Icon name="address-book" size={20} color="#fff" />
@@ -100,6 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
+    color: PRIMARY_TEXT_COLOR,
   },
   line: {
     height: 4,
@@ -120,6 +160,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     marginLeft: 10,
+    color: PRIMARY_TEXT_COLOR,
   },
   separator: {
     height: 4,
