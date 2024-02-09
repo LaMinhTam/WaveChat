@@ -6,6 +6,7 @@ import UserStackNavigator from './UserStackNavigator';
 import ContactStackNavigator from './ContactStackNavigator';
 import ConversationStackNavigator from './ConversationStackNavigator';
 import {useIsFocused} from '@react-navigation/native';
+import {MAIN_COLOR} from '../styles/styles';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -15,10 +16,10 @@ const TabNavigator = () => {
       screenOptions={({route, navigation}) => ({
         tabBarLabelStyle: {fontSize: 12},
         tabBarItemStyle: {height: 50},
-        tabBarActiveTintColor: '#1DC071',
+        tabBarActiveTintColor: MAIN_COLOR,
         swipeEnabled: true,
         tabBarPressColor: '#f3e7fd',
-
+        tabBarHideOnKeyboard: true,
         tabBarLabel: navigation.isFocused() ? route.name : '',
 
         tabBarShowLabel: isFocused,
@@ -74,7 +75,9 @@ const TabNavigator = () => {
       <Tab.Screen
         name="Tin nhắn"
         component={ConversationStackNavigator}
-        options={{headerShown: false}}
+        options={{
+          headerShown: false,
+        }}
       />
       <Tab.Screen
         name="Danh bạ"
