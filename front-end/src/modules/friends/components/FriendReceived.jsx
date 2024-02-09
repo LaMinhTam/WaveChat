@@ -4,7 +4,7 @@ import Avatar from './Avatar'
 import Button, { ButtonBlue } from './Button'
 import axios from 'axios'
 
-const FriendReceived = ({ request }) => {
+const FriendReceived = ({ request, onReject, onAccept }) => {
 	// console.log(request);
 
 	const [user, setUser] = useState(null)
