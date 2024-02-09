@@ -9,4 +9,5 @@ export const waveChatApi = {
   getFriends: type => `${waveChatEndpoint}/friend?type=${type}`,
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
+  createConversation: () => `${waveChatEndpoint}/conversation/create`,
 };

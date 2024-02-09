@@ -6,7 +6,7 @@ import {AuthProvider} from './contexts/auth-context';
 import {useAuth} from './contexts/auth-context';
 import TabNavigator from './navigations/TabNavigator';
 import {NavigationContainer} from '@react-navigation/native';
-
+import {SocketProvider} from './contexts/SocketProvider';
 const App = () => {
   return (
     <Provider store={store}>
@@ -22,7 +22,15 @@ const App = () => {
 const Main = () => {
   const {accessTokens} = useAuth();
   return (
-    <>{accessTokens.accessToken ? <TabNavigator /> : <LoginStackNavigator />}</>
+    <>
+      {accessTokens.accessToken ? (
+        <SocketProvider>
+          <TabNavigator />
+        </SocketProvider>
+      ) : (
+        <LoginStackNavigator />
+      )}
+    </>
   );
 };
 export default App;

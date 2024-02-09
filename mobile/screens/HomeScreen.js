@@ -1,15 +1,11 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectConversations, setCurrentConversation} from '../store/chatSlice';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useAuth} from '../contexts/auth-context';
+import {useSocket} from '../contexts/SocketProvider';
 
 const HomeScreen = ({navigation}) => {
-  const {userInfo} = useAuth();
-  const dispatch = useDispatch();
-  const conversations = useSelector(selectConversations);
+  const {conversations} = useSocket();
   const formatLastActivity = timestamp => {
     const now = new Date();
     const activityDate = new Date(timestamp);
@@ -43,8 +39,7 @@ const HomeScreen = ({navigation}) => {
           key={conversation.conversation_id}
           style={styles.conversationRow}
           onPress={() => {
-            dispatch(setCurrentConversation({conversation, userInfo}));
-            navigation.navigate('ChatScreen');
+            navigation.navigate('ChatScreen', conversation);
           }}>
           <Image
             style={styles.avatar}

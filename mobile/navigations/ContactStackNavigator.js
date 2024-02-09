@@ -9,6 +9,7 @@ import {globalScreenOptions} from '../styles';
 import FriendRequest from '../screens/FriendRequest';
 import PhoneContacts from '../screens/PhoneContacts';
 import FriendRequestTabNavigator from './FriendRequestTabNavigator';
+import PrivateChatScreen from '../screens/ChatScreen';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
@@ -29,6 +30,7 @@ const UserStackNavigator = () => {
         component={PhoneContacts}
         options={{title: 'Danh bạ máy'}}
       />
+      <Stack.Screen name="ChatScreen" component={PrivateChatScreen} />
     </Stack.Navigator>
   );
 };

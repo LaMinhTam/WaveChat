@@ -7,7 +7,6 @@ const chatSlice = createSlice({
       {
         conversation_id: '65bc6457a732dac5bab21699',
         name: '',
-        type: 2,
         is_pinned: 0,
         is_notify: 0,
         is_hidden: 0,
@@ -37,8 +36,6 @@ const chatSlice = createSlice({
         last_connect: '',
       },
     ],
-    currentConversation: {},
-    socket: null,
   },
   reducers: {
     receiveMessage: (state, action) => {
@@ -60,37 +57,14 @@ const chatSlice = createSlice({
         });
       }
     },
-    setCurrentConversation: (state, action) => {
-      const {conversation, userInfo} = action.payload;
-
-      if (conversation.type === 2) {
-        const otherMember = conversation.members.find(
-          member => member._id !== userInfo._id,
-        );
-
-        if (otherMember) {
-          state.currentConversation = {
-            ...conversation,
-            name: otherMember.full_name,
-            avatar: otherMember.avatar,
-          };
-        } else {
-          state.currentConversation = conversation;
-        }
-      } else {
-        state.currentConversation = conversation;
-      }
-    },
-    setSocket: (state, action) => {
-      state.socket = action.payload;
+    addConversation: (state, action) => {
+      const newConversation = action.payload;
+      state.conversations.push(newConversation);
     },
   },
 });
 
-export const {receiveMessage, setCurrentConversation, setSocket} =
+export const {receiveMessage, setCurrentConversation, addConversation} =
   chatSlice.actions;
 export const selectConversations = state => state.chatSlide.conversations;
-export const selectCurrentConversation = state =>
-  state.chatSlide.currentConversation;
-export const selectSocket = state => state.chatSlide.socket;
 export default chatSlice.reducer;
