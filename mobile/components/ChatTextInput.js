@@ -6,8 +6,8 @@ import {useSocket} from '../contexts/SocketProvider';
 import {createConversation} from '../apis/conversation';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useAuth} from '../contexts/auth-context';
-import {sendImageMessage} from '../utils/S3Bucket';
-// import {uploadImageToS3} from '../utils/S3Bucket';
+import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
+import DocumentPicker from 'react-native-document-picker';
 
 const ChatTextInput = ({accessTokens}) => {
   const [newMessage, setNewMessage] = useState('');
@@ -73,6 +73,33 @@ const ChatTextInput = ({accessTokens}) => {
         console.error('error', error);
       });
   };
+
+  const handleSelectDocument = async () => {
+    try {
+      const results = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+        copyTo: 'cachesDirectory',
+        allowMultiSelection: true,
+      });
+      results.forEach(async file => {
+        let conversationID = await createOrUpdateConversation(
+          currentConversation.members[1]._id,
+          accessTokens.accessToken,
+        );
+
+        await uploadFileToS3(file, conversationID);
+
+        handleMessage(conversationID, file.name, 3);
+      });
+    } catch (error) {
+      if (DocumentPicker.isCancel(error)) {
+        console.log('User cancelled the document picker.');
+      } else {
+        console.error('Error while picking the document:', error);
+      }
+    }
+  };
+
   const handleMessage = (conversationID, messageContent, type) => {
     const message = {
       conversation_id: conversationID,
@@ -80,7 +107,6 @@ const ChatTextInput = ({accessTokens}) => {
       type: type,
       created_at: new Date().getTime(),
     };
-    console.log('message', message);
     socket.emit('message-text', message);
   };
   return (
@@ -105,9 +131,16 @@ const ChatTextInput = ({accessTokens}) => {
           <Ionicons name="send" size={24} color={MAIN_COLOR} />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity onPress={handleSelectImage}>
-          <Ionicons name="image-outline" size={24} color={MAIN_COLOR} />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            onPress={handleSelectDocument}
+            style={{padding: 10}}>
+            <Ionicons name="attach" size={24} color={MAIN_COLOR} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSelectImage} style={{padding: 10}}>
+            <Ionicons name="image-outline" size={24} color={MAIN_COLOR} />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );

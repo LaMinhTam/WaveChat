@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, Image, Modal, TouchableOpacity} from 'react-native';
 import {TruncatedText} from '../utils/TruncatedText';
 import MessageImage from './MessageImage';
+import MessageFile from './MessageFile';
 
 const formatTime = time => {
   return (
@@ -24,6 +25,8 @@ const Message = ({item, userInfo, users}) => {
         return <TruncatedText text={item.message} />;
       case 2:
         return <MessageImage item={item} />;
+      case 5:
+        return <MessageFile item={item} />;
       default:
         return null;
     }
