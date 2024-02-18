@@ -1,12 +1,13 @@
 export default function formatPhone(str) {
-    str =
-        "+" +
-        str.slice(0, 2) +
+    var newStr = str.slice(1);
+    newStr =
+        "+84 " +
+        newStr.slice(0, 2) +
         " " +
-        str.slice(2, 5) +
+        newStr.slice(2, 5) +
         " " +
-        str.slice(5, 8) +
+        newStr.slice(5, 8) +
         " " +
-        str.slice(8);
-    return str;
+        newStr.slice(8);
+    return newStr;
 }

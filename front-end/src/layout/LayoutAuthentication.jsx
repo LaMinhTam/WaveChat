@@ -31,62 +31,76 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
     const { confirmationResult, values } = useAuth();
     const handleVerify = async () => {
         setIsLoading(true);
-        await handleVerifyOTP(confirmationResult, otpCode);
-        if (isRegister) {
-            try {
-                const hashedPassword = await bcrypt.hash(values.password, 10);
-                await setDoc(doc(db, "users", auth.currentUser.uid), {
-                    id: auth.currentUser.uid,
-                    name: values.name,
-                    phone: values.phone,
-                    password: hashedPassword,
-                    avatar: "https://source.unsplash.com/random",
-                    createdAt: serverTimestamp(),
-                });
-                const res = await axios.post("/auth/sign-up", {
-                    full_name: values.name,
-                    nick_name: values.name,
-                    phone: values.phone,
-                    password: values.password,
-                });
-                if (res.data.status === 200) {
-                    const resLogin = await axios.post("/auth/sign-in", {
+        const isValid = await handleVerifyOTP(confirmationResult, otpCode);
+        if (isValid) {
+            if (isRegister) {
+                try {
+                    const hashedPassword = await bcrypt.hash(
+                        values.password,
+                        10
+                    );
+                    await setDoc(doc(db, "users", auth.currentUser.uid), {
+                        id: auth.currentUser.uid,
+                        name: values.name,
+                        phone: values.phone,
+                        password: hashedPassword,
+                        avatar: "https://source.unsplash.com/random",
+                        createdAt: serverTimestamp(),
+                    });
+                    const res = await axios.post("/auth/sign-up", {
+                        full_name: values.name,
+                        nick_name: values.name,
                         phone: values.phone,
                         password: values.password,
                     });
                     if (res.data.status === 200) {
-                        saveUserId(resLogin.data.data._id);
-                        saveToken(resLogin.data.data.access_token);
-                        toast.success("Sign up successfully");
+                        const resLogin = await axios.post("/auth/sign-in", {
+                            phone: values.phone,
+                            password: values.password,
+                        });
+                        if (res.data.status === 200) {
+                            saveUserId(resLogin.data.data._id);
+                            saveToken(resLogin.data.data.access_token);
+                            toast.success("Sign up successfully");
+                        } else {
+                            toast.error(resLogin.data.data.message);
+                        }
                     } else {
-                        toast.error(resLogin.data.data.message);
+                        toast.error(res.data.data.response.message);
                     }
-                } else {
-                    toast.error(res.data.data.response.message);
+                } catch (error) {
+                    toast.error("Sign up failed, please try again later");
                 }
-            } catch (error) {
-                toast.error("Sign up failed, please try again later");
             }
-        }
-        if (isLogin) {
-            try {
-                const res = await axios.post("/auth/sign-in", {
-                    phone: values.phone,
-                    password: values.password,
-                });
-                if (res.data.status === 200) {
-                    saveUserId(res.data.data?._id);
-                    saveToken(res.data.data?.access_token);
-                    toast.success("Sign in successfully");
-                } else {
-                    toast.error(res.data.data.message);
+            if (isLogin) {
+                try {
+                    var newPhone = values.phone;
+                    if (values.phone.length === 12) {
+                        newPhone = values.phone.slice(2);
+                    }
+                    if (values.phone.length === 11) {
+                        newPhone = `0${values.phone.slice(2)}`;
+                    }
+                    const res = await axios.post("/auth/sign-in", {
+                        phone: newPhone,
+                        password: values.password,
+                    });
+                    if (res.data.status === 200) {
+                        saveUserId(res.data.data?._id);
+                        saveToken(res.data.data?.access_token);
+                        toast.success("Sign in successfully");
+                    } else {
+                        toast.error(res.data.data.message);
+                    }
+                } catch (error) {
+                    toast.error("Sign in failed, please try again later");
                 }
-            } catch (error) {
-                toast.error("Sign in failed, please try again later");
             }
+            setIsLoading(false);
+            navigate("/");
+        } else {
+            setIsLoading(false);
         }
-        setIsLoading(false);
-        navigate("/");
     };
     return (
         <>

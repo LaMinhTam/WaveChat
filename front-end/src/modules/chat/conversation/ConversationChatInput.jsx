@@ -11,6 +11,7 @@ const ConversationChatInput = ({ user_id }) => {
     const [socket, setSocket] = useState(null);
     const accessToken = getToken();
     const { conversationId, setConversationId, setMessage } = useChat();
+    console.log("ConversationChatInput ~ conversationId:", conversationId);
 
     useEffect(() => {
         // Connect to the WebSocket server

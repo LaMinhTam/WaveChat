@@ -13,8 +13,12 @@ export default function formatDate(timestamp) {
             // Convert the Date object to Vietnam time
             const vietnamTime = moment(date).tz("Asia/Ho_Chi_Minh");
             // Format the date and time
-            const formattedDate = vietnamTime.format("YYYY-MM-DD HH:mm:ss");
-            return formattedDate;
+            const formattedDate = vietnamTime.format("DD/MM/YYYY HH:mm");
+
+            // Split the formatted date into date and time
+            const [datePart, timePart] = formattedDate.split(" ");
+
+            return { date: datePart, time: timePart };
         }
     }
 }

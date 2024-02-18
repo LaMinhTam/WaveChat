@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from "uuid";
 const ConversationContent = () => {
     const { message } = useChat();
     const currentUserId = getUserId();
-    console.log("ConversationContent ~ message:", message);
     return (
         <div className="flex-1 w-full h-full max-h-[570px] overflow-y-auto custom-scrollbar bg-strock">
             {message.map((msg) =>

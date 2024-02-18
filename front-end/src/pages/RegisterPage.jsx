@@ -5,14 +5,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import useToggleValue from "../hooks/useToggleValue";
 import LayoutAuthentication from "../layout/LayoutAuthentication";
-import ButtonGoogle from "../components/button/ButtonGoogle";
 import { Button } from "../components/button";
 import FormGroup from "../components/common/FormGroup";
 import Label from "../components/label";
 import Input from "../components/input/Input";
 import { IconEyeToggle } from "../components/icons";
 import Checkbox from "../components/checkbox";
-import { handleLoginWithGoogle } from "../utils/handleLoginWithGoogle";
 import PhoneInput from "react-phone-input-2";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
@@ -72,7 +70,6 @@ const RegisterPage = () => {
     }, [loading, navigate, token, userInfo]);
     return (
         <LayoutAuthentication heading="SignUp">
-            <div id="recaptcha-container"></div>
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">
                 Already have an account?{" "}
                 <Link
@@ -82,10 +79,6 @@ const RegisterPage = () => {
                     Login
                 </Link>
             </p>
-            <ButtonGoogle
-                text="Sign up with google"
-                onClick={() => handleLoginWithGoogle(navigate)}
-            ></ButtonGoogle>
             <p className="mb-4 text-xs font-normal text-center lg:text-sm lg:mb-8 text-text2 dark:text-white">
                 Or sign up with phone number
             </p>
@@ -154,6 +147,7 @@ const RegisterPage = () => {
                         </p>
                     </Checkbox>
                 </div>
+                <div id="recaptcha-container" className="my-2"></div>
                 <Button
                     className="w-full"
                     kind="primary"

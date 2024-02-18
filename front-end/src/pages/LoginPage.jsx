@@ -2,7 +2,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import useToggleValue from "../hooks/useToggleValue";
 import LayoutAuthentication from "../layout/LayoutAuthentication";
-import { Button, ButtonGoogle } from "../components/button";
+import { Button } from "../components/button";
 import FormGroup from "../components/common/FormGroup";
 import Label from "../components/label";
 import Input from "../components/input/Input";
@@ -10,7 +10,6 @@ import { IconEyeToggle } from "../components/icons";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { handleLoginWithGoogle } from "../utils/handleLoginWithGoogle";
 import { toast } from "react-toastify";
 import PhoneInput from "react-phone-input-2";
 import { useEffect } from "react";
@@ -72,7 +71,6 @@ const LoginPage = () => {
         useToggleValue();
     return (
         <LayoutAuthentication heading="Welcome Back!">
-            <div id="recaptcha-container"></div>
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">
                 {`Don't have an account?`}{" "}
                 <Link
@@ -82,10 +80,6 @@ const LoginPage = () => {
                     Sign up
                 </Link>
             </p>
-            <ButtonGoogle
-                text="Sign in with google"
-                onClick={() => handleLoginWithGoogle(navigate)}
-            ></ButtonGoogle>
             <form onSubmit={handleSubmit(handleSignIn)}>
                 <FormGroup>
                     <Label htmlFor="phone">Phone *</Label>
@@ -128,6 +122,7 @@ const LoginPage = () => {
                         </span>
                     </div>
                 </FormGroup>
+                <div id="recaptcha-container" className="my-2"></div>
                 <Button
                     kind="primary"
                     className="w-full"

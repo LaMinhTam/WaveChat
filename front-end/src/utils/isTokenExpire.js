@@ -10,7 +10,6 @@ export function isTokenExpire(access_token) {
     const currentTime = Math.floor(Date.now() / 1000);
 
     if (decodedToken.exp < currentTime) {
-        console.log(decodedToken.exp);
         return true;
     } else {
         return false;
