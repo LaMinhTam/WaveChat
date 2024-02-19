@@ -10,4 +10,6 @@ export const waveChatApi = {
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
+  findUserByPhoneNumber: phoneNumber =>
+    `${waveChatEndpoint}/user/find-phone?phone=${phoneNumber}`,
 };

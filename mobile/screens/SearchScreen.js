@@ -1,35 +1,39 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useAuth} from '../contexts/auth-context';
 import {
   View,
   TextInput,
-  Button,
-  Text,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { getFriends } from '../apis/user';
+import {findUserByPhoneNumber} from '../apis/user';
+import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
+import {RenderView} from '../screens/RenderView';
+import {set} from 'firebase/database';
 
 const SearchScreen = ({navigation}) => {
-  const {userInfo, setUserInfo, accessTokens, setAccessTokens} = useAuth();
-  const [query, setQuery] = useState('');
+  const {accessTokens} = useAuth();
+  const [user, setUser] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
 
-  
-  const handleInputChange = (value) => {
-    setPhoneNumber(value);
+  async function fetchUser(phoneNumber) {
+    if (phoneNumber.length === 10) {
+      const res = await findUserByPhoneNumber(
+        phoneNumber,
+        accessTokens.accessToken,
+      );
+      if (res.status === 200) {
+        setUser(res.data);
+      } else {
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
   }
-  
-  useEffect(() => {
-    console.log(phoneNumber);
-  }, [phoneNumber]);
-  
-  const handleSearch = () => {
-    const findFriend = getFriends(accessTokens.accessToken);
-    console.log(findFriend); 
-  };
 
   return (
     <View style={styles.container}>
@@ -37,22 +41,21 @@ const SearchScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.touchAble}
           onPress={() => {
+            setPhoneNumber('');
             navigation.goBack();
           }}>
           <Icon name="arrow-left" size={24} color="#fff"></Icon>
         </TouchableOpacity>
-        <View
-          style={{
-            flex: 1,
-          }}>
+        <View style={{flex: 1}}>
           <TouchableOpacity
             style={{
               flex: 1,
               flexDirection: 'row',
               justifyContent: 'flex-start',
               alignItems: 'center',
-              backgroundColor: '#000',
+              backgroundColor: '#fff',
               borderRadius: 15,
+              marginHorizontal: '2%',
             }}>
             <Icon
               name="search"
@@ -61,20 +64,29 @@ const SearchScreen = ({navigation}) => {
               style={{paddingHorizontal: 10}}
             />
             <TextInput
+              autoFocus={true}
               placeholder="Tìm kiếm"
-              placeholderTextColor="#f3e7fd"
-              keyboardType='phone-pad'
-              style={{color: 'white', fontSize: 16}}
-              // value={phoneNumber}
-              onChangeText={handleInputChange}
+              placeholderTextColor="#ccc"
+              keyboardType="phone-pad"
+              style={{color: '#000', fontSize: 16}}
+              selectionColor="#50fa7b"
+              value={phoneNumber}
+              onChangeText={text => {
+                setPhoneNumber(text);
+                if (text.length === 10) {
+                  fetchUser(text);
+                } else {
+                  setUser(null);
+                }
+              }}
             />
-
           </TouchableOpacity>
         </View>
+        <TouchableOpacity style={styles.touchAble}>
+          <Icon name="qrcode" size={34} color="#fff" />
+        </TouchableOpacity>
       </View>
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>{phoneNumber}</Text>
-      </View>
+      <RenderView user={user} phoneNumber={phoneNumber} />
     </View>
   );
 };
@@ -83,18 +95,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     height: '100%',
+    backgroundColor: BACKGROUND_COLOR,
   },
   header: {
-    backgroundColor: '#1dc071',
+    backgroundColor: MAIN_COLOR,
     display: 'flex',
     flexDirection: 'row',
-    padding: 5,
+    padding: '2%',
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#fff',
+    margin: 15,
   },
   touchAble: {
-    padding: 10,
-    marginRight: 10,
+    padding: '2%',
     color: '#fff',
   },
 });

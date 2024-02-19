@@ -10,7 +10,6 @@ import {
   TextInput,
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {useAuth} from '../contexts/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {updateProfile} from '../apis/user';
@@ -19,6 +18,7 @@ import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 const UserModificationScreen = ({navigation}) => {
   const {userInfo, setUserInfo, accessTokens} = useAuth();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [checked, setChecked] = useState(userInfo.gender === 1 ? true : false);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -37,13 +37,9 @@ const UserModificationScreen = ({navigation}) => {
     hideDatePicker();
   };
 
-<<<<<<< HEAD
   const handleGenderChange = value => {
-    setChecked(value);
-=======
-  const handleDateChange = value => {
-    setUserInfo({...userInfo, gender: value === 'Nam' ? 0 : 1});
->>>>>>> c32ea5732f74c94c3cae80fd0a84bb97bf5acb74
+    setChecked(value === 'Nam' ? true : false);
+    setUserInfo({...userInfo, gender: value === 'Nam' ? 1 : 0});
   };
 
   const handleInputChange = value => {
@@ -82,21 +78,21 @@ const UserModificationScreen = ({navigation}) => {
             />
           </View>
           <View>
-            <RadioButton.Group onValueChange={handleGenderChange}>
+            <RadioButton.Group onValueChange={handleGenderChange} >
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
                 <RadioButton.Item
                   label="Nam"
                   value="Nam"
                   labelStyle={{fontSize: 20}}
-                  status={userInfo.gender === 0 ? 'checked' : 'unchecked'}
+                  status={checked === true ? 'checked' : 'unchecked'}
                   color="#1dc071"
                   position="leading"
                 />
                 <RadioButton.Item
                   label="Nữ"
                   value="Nữ"
-                  status={userInfo.gender === 1 ? 'checked' : 'unchecked'}
+                  status={checked === false ? 'checked' : 'unchecked'}
                   labelStyle={{fontSize: 20}}
                   color="#1dc071"
                   position="leading"

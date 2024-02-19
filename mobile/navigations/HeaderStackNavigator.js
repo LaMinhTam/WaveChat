@@ -5,6 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {globalScreenOptions} from '../styles';
 import UserModificationScreen from '../screens/UserModificationScreen';
 import SearchScreen from '../screens/SearchScreen';
+import {NavigationContainer} from '@react-navigation/native';
 const Stack = createStackNavigator();
 
 const HeaderStackNavigator = () => {

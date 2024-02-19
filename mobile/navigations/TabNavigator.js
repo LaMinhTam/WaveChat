@@ -23,54 +23,52 @@ const TabNavigator = () => {
     <Tab.Navigator
       screenOptions={({route, navigation}) => ({
         // Header config
-        headerStyle: {backgroundColor: '#1DC071'},
-        headerTintColor: '#fff',
+        headerStyle: {backgroundColor: MAIN_COLOR},
         headerTitle: () => (
-          <View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TouchableOpacity
-              onPress={() => {navigation.navigate('../screens/SearchScreen')}}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                backgroundColor: '#1DC071',
-                borderRadius: 15,
-              }}>
-              <TextInput
-                placeholder="Tìm kiếm"
-                placeholderTextColor="#f3e7fd"
-                style={{color: 'white', fontSize: 16}}
-                onFocus={() => {
-                  setShowHeaderLeft(true);
-                }}
-              />
+              onPress={() => {
+                navigation.navigate('Search');
+              }}
+              style={{width: '80%'}}>
+              <Text style={{color: 'white', fontSize: 16}}>Tìm kiếm</Text>
             </TouchableOpacity>
           </View>
         ),
         headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => {
-              toggleHeaderLeft();
-            }}>
-            <Icon
-              name="search"
-              size={24}
-              color="#fff"
-              style={{paddingHorizontal: '5%'}}
-            />
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('Search');
+              }}>
+              <Icon
+                name="search"
+                size={26}
+                color="#fff"
+                style={{paddingHorizontal: '5%'}}
+              />
+            </TouchableOpacity>
+          </View>
         ),
         headerRight: () => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Notification');
-            }}>
-            <Icon
-              name="plus"
-              size={24}
-              color="#fff"
-              style={{paddingHorizontal: '5%'}}
-            />
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity>
+              <Icon
+                name="qrcode"
+                size={30}
+                color="#fff"
+                style={{paddingHorizontal: '5%'}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {}}>
+              <Icon
+                name="plus"
+                size={30}
+                color="#fff"
+                style={{paddingHorizontal: '5%'}}
+              />
+            </TouchableOpacity>
+          </View>
         ),
 
         // Tab config
@@ -136,25 +134,27 @@ const TabNavigator = () => {
         name="Tin nhắn"
         component={ConversationStackNavigator}
         options={{
-          headerShown: false,
+          headerShown: true,
         }}
       />
       <Tab.Screen
         name="Danh bạ"
         component={ContactStackNavigator}
-        options={{headerShown: false}}
+        options={{headerShown: true}}
       />
       <Tab.Screen
         name="Cá nhân"
         component={UserStackNavigator}
         options={{headerShown: false}}
       />
-      <Tab.Screen name="Search" component={HeaderStackNavigator} options={{headerShown: false}}/>
-    </Tab.Navigator> 
+      <Tab.Screen
+        name="Search"
+        component={HeaderStackNavigator}
+        options={{headerShown: false}}
+      />
+    </Tab.Navigator>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   searchBarContainer: {
