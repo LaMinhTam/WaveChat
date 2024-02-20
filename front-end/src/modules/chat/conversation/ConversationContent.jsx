@@ -7,11 +7,12 @@ import { v4 as uuidv4 } from "uuid";
 
 const ConversationContent = () => {
     const { message } = useChat();
+    console.log("ConversationContent ~ message:", message);
     const currentUserId = getUserId();
     return (
         <div className="flex-1 w-full h-full max-h-[570px] overflow-y-auto custom-scrollbar bg-strock">
             {message.map((msg) =>
-                msg.user?._id === currentUserId ? (
+                msg.message?.user_id === currentUserId ? (
                     <MessageSend key={uuidv4()} msg={msg.message} />
                 ) : (
                     <MessageReceive

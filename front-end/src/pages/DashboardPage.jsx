@@ -1,7 +1,7 @@
 // import DashboardWelcome from "../modules/dashboard/DashboardWelcome";
 import { useSelector } from "react-redux";
-import Conversation from "../modules/chat/Conversation";
 import RequiredAuthPage from "./RequiredAuthPage";
+import Conversation from "../modules/chat/conversation/Conversation";
 
 const DashboardPage = () => {
     const showConversation = useSelector(

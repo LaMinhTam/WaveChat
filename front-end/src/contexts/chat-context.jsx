@@ -12,6 +12,12 @@ export function ChatProvider(props) {
         setShow: setShowProfileDetails,
         nodeRef: profileDetailsRef,
     } = useClickOutSide();
+
+    const {
+        show: showCreateGroupChat,
+        setShow: setShowCreateGroupChat,
+        nodeRef: groupChatRef,
+    } = useClickOutSide();
     const contextValues = {
         show,
         setShow,
@@ -23,6 +29,9 @@ export function ChatProvider(props) {
         setConversationId,
         message,
         setMessage,
+        showCreateGroupChat,
+        setShowCreateGroupChat,
+        groupChatRef,
     };
     return (
         <ChatContext.Provider

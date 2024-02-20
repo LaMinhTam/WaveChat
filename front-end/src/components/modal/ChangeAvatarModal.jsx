@@ -15,18 +15,7 @@ import { setUserProfile } from "../../store/userSlice";
 import s3ImageUrl from "../../utils/s3ImageUrl";
 
 const ChangeAvatarModal = () => {
-    const { setValue, getValues } = useForm({
-        mode: "onChange",
-        defaultValues: {
-            title: "",
-            slug: "",
-            status: 2,
-            hot: false,
-            image: "",
-            category: {},
-            user: {},
-        },
-    });
+    const { setValue, getValues } = useForm();
     const { progress, image, handleSelectImage, handleDeleteImage, setImage } =
         useS3Image(setValue, getValues);
 

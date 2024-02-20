@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserId } from "../../utils/auth";
 import { setActiveName, setShowConversation } from "../../store/commonSlice";
 import { setFriendInfo } from "../../store/userSlice";
-import { useChat } from "../../contexts/chat-context";
 
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
@@ -16,7 +15,6 @@ const Member = ({ user }) => {
         (member) => member._id === current_userId
     );
     const activeName = useSelector((state) => state.common.activeName);
-    const { setConversationId } = useChat();
     if (!user || !checkMemberInConversation) return null;
     const otherUser = user.members.find(
         (member) => member._id !== current_userId
@@ -27,7 +25,6 @@ const Member = ({ user }) => {
         dispatch(setFriendInfo(otherUser));
         dispatch(setShowConversation(true));
         dispatch(setActiveName(otherUser.full_name));
-        setConversationId("");
     };
 
     return (
