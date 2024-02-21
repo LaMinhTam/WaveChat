@@ -9,9 +9,10 @@ export default {
             },
             colors: {
                 primary: "#1DC071",
-                secondary: "#6F49FD",
+                secondary: "#0068ff",
                 thirdly: "#3498DB",
                 tertiary: "#B7DFFF",
+
                 text1: "#171725",
                 text2: "#4B5264",
                 text3: "#808191",
