@@ -33,10 +33,13 @@ const Conversation = () => {
         });
 
         newSocket.on("message", (incomingMessage) => {
+            // handle created_at has time format like createAt
+            incomingMessage.message.created_at =
+                incomingMessage.message.createdAt;
             setMessage((prev) =>
                 Array.isArray(prev)
-                    ? [...prev, incomingMessage]
-                    : [incomingMessage]
+                    ? [...prev, incomingMessage.message]
+                    : [incomingMessage.message]
             );
         });
 

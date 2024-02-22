@@ -16,6 +16,7 @@ const SearchPerson = () => {
     const listFriend = useSelector((state) => state.user.listFriend);
     const [searchResult, setSearchResult] = useState([]);
     const [personList, setPersonList] = useState([]);
+    console.log("SearchPerson ~ personList:", personList);
     const conversations = useSelector(
         (state) => state.conversation.conversations
     );
@@ -265,7 +266,7 @@ const SearchPerson = () => {
                                     key={uuidv4()}
                                     fullName={item.full_name}
                                     onClick={() => handleRemovePerson(item)}
-                                    avatar={item.avatar}
+                                    avatarName={item.avatar}
                                 />
                             ))}
                         </div>

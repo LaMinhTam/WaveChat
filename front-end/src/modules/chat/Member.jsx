@@ -7,10 +7,12 @@ import { getUserId } from "../../utils/auth";
 import { setActiveName, setShowConversation } from "../../store/commonSlice";
 import { setFriendInfo } from "../../store/userSlice";
 import formatTime from "../../utils/formatTime";
+import { axiosPrivate } from "../../api/axios";
+import { useChat } from "../../contexts/chat-context";
 
 const Member = ({ user }) => {
-    console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
+    const { setMessage } = useChat();
     const current_userId = getUserId();
     const dispatch = useDispatch();
     const checkMemberInConversation = user.members.find(
@@ -29,10 +31,18 @@ const Member = ({ user }) => {
 
     const isActive = otherUserInfo.full_name === activeName;
 
-    const handleClickedMember = () => {
-        dispatch(setFriendInfo(otherUserInfo));
-        dispatch(setShowConversation(true));
-        dispatch(setActiveName(otherUserInfo.full_name));
+    const handleClickedMember = async () => {
+        try {
+            const res = await axiosPrivate.get(`/message/${user._id}`);
+            const data = res.data;
+            data.reverse();
+            setMessage(data);
+            dispatch(setFriendInfo(otherUserInfo));
+            dispatch(setShowConversation(true));
+            dispatch(setActiveName(otherUserInfo.full_name));
+        } catch (error) {
+            console.log(error);
+        }
     };
     const message = user.last_message.message;
     if (!user || !checkMemberInConversation) return null;
@@ -47,7 +57,7 @@ const Member = ({ user }) => {
             onClick={handleClickedMember}
         >
             <div className="flex items-center justify-center gap-x-3">
-                <div className="w-[48px] h-[48px] rounded-full ml-2">
+                <div className="w-[48px] h-[48px] rounded-full ml-2 flex-shrink-0">
                     <img
                         src={s3ImageUrl(
                             otherUserInfo.avatar,

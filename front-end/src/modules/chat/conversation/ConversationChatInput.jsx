@@ -9,9 +9,9 @@ const ConversationChatInput = ({ user_id, socket }) => {
     const [messageSend, setMessageSend] = useState("");
     const { conversationId, setConversationId } = useChat();
 
-    const onEnterPress = (e) => {
+    const onEnterPress = async (e) => {
         if (e.key === "Enter") {
-            handleSendMessage();
+            await handleSendMessage();
         }
     };
 
@@ -29,7 +29,6 @@ const ConversationChatInput = ({ user_id, socket }) => {
                 created_at: "",
             };
             socket.emit("message", message);
-            console.log("Emit message successfully");
             setMessageSend("");
         } else {
             const message = {
@@ -39,7 +38,6 @@ const ConversationChatInput = ({ user_id, socket }) => {
                 created_at: "",
             };
             socket.emit("message", message);
-            console.log("Emit message successfully");
             setMessageSend("");
         }
     };

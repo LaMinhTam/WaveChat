@@ -1,25 +1,17 @@
-import { fromUnixTime } from "date-fns";
 import moment from "moment-timezone";
 export default function formatDate(timestamp) {
     if (!timestamp) return;
     else {
-        if (typeof timestamp === "string" && timestamp.includes("/")) {
-            let dateParts = timestamp.split("/").reverse();
-            let formattedDate = new Date(dateParts.join("/"));
-            return formattedDate;
-        } else if (typeof timestamp === "number") {
-            // Convert the timestamp to seconds
-            const date = fromUnixTime(timestamp / 1000);
-            // Convert the Date object to Vietnam time
-            const vietnamTime = moment(date).tz("Asia/Ho_Chi_Minh");
-            // Format the date and time
-            const formattedDate = vietnamTime.format("DD/MM/YYYY HH:mm");
+        const date = moment(timestamp).tz("Asia/Ho_Chi_Minh");
+        let hours = date.hours();
+        let minutes = date.minutes();
 
-            // Split the formatted date into date and time
-            const [datePart, timePart] = formattedDate.split(" ");
+        // Pad the minutes and hours with 0s on the left if they are less than 10
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
 
-            return { date: datePart, time: timePart };
-        }
+        const timeString = `${hours}:${minutes}`;
+        return timeString;
     }
 }
 

@@ -22,6 +22,7 @@ const CreateGroupChatModal = () => {
             const res = await axiosPrivate.post("/conversation-group/create", {
                 name: groupChatName,
                 member_ids,
+                background: "abc.jpg",
             });
             dispatch(setId(res.data.data.conversation_id));
             setGroupChatName("");
