@@ -14,6 +14,7 @@ const DashboardPage = () => {
     );
     const dispatch = useDispatch();
     const currentTab = useSelector((state) => state.chat.currentTab);
+    const id = useSelector((state) => state.conversation.id);
     useEffect(() => {
         async function fetchData() {
             try {
@@ -26,7 +27,7 @@ const DashboardPage = () => {
             }
         }
         fetchData();
-    }, [dispatch]);
+    }, [dispatch, id]);
     return (
         <RequiredAuthPage>
             {/* <DashboardWelcome /> */}

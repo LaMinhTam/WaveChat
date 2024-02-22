@@ -24,6 +24,12 @@ const useClickOutSide = (dom = "button") => {
             if (e.target.closest(".btn_showUpdateAvatar")) {
                 return;
             }
+            if (e.target.closest(".btn-remove__checked")) {
+                return;
+            }
+            if (e.target.closest(".input-checkbox")) {
+                return;
+            }
             if (
                 nodeRef.current &&
                 !nodeRef.current.contains(e.target) &&

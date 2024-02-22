@@ -6,26 +6,36 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserId } from "../../utils/auth";
 import { setActiveName, setShowConversation } from "../../store/commonSlice";
 import { setFriendInfo } from "../../store/userSlice";
+import formatTime from "../../utils/formatTime";
 
 const Member = ({ user }) => {
+    console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
     const current_userId = getUserId();
     const dispatch = useDispatch();
     const checkMemberInConversation = user.members.find(
-        (member) => member._id === current_userId
+        (member) => member === current_userId
     );
     const activeName = useSelector((state) => state.common.activeName);
-    if (!user || !checkMemberInConversation) return null;
-    const otherUser = user.members.find(
+    const otherUserId = user.members.find(
         (member) => member._id !== current_userId
     );
-    const isActive = otherUser.full_name === activeName;
+
+    const otherUserInfo = {
+        _id: otherUserId,
+        avatar: user.avatar,
+        full_name: user.name,
+    };
+
+    const isActive = otherUserInfo.full_name === activeName;
 
     const handleClickedMember = () => {
-        dispatch(setFriendInfo(otherUser));
+        dispatch(setFriendInfo(otherUserInfo));
         dispatch(setShowConversation(true));
-        dispatch(setActiveName(otherUser.full_name));
+        dispatch(setActiveName(otherUserInfo.full_name));
     };
+    const message = user.last_message.message;
+    if (!user || !checkMemberInConversation) return null;
 
     return (
         <div
@@ -39,23 +49,30 @@ const Member = ({ user }) => {
             <div className="flex items-center justify-center gap-x-3">
                 <div className="w-[48px] h-[48px] rounded-full ml-2">
                     <img
-                        src={s3ImageUrl(otherUser.avatar, otherUser._id)}
+                        src={s3ImageUrl(
+                            otherUserInfo.avatar,
+                            otherUserInfo._id
+                        )}
                         alt=""
                         className="object-cover w-full h-full rounded-full"
                     />
                 </div>
                 <div className="flex flex-col">
                     <span className="text-sm font-bold">
-                        {otherUser.full_name}
+                        {otherUserInfo.full_name}
                     </span>
-                    <span className="text-sm text-text3">Hello</span>
+                    <span className="text-sm text-text3 line-clamp-1">
+                        {message}
+                    </span>
                 </div>
             </div>
-            <div className="pb-3 pr-3 ml-auto">
+            <div className="flex-shrink-0 pb-3 pr-3 ml-auto">
                 {isHover ? (
                     <IconHorizontalMore />
                 ) : (
-                    <span className="text-sm">3 giờ</span>
+                    <span className="text-sm">
+                        {formatTime(user.updated_at)}
+                    </span>
                 )}
             </div>
         </div>

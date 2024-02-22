@@ -1,8 +1,10 @@
 import { useSelector } from "react-redux";
 import { IconAddGroup, IconAddUser, IconSearch } from "../../components/icons";
+import { useChat } from "../../contexts/chat-context";
 
 const DashboardSearch = () => {
     const currentTab = useSelector((state) => state.chat.currentTab);
+    const { setShowCreateGroupChat, showCreateGroupChat } = useChat();
     return (
         <div className="flex flex-col min-w-[334px] w-full border border-text4">
             <div className="flex flex-col w-full pl-4">
@@ -21,7 +23,13 @@ const DashboardSearch = () => {
                         <button className="w-[32px] h-[32px] flex items-center justify-center">
                             <IconAddUser />
                         </button>
-                        <button className="w-[32px] h-[32px] flex items-center justify-center">
+                        <button
+                            className="w-[32px] h-[32px] flex items-center justify-center"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowCreateGroupChat(!showCreateGroupChat);
+                            }}
+                        >
                             <IconAddGroup />
                         </button>
                     </div>

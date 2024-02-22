@@ -5,7 +5,7 @@ import ProfileDetailsModal from "./ProfileDetailsModal";
 import CreateGroupChatModal from "./CreateGroupChatModal";
 
 const Modal = () => {
-    const { show, showProfileDetails } = useChat();
+    const { show, showProfileDetails, showCreateGroupChat } = useChat();
     return (
         <>
             <ReactModal
@@ -25,7 +25,7 @@ const Modal = () => {
                 <ProfileDetailsModal />
             </ReactModal>
             <ReactModal
-                isOpen={true}
+                isOpen={showCreateGroupChat}
                 overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
                 flex justify-center items-center"
                 className="modal-content w-full max-w-[520px] bg-white rounded outline-none relative"

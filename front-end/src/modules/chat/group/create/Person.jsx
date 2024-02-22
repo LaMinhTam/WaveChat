@@ -19,7 +19,7 @@ const Person = ({
                         name={inputName}
                         type="checkbox"
                         checked={isChecked}
-                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-secondary focus:ring-secondary"
+                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded input-checkbox text-secondary focus:ring-secondary"
                         onChange={onClick}
                     />
                     <label
@@ -54,7 +54,7 @@ const Person = ({
                         </span>
                     </div>
                     <button
-                        className="w-[18px] h-[18px] flex items-center justify-center bg-secondary rounded-full flex-shrink-0 text-lite"
+                        className="btn-remove__checked w-[18px] h-[18px] flex items-center justify-center bg-secondary rounded-full flex-shrink-0 text-lite"
                         onClick={onClick}
                     >
                         <IconClose />
