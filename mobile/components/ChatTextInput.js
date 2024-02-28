@@ -107,7 +107,7 @@ const ChatTextInput = ({accessTokens}) => {
       type: type,
       created_at: new Date().getTime(),
     };
-    socket.emit('message-text', message);
+    socket.emit('message', message);
   };
   return (
     <View
