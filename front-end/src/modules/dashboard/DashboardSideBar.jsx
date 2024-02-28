@@ -8,6 +8,7 @@ import {
 } from "../../components/icons";
 import { useChat } from "../../contexts/chat-context";
 import { setCurrentTab } from "../../store/chatSlice";
+import s3ImageUrl from "../../utils/s3ImageUrl";
 
 const sidebarLinks = [
     {
@@ -41,6 +42,7 @@ const DashboardSideBar = () => {
     const dispatch = useDispatch();
     const { setShow } = useChat();
     const currentTab = useSelector((state) => state.chat.currentTab);
+    const userProfile = useSelector((state) => state.user.userProfile);
     return (
         <div className="flex flex-col w-[64px] min-h-screen items-center bg-primary text-lite">
             {sidebarLinks.map((item) => {
@@ -55,7 +57,10 @@ const DashboardSideBar = () => {
                                 }}
                             >
                                 <img
-                                    src="https://source.unsplash.com/random"
+                                    src={s3ImageUrl(
+                                        userProfile?.avatar,
+                                        userProfile?._id
+                                    )}
                                     alt="profile"
                                     className="object-cover w-full h-full rounded-full"
                                 />

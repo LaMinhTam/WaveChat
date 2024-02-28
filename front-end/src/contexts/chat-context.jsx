@@ -5,10 +5,20 @@ const ChatContext = React.createContext();
 
 export function ChatProvider(props) {
     const { show, setShow, nodeRef } = useClickOutSide();
+    const [conversationId, setConversationId] = React.useState("");
+    const [message, setMessage] = React.useState([]);
+    // This code to save the selected person when create group chat
+    const [selectedList, setSelectedList] = React.useState([]);
     const {
         show: showProfileDetails,
         setShow: setShowProfileDetails,
         nodeRef: profileDetailsRef,
+    } = useClickOutSide();
+
+    const {
+        show: showCreateGroupChat,
+        setShow: setShowCreateGroupChat,
+        nodeRef: groupChatRef,
     } = useClickOutSide();
     const contextValues = {
         show,
@@ -17,6 +27,15 @@ export function ChatProvider(props) {
         showProfileDetails,
         setShowProfileDetails,
         profileDetailsRef,
+        conversationId,
+        setConversationId,
+        message,
+        setMessage,
+        showCreateGroupChat,
+        setShowCreateGroupChat,
+        groupChatRef,
+        selectedList,
+        setSelectedList,
     };
     return (
         <ChatContext.Provider

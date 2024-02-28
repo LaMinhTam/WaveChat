@@ -1,16 +1,18 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit'
-import commonSlice from './commonSlice'
-import userSlice from './userSlice'
-import chatSlice from './chatSlice'
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import commonSlice from "./commonSlice";
+import userSlice from "./userSlice";
+import chatSlice from "./chatSlice";
+import conversationSlice from "./conversationSlice";
 
 const reducer = combineReducers({
-	common: commonSlice,
-	user: userSlice,
-	chat: chatSlice,
-})
+    common: commonSlice,
+    user: userSlice,
+    chat: chatSlice,
+    conversation: conversationSlice,
+});
 
 const store = configureStore({
-	reducer,
-})
+    reducer,
+});
 
-export default store
+export default store;

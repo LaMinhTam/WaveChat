@@ -1,21 +1,38 @@
 // import DashboardWelcome from "../modules/dashboard/DashboardWelcome";
-import { useSelector } from 'react-redux'
-import { useTabFriendsContext } from '../contexts/TabFriendsContext'
-import Conversation from '../modules/chat/Conversation'
-import Friends from '../modules/friends/Friends'
-import FriendRequest from '../modules/friends/components/FriendRequest'
-import RequiredAuthPage from './RequiredAuthPage'
+import { useDispatch, useSelector } from "react-redux";
+import RequiredAuthPage from "./RequiredAuthPage";
+import Conversation from "../modules/chat/conversation/Conversation";
+import { useEffect } from "react";
+import fetchCurrentUserFriends from "../api/fetchCurrentUserFriends";
+import { setListFriend } from "../store/userSlice";
+import fetchConversations from "../api/fetchConversations";
+import { setConversations } from "../store/conversationSlice";
 
 const DashboardPage = () => {
-	const { currentTabFriend, setCurrentTabFriend } = useTabFriendsContext()
-	const currentTab = useSelector((state) => state.chat.currentTab)
-
-	return (
-		<RequiredAuthPage>
-			{/* <DashboardWelcome /> */}
-			{/* <Conversation /> */}
-			{currentTab === 'Contact' && <Friends />}
-		</RequiredAuthPage>
-	)
-}
-export default DashboardPage
+    const showConversation = useSelector(
+        (state) => state.common.showConversation
+    );
+    const dispatch = useDispatch();
+    const currentTab = useSelector((state) => state.chat.currentTab);
+    const id = useSelector((state) => state.conversation.id);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const friends = await fetchCurrentUserFriends();
+                dispatch(setListFriend(friends));
+                const conversations = await fetchConversations();
+                dispatch(setConversations(conversations));
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
+    }, [dispatch, id]);
+    return (
+        <RequiredAuthPage>
+            {/* <DashboardWelcome /> */}
+            {currentTab === "Chat" && showConversation && <Conversation />}
+        </RequiredAuthPage>
+    );
+};
+export default DashboardPage;

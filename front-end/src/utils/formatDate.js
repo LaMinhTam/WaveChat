@@ -1,8 +1,18 @@
-export default function formatDate(date) {
-    if (!date) return;
-    let dateParts = date.split("/").reverse();
-    let formattedDate = new Date(dateParts.join("/"));
-    return formattedDate;
+import moment from "moment-timezone";
+export default function formatDate(timestamp) {
+    if (!timestamp) return;
+    else {
+        const date = moment(timestamp).tz("Asia/Ho_Chi_Minh");
+        let hours = date.hours();
+        let minutes = date.minutes();
+
+        // Pad the minutes and hours with 0s on the left if they are less than 10
+        hours = hours < 10 ? "0" + hours : hours;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+
+        const timeString = `${hours}:${minutes}`;
+        return timeString;
+    }
 }
 
 export function formatBirthDay(date) {

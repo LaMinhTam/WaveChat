@@ -16,7 +16,6 @@ const UpdateProfileModal = () => {
     const [startDate, setStartDate] = useState(
         userProfile.birthday ? formatDate(userProfile.birthday) : new Date()
     );
-    console.log("UpdateProfileModal ~ startDate:", startDate);
     const [nickName, setNickName] = useState(userProfile.nick_name);
     const [gender, setGender] = useState(userProfile.gender);
     const { setShowProfileDetails } = useChat();
@@ -34,6 +33,7 @@ const UpdateProfileModal = () => {
 
     const handleUpdateProfile = async () => {
         const res = await axiosPrivate.post("/user/update", {
+            ...userProfile,
             nick_name: nickName,
             gender: gender,
             birthday: formatBirthDay(startDate),
