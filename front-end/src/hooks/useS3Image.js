@@ -11,16 +11,16 @@ const useS3Image = (setValue = () => {}, getValues = () => {}, cb = null) => {
     const dispatch = useDispatch();
 
     AWS.config.update({
-        accessKeyId: "AKIAZQ3DS6OMCMIHTFUR",
-        secretAccessKey: "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",
-        region: "ap-southeast-1",
+        accessKeyId: import.meta.env.VITE_S3_AccessKeyId,
+        secretAccessKey: import.meta.env.VITE_S3_SecretAccessKey,
+        region: import.meta.env.VITE_S3_Region,
     });
 
     const s3 = new AWS.S3();
 
     const handleUploadImage = (file) => {
         const params = {
-            Bucket: "wavechat",
+            Bucket: import.meta.env.VITE_S3_Bucket,
             Key: `images/${userProfile._id}/` + file.name,
             Body: file,
             ACL: "public-read",
@@ -51,7 +51,7 @@ const useS3Image = (setValue = () => {}, getValues = () => {}, cb = null) => {
     const handleDeleteImage = () => {
         const imageName = getValues("image_name") || userProfile.avatar;
         const params = {
-            Bucket: "wavechat",
+            Bucket: import.meta.env.VITE_S3_Bucket,
             Key: `images/${userProfile._id}/` + imageName,
         };
 

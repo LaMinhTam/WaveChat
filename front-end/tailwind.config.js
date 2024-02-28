@@ -5,7 +5,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                primary: ["Epilogue", "sans-serif;"],
+                primary: ["Poppins", "sans-serif;"],
             },
             colors: {
                 primary: "#1DC071",

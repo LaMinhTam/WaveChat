@@ -16,7 +16,7 @@ const SearchPerson = () => {
     const listFriend = useSelector((state) => state.user.listFriend);
     const [searchResult, setSearchResult] = useState([]);
     const [personList, setPersonList] = useState([]);
-    console.log("SearchPerson ~ personList:", personList);
+    // console.log("SearchPerson ~ personList:", personList);
     const conversations = useSelector(
         (state) => state.conversation.conversations
     );
@@ -168,7 +168,8 @@ const SearchPerson = () => {
             <div className="flex items-center px-4 py-2 border-t border-gray-300">
                 <ul className="px-3 pb-3 overflow-y-auto text-sm text-gray-700 h-[400px] dark:text-gray-200 mr-3 flex-1">
                     {searchResult &&
-                        searchResult.length > 1 &&
+                        isNaN(Number(searchValue)) &&
+                        searchResult.length >= 1 &&
                         searchResult.map((user) => (
                             <li key={uuidv4()}>
                                 <Person

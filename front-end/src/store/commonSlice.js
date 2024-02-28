@@ -9,8 +9,9 @@ const commonSlice = createSlice({
         showUpdateProfile: false,
         showUpdateAvatar: false,
         showConversation: false,
-        activeName: "",
         currentUserName: "",
+        activeConversation: "",
+        isSendFileLoading: false,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -41,13 +42,17 @@ const commonSlice = createSlice({
             ...state,
             showConversation: action.payload,
         }),
-        setActiveName: (state, action) => ({
-            ...state,
-            activeName: action.payload,
-        }),
         setCurrentUserName: (state, action) => ({
             ...state,
             currentUserName: action.payload,
+        }),
+        setActiveConversation: (state, action) => ({
+            ...state,
+            activeConversation: action.payload,
+        }),
+        setIsSendFileLoading: (state, action) => ({
+            ...state,
+            isSendFileLoading: action.payload,
         }),
     },
 });
@@ -59,7 +64,8 @@ export const {
     setShowUpdateProfile,
     setShowUpdateAvatar,
     setShowConversation,
-    setActiveName,
     setCurrentUserName,
+    setActiveConversation,
+    setIsSendFileLoading,
 } = commonSlice.actions;
 export default commonSlice.reducer;

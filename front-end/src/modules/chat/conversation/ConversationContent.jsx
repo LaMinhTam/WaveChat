@@ -1,9 +1,7 @@
 import { useChat } from "../../../contexts/chat-context";
 import { getUserId } from "../../../utils/auth";
 import groupMessages from "../../../utils/groupMessage";
-import s3ImageUrl from "../../../utils/s3ImageUrl";
-import MessageReceive from "./MessageReceive";
-import MessageSend from "./MessageSend";
+import Message from "./Message";
 import { v4 as uuidv4 } from "uuid";
 
 const ConversationContent = () => {
@@ -11,7 +9,7 @@ const ConversationContent = () => {
     const currentUserId = getUserId();
 
     const groupedMessages = groupMessages(message);
-    console.log("ConversationContent ~ groupedMessages:", groupedMessages);
+
     return (
         <div className="flex-1 w-full h-full max-h-[570px] overflow-y-auto custom-scrollbar bg-strock p-2">
             {groupedMessages.map((group) => (
@@ -21,16 +19,9 @@ const ConversationContent = () => {
                     </span>
                     {group.data.map((msg) =>
                         msg?.user_id === currentUserId ? (
-                            <MessageSend key={uuidv4()} msg={msg} />
+                            <Message key={uuidv4()} msg={msg} type="send" />
                         ) : (
-                            <MessageReceive
-                                key={uuidv4()}
-                                msg={msg}
-                                imageUrl={s3ImageUrl(
-                                    msg.user?.avatar,
-                                    msg.user?._id
-                                )}
-                            />
+                            <Message key={uuidv4()} msg={msg} type="receive" />
                         )
                     )}
                 </div>

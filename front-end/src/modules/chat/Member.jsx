@@ -4,24 +4,30 @@ import PropTypes from "prop-types";
 import s3ImageUrl from "../../utils/s3ImageUrl";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserId } from "../../utils/auth";
-import { setActiveName, setShowConversation } from "../../store/commonSlice";
+import {
+    setActiveConversation,
+    setShowConversation,
+} from "../../store/commonSlice";
 import { setFriendInfo } from "../../store/userSlice";
 import formatTime from "../../utils/formatTime";
 import { axiosPrivate } from "../../api/axios";
 import { useChat } from "../../contexts/chat-context";
 
 const Member = ({ user }) => {
+    console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
     const { setMessage } = useChat();
     const current_userId = getUserId();
     const dispatch = useDispatch();
-    const checkMemberInConversation = user.members.find(
-        (member) => member === current_userId
+    const activeConversation = useSelector(
+        (state) => state.common.activeConversation
     );
-    const activeName = useSelector((state) => state.common.activeName);
-    const otherUserId = user.members.find(
-        (member) => member._id !== current_userId
-    );
+    let otherUserId = null;
+    if (user.type === 2) {
+        otherUserId = user.members.find(
+            (member) => member._id !== current_userId
+        );
+    }
 
     const otherUserInfo = {
         _id: otherUserId,
@@ -29,7 +35,7 @@ const Member = ({ user }) => {
         full_name: user.name,
     };
 
-    const isActive = otherUserInfo.full_name === activeName;
+    const isActive = activeConversation === user._id;
 
     const handleClickedMember = async () => {
         try {
@@ -37,15 +43,15 @@ const Member = ({ user }) => {
             const data = res.data;
             data.reverse();
             setMessage(data);
+            dispatch(setActiveConversation(user._id));
             dispatch(setFriendInfo(otherUserInfo));
             dispatch(setShowConversation(true));
-            dispatch(setActiveName(otherUserInfo.full_name));
         } catch (error) {
             console.log(error);
         }
     };
-    const message = user.last_message.message;
-    if (!user || !checkMemberInConversation) return null;
+    const lastMessage = user.last_message;
+    if (!user) return null;
 
     return (
         <div
@@ -72,7 +78,7 @@ const Member = ({ user }) => {
                         {otherUserInfo.full_name}
                     </span>
                     <span className="text-sm text-text3 line-clamp-1">
-                        {message}
+                        {lastMessage.message}
                     </span>
                 </div>
             </div>
@@ -81,7 +87,7 @@ const Member = ({ user }) => {
                     <IconHorizontalMore />
                 ) : (
                     <span className="text-sm">
-                        {formatTime(user.updated_at)}
+                        {formatTime(lastMessage.updated_at || user.updated_at)}
                     </span>
                 )}
             </div>
