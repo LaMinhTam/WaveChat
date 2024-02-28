@@ -1,6 +1,6 @@
 import {View, Text, StyleSheet, PermissionsAndroid, Button} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {BACKGROUND_COLOR} from '../styles/styles';
+import {BACKGROUND_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
 import Contacts from 'react-native-contacts';
 import {getProfile} from '../apis/user';
 import {useAuth} from '../contexts/auth-context';
@@ -64,8 +64,9 @@ const PhoneContacts = () => {
       });
 
     contacts.forEach(contact => {
+      console.log(contact);
       contact.phone.forEach(async phone => {
-        console.log('doing');
+        // console.log(phone);
         //lack of api so this is waiting to implement
         // get user profile by the phone number, then if exist user with that phone number, add to an array
         // with the structure
@@ -82,7 +83,7 @@ const PhoneContacts = () => {
 
   return (
     <View style={styles.container}>
-      <Text>PhoneContacts</Text>
+      <Text style={{color: PRIMARY_TEXT_COLOR}}>PhoneContacts</Text>
     </View>
   );
 };

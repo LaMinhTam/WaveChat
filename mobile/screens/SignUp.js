@@ -9,27 +9,64 @@ import {
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {useAuth} from '../contexts/auth-context';
-import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {Login, authSignUp} from '../apis/authenApi';
+// import auth from '@react-native-firebase/auth';
 
 const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('+84886700046');
   const [username, setUsername] = useState('La Minh Tâm');
   const [password, setPassword] = useState('123456789');
-  const {setConfirmationResult, setValues, accessTokens} = useAuth();
-
-  useEffect(() => {
-    auth().signOut();
-    console.log(accessTokens.accessToken);
-  });
+  const {setConfirmationResult, setValues, setUserInfo} = useAuth();
 
   const handleSignUp = async () => {
     try {
-      confirm = await auth().signInWithPhoneNumber(phoneNumber);
-      setConfirmationResult(confirm);
-      setValues({name: username, phone: phoneNumber, password: password});
-      navigation.navigate('OTPScreen');
+      // confirm = await auth().signInWithPhoneNumber(phoneNumber);
+      // setConfirmationResult(confirm);
+      values = {name: username, phone: phoneNumber, password: password};
+      setValues(values);
+      createUser(values);
+      // navigation.navigate('OTPScreen');
     } catch (error) {
       console.error('Error signing up:', error);
+    }
+  };
+
+  createUser = async (values) => {
+    var {name, phone, password} = values;
+    const formattedPhoneNumber = '0' + phone.slice(3);
+    const data = await authSignUp(name, formattedPhoneNumber, password);
+    
+    if (data.status == 200) {
+      try {
+        const user = data.data;
+        setUserInfo(user);
+
+        firestore()
+          .collection('users')
+          .doc(user._id)
+          .set({
+            id: user._id,
+            name: user.full_name,
+            phone: user.phone,
+            password: user.password,
+            avatar: 'https://source.unsplash.com/random',
+            createdAt: user.created_at,
+          })
+          .then(() => {
+            console.log('User added!');
+          });
+
+        const logUser = await Login(user.phone, password);
+
+        navigation.navigate('GenderDOBSelectionScreen', {
+          accessToken: logUser.data.access_token,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (data.status == 400) {
+      Alert.alert('Lỗi', data.data.message);
     }
   };
 
