@@ -1,7 +1,7 @@
 import {View, Text, FlatList, Image} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {createConversation, getConversationDetail} from '../apis/conversation';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,7 +10,7 @@ import {TruncatedText} from '../utils/TruncatedText';
 import {useSocket} from '../contexts/SocketProvider';
 
 const PrivateChatScreen = ({navigation}) => {
-  const {userInfo, accessTokens} = useAuth();
+  const {userInfo, accessTokens} = useUserData();
   const {
     socket,
     currentConversation,

@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {updateProfile} from '../apis/user';
 
 const GenderDOBSelectionScreen = ({navigation, route}) => {
   const [selectedGender, setSelectedGender] = useState(0);
   const [selectedDOB, setSelectedDOB] = useState(new Date());
-  const {userInfo, setUserInfo, storeAccessToken} = useAuth();
+  const {userInfo, setUserInfo, storeAccessToken} = useUserData();
   const {accessToken} = route.params;
 
   const handleGenderSelection = gender => {

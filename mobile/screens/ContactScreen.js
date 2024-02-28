@@ -10,17 +10,16 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles';
 import {getFriends} from '../apis/user';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
 
 const Separator = () => <View style={styles.separator} />;
 
 const FriendScreen = ({navigation}) => {
-  const {accessTokens, userInfo} = useAuth();
+  const {accessTokens, userInfo, friends, setFriends} = useUserData();
   const {setCurrentConversation, conversations} = useSocket();
-  const [data, setData] = useState([]);
-  
+
   useEffect(() => {
     fetchFriends();
   }, []);
@@ -54,7 +53,7 @@ const FriendScreen = ({navigation}) => {
   const fetchFriends = async () => {
     try {
       const friendsData = await getFriends(4, accessTokens.accessToken);
-      setData(friendsData.data);
+      setFriends(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
     }
@@ -63,7 +62,7 @@ const FriendScreen = ({navigation}) => {
   const renderFriendsByCharacter = () => {
     const friendsByCharacter = {};
 
-    data.forEach(item => {
+    friends.forEach(item => {
       const firstChar = item.full_name[0].toUpperCase();
 
       if (!friendsByCharacter[firstChar]) {

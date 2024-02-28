@@ -3,14 +3,14 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {getProfile} from '../apis/user';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
   const [password, setPassword] = useState('123456789');
   const [errorMessage, setErrorMessage] = useState('');
-  const {setUserInfo, storeAccessToken} = useAuth();
+  const {setUserInfo, storeAccessToken} = useUserData();
 
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);

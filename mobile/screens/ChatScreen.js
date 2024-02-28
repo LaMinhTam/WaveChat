@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {useSocket} from '../contexts/SocketProvider';
 import {getConversationDetail} from '../apis/conversation';
 import Message from '../components/Message';
 import ChatTextInput from '../components/ChatTextInput';
 
 const PrivateChatScreen = ({navigation}) => {
-  const {userInfo, accessTokens} = useAuth();
+  const {userInfo, accessTokens} = useUserData();
   const {currentConversation, messages, setMessages} = useSocket();
   const [users, setUsers] = useState([]);
 

@@ -5,11 +5,11 @@ import UserInformationScreen from '../screens/UserInformationScreen';
 import {createStackNavigator} from '@react-navigation/stack';
 import {globalScreenOptions} from '../styles';
 import UserModificationScreen from '../screens/UserModificationScreen';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
-  const {userInfo} = useAuth();
+  const {userInfo} = useUserData();
 
   return (
     <Stack.Navigator screenOptions={globalScreenOptions}>

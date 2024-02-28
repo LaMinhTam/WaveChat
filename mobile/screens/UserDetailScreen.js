@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {
   BACKGROUND_COLOR,
   PRIMARY_TEXT_COLOR,
@@ -17,7 +17,7 @@ import {
 } from '../styles/styles';
 
 const UserDetailScreen = ({navigation}) => {
-  const {userInfo} = useAuth();
+  const {userInfo} = useUserData();
 
   const getGender = () => {
     return userInfo.gender === 0 ? 'Nam' : 'Nữ';

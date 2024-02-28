@@ -1,13 +1,13 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import io from 'socket.io-client';
 import HOST_IP from '../apis/host';
-import {useAuth} from './auth-context';
+import {useUserData} from './auth-context';
 
 const SocketContext = createContext();
 
 export const SocketProvider = ({children}) => {
   const [socket, setSocket] = useState(null);
-  const {userInfo} = useAuth();
+  const {userInfo} = useUserData();
   const [currentConversation, setCurrentConversation] = useState({});
   const [conversations, setConversations] = useState([
     {

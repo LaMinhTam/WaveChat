@@ -10,4 +10,9 @@ export const waveChatApi = {
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
+  sendFriendRequest: id => `${waveChatEndpoint}/friend/send?_id=${id}`,
+  acceptFriendRequest: id => `${waveChatEndpoint}/friend/accept?_id=${id}`,
+  revokeFriendRequest: id =>
+    `${waveChatEndpoint}/friend/remove-request?_id=${id}`,
+  removeFriend: id => `${waveChatEndpoint}/friend/remove-friend?_id=${id}`,
 };

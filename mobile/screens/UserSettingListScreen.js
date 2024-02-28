@@ -7,11 +7,11 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {MAIN_COLOR, PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 
 const UserSettingListScreen = ({navigation}) => {
-  const {userInfo} = useAuth();
+  const {userInfo} = useUserData();
   const listData = [
     {id: 1, title: 'Thông tin'},
     {id: 2, title: 'Đổi ảnh đại diện'},

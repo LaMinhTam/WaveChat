@@ -5,13 +5,13 @@ import {PRIMARY_TEXT_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
 import {createConversation} from '../apis/conversation';
 import ImagePicker from 'react-native-image-crop-picker';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
 import DocumentPicker from 'react-native-document-picker';
 
 const ChatTextInput = ({accessTokens}) => {
   const [newMessage, setNewMessage] = useState('');
-  const {userInfo} = useAuth();
+  const {userInfo} = useUserData();
   const {
     socket,
     currentConversation,

@@ -1,13 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {getFriends} from '../apis/user';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {
   BACKGROUND_COLOR,
   PRIMARY_TEXT_COLOR,
   SECONDARY_TEXT_COLOR,
   SECOND_COLOR,
 } from '../styles/styles';
+import {
+  acceptFriendRequest,
+  removeFriend,
+  revokeFriendRequest,
+} from '../apis/friend';
 
 const formatDate = timestamp => {
   const createdAt = new Date(timestamp);
@@ -34,7 +39,7 @@ const formatDate = timestamp => {
 };
 
 const ReceiveFriendRequest = ({navigation}) => {
-  const {accessTokens} = useAuth();
+  const {accessTokens, setFriends} = useUserData();
   const [friendsData, setFriendsData] = useState([]);
 
   useEffect(() => {
@@ -69,28 +74,46 @@ const ReceiveFriendRequest = ({navigation}) => {
         </View>
         <View style={styles.buttonsColumn}>
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleReject(friend)}>
-            <Text style={styles.buttonText}>TỪ CHỐI</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             style={[styles.button, styles.approveButton]}
             onPress={() => handleAccept(friend)}>
             <Text style={[styles.buttonText, styles.approveText]}>ĐỒNG Ý</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleReject(friend)}>
+            <Text style={styles.buttonText}>TỪ CHỐI</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   };
 
-  const handleReject = friend => {
+  const handleReject = async friend => {
     // Implement reject logic
-    console.log(friend);
+    const data = await removeFriend(friend.user_id, accessTokens.accessToken);
+    if (data.status === 200) {
+      setFriendsData(
+        friendsData.filter(
+          currentFriend => currentFriend.user_id !== friend.user_id,
+        ),
+      );
+    }
   };
 
-  const handleAccept = friend => {
-    // Implement accept logic
-    console.log(friend);
+  const handleAccept = async friend => {
+    // Implement accept api
+    const data = await acceptFriendRequest(
+      friend.user_id,
+      accessTokens.accessToken,
+    );
+    if (data.status === 200) {
+      setFriendsData(
+        friendsData.filter(
+          currentFriend => currentFriend.user_id !== friend.user_id,
+        ),
+      );
+      setFriends(prevFriend => [...prevFriend, friend]);
+    }
   };
 
   return (
@@ -105,7 +128,7 @@ const ReceiveFriendRequest = ({navigation}) => {
 };
 
 const SendFriendRequest = ({navigation}) => {
-  const {accessTokens} = useAuth();
+  const {accessTokens} = useUserData();
   const [friendsData, setFriendsData] = useState([]);
 
   useEffect(() => {
@@ -150,9 +173,19 @@ const SendFriendRequest = ({navigation}) => {
     );
   };
 
-  const handleRevoke = friend => {
+  const handleRevoke = async friend => {
     // Implement reject logic
-    console.log(friend);
+    const data = await revokeFriendRequest(
+      friend.user_id,
+      accessTokens.accessToken,
+    );
+    if (data.status === 200) {
+      setFriendsData(
+        friendsData.filter(
+          currentFriend => currentFriend.user_id !== friend.user_id,
+        ),
+      );
+    }
   };
 
   return (
@@ -199,7 +232,7 @@ const styles = StyleSheet.create({
     color: SECONDARY_TEXT_COLOR,
   },
   buttonsColumn: {
-    flexDirection: 'row',
+    gap: 10,
   },
   button: {
     marginLeft: 10,

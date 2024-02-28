@@ -11,13 +11,13 @@ import {
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {updateProfile} from '../apis/user';
 import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 
 const UserModificationScreen = ({navigation}) => {
-  const {userInfo, setUserInfo, accessTokens} = useAuth();
+  const {userInfo, setUserInfo, accessTokens} = useUserData();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {

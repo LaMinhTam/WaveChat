@@ -3,11 +3,11 @@ import React, {useEffect, useState} from 'react';
 import {BACKGROUND_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
 import Contacts from 'react-native-contacts';
 import {getProfile} from '../apis/user';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 
 const PhoneContacts = () => {
   const [contacts, setContacts] = useState([]);
-  const {accessTokens} = useAuth();
+  const {accessTokens} = useUserData();
 
   const requestContactsPermission = async () => {
     try {

@@ -10,11 +10,11 @@ import {
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 
 const UserInformationScreen = ({navigation}) => {
-  const {userInfo} = useAuth();
+  const {userInfo} = useUserData();
 
   const navigateBack = () => {
     navigation.goBack();

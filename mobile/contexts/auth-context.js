@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext();
 
-export function AuthProvider(props) {
+export function UserDataProvider(props) {
   const [values, setValues] = React.useState({
     name: '',
     phone: '',
@@ -13,8 +13,9 @@ export function AuthProvider(props) {
   });
 
   const [userInfo, setUserInfo] = React.useState('');
-  const [confirmationResult, setConfirmationResult] = React.useState(null); // Add this line
+  const [confirmationResult, setConfirmationResult] = React.useState(null);
   const [accessTokens, setAccessTokens] = React.useState({});
+  const [friends, setFriends] = React.useState([]);
 
   React.useEffect(() => {
     onAuthStateChanged(auth, user => {
@@ -39,6 +40,8 @@ export function AuthProvider(props) {
     userInfo,
     setValues,
     setUserInfo,
+    friends,
+    setFriends,
     confirmationResult,
     setConfirmationResult,
     accessTokens,
@@ -52,7 +55,7 @@ export function AuthProvider(props) {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useAuth() {
+export function useUserData() {
   const context = React.useContext(AuthContext);
   if (typeof context === 'undefined')
     throw new Error('useAuth must be used within AuthProvider');

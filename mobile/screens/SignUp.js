@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import firestore from '@react-native-firebase/firestore';
 import {Login, authSignUp} from '../apis/authenApi';
 // import auth from '@react-native-firebase/auth';
@@ -17,7 +17,7 @@ const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('+84886700046');
   const [username, setUsername] = useState('La Minh Tâm');
   const [password, setPassword] = useState('123456789');
-  const {setConfirmationResult, setValues, setUserInfo} = useAuth();
+  const {setConfirmationResult, setValues, setUserInfo} = useUserData();
 
   const handleSignUp = async () => {
     try {
@@ -32,11 +32,11 @@ const SignUp = ({navigation}) => {
     }
   };
 
-  createUser = async (values) => {
+  createUser = async values => {
     var {name, phone, password} = values;
     const formattedPhoneNumber = '0' + phone.slice(3);
     const data = await authSignUp(name, formattedPhoneNumber, password);
-    
+
     if (data.status == 200) {
       try {
         const user = data.data;

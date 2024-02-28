@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import auth from '@react-native-firebase/auth';
 import {Login, authSignUp} from '../apis/authenApi';
 import firestore from '@react-native-firebase/firestore';
@@ -17,7 +17,7 @@ const OTPScreen = ({navigation}) => {
   const [resendTimer, setResendTimer] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(false);
   const timerIntervalRef = useRef(null);
-  const {confirmationResult, values, setUserInfo} = useAuth();
+  const {confirmationResult, values, setUserInfo} = useUserData();
 
   useEffect(() => {
     timerIntervalRef.current = setInterval(() => {
