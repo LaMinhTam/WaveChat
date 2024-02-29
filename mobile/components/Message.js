@@ -1,23 +1,22 @@
-import React, {useState} from 'react';
-import {View, Text, Image, Modal, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {View, Text, Image} from 'react-native';
 import {TruncatedText} from '../utils/TruncatedText';
 import MessageImage from './MessageImage';
 import MessageFile from './MessageFile';
 
-const formatTime = time => {
-  return (
-    new Date(time).toLocaleTimeString('vi-VN', {
-      hour: '2-digit',
-      minute: '2-digit',
-    }) +
-    ' ' +
-    new Date(time).toLocaleDateString('vi-VN')
-  );
-};
+const Message = ({item, userInfo}) => {
+  const formatTime = time => {
+    return (
+      new Date(time).toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }) +
+      ' ' +
+      new Date(time).toLocaleDateString('vi-VN')
+    );
+  };
 
-const Message = ({item, userInfo, users}) => {
-  const sender = users.find(user => user._id === item.user_id);
-  const isCurrentUser = item.user_id === userInfo._id;
+  const isCurrentUser = item.user._id === userInfo._id;
 
   const renderContent = () => {
     switch (item.type) {
@@ -42,7 +41,7 @@ const Message = ({item, userInfo, users}) => {
       }}>
       {!isCurrentUser && (
         <Image
-          source={{uri: sender?.avatar}}
+          source={{uri: item.user.avatar}}
           style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
         />
       )}
@@ -65,7 +64,7 @@ const Message = ({item, userInfo, users}) => {
       </View>
       {isCurrentUser && (
         <Image
-          source={{uri: sender?.avatar}}
+          source={{uri: item.user.avatar}}
           style={{width: 40, height: 40, borderRadius: 20, marginLeft: 10}}
         />
       )}

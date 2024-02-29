@@ -5,10 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  SafeAreaView,
 } from 'react-native';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-import FeatherIcon from 'react-native-vector-icons/Feather';
 import {useUserData} from '../contexts/auth-context';
 import {
   BACKGROUND_COLOR,

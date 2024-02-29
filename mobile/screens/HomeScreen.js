@@ -1,11 +1,26 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSocket} from '../contexts/SocketProvider';
+import {getConversations} from '../apis/conversation';
 
 const HomeScreen = ({navigation}) => {
-  const {conversations} = useSocket();
+  const {conversations, setConversations, setCurrentConversation} = useSocket();
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const conversation = await getConversations(user.access_token);
+        setConversations(conversation.data);
+      } catch (error) {
+        console.error('Error fetching conversations:', error);
+      }
+    };
+
+    fetchConversations();
+  }, []);
+
   const formatLastActivity = timestamp => {
     const now = new Date();
     const activityDate = new Date(timestamp);
@@ -36,10 +51,11 @@ const HomeScreen = ({navigation}) => {
     <ScrollView contentContainerStyle={styles.container}>
       {conversations.map(conversation => (
         <TouchableOpacity
-          key={conversation.conversation_id}
+          key={conversation._id}
           style={styles.conversationRow}
           onPress={() => {
-            navigation.navigate('ChatScreen', conversation);
+            setCurrentConversation(conversation);
+            navigation.navigate('ChatScreen');
           }}>
           <Image
             style={styles.avatar}

@@ -5,13 +5,11 @@ import {PRIMARY_TEXT_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
 import {createConversation} from '../apis/conversation';
 import ImagePicker from 'react-native-image-crop-picker';
-import {useUserData} from '../contexts/auth-context';
 import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
 import DocumentPicker from 'react-native-document-picker';
 
-const ChatTextInput = ({accessTokens}) => {
+const ChatTextInput = ({accessTokens, memberId}) => {
   const [newMessage, setNewMessage] = useState('');
-  const {userInfo} = useUserData();
   const {
     socket,
     currentConversation,
@@ -19,7 +17,7 @@ const ChatTextInput = ({accessTokens}) => {
     setConversations,
   } = useSocket();
 
-  const createOrUpdateConversation = async (memberId, accessToken) => {
+  const getConversationId = async accessToken => {
     if (!currentConversation.conversation_id) {
       const newConversation = await createConversation(memberId, accessToken);
 
@@ -40,26 +38,17 @@ const ChatTextInput = ({accessTokens}) => {
   };
 
   const handleSendMessage = async () => {
-    let conversationID = await createOrUpdateConversation(
-      currentConversation.members[1]._id,
-      accessTokens.accessToken,
-    );
+    let conversationID = await getConversationId(accessTokens.accessToken);
 
-    try {
-      handleMessage(conversationID, newMessage, 1);
-      setNewMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-      Alert.alert('Error', 'Failed to send message');
-    }
+    handleMessage(conversationID, newMessage, 1);
+    setNewMessage('');
   };
 
   const handleSelectImage = () => {
     ImagePicker.openPicker({multiple: true, cropping: false})
-      .then(async images => {
+      .then(images => {
         images.map(async image => {
-          let conversationID = await createOrUpdateConversation(
-            currentConversation.members[1]._id,
+          let conversationID = await getConversationId(
             accessTokens.accessToken,
           );
 
@@ -82,10 +71,7 @@ const ChatTextInput = ({accessTokens}) => {
         allowMultiSelection: true,
       });
       results.forEach(async file => {
-        let conversationID = await createOrUpdateConversation(
-          currentConversation.members[1]._id,
-          accessTokens.accessToken,
-        );
+        let conversationID = await getConversationId(accessTokens.accessToken);
 
         await uploadFileToS3(file, conversationID);
 
@@ -114,7 +100,6 @@ const ChatTextInput = ({accessTokens}) => {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
         backgroundColor: SECOND_COLOR,
       }}>
       <TextInput

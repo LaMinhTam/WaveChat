@@ -7,8 +7,10 @@ export const waveChatApi = {
   getProfile: id => `${waveChatEndpoint}/user/profile?_id=${id}`,
   updateProfile: () => `${waveChatEndpoint}/user/update`,
   getFriends: type => `${waveChatEndpoint}/friend?type=${type}`,
+  getConversations: () => `${waveChatEndpoint}/conversation`,
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
+  getMessages: id => `${waveChatEndpoint}/message/${id}`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
   sendFriendRequest: id => `${waveChatEndpoint}/friend/send?_id=${id}`,
   acceptFriendRequest: id => `${waveChatEndpoint}/friend/accept?_id=${id}`,

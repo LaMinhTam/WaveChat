@@ -1,5 +1,5 @@
 import {View, Text, FlatList, Image} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createConversation, getConversationDetail} from '../apis/conversation';
 import {useUserData} from '../contexts/auth-context';
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';

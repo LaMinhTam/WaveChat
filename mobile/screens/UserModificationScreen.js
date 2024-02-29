@@ -4,13 +4,10 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Button,
   Image,
-  ImageBackground,
   TextInput,
 } from 'react-native';
 import {RadioButton} from 'react-native-paper';
-import EntypoIcon from 'react-native-vector-icons/Entypo';
 import {useUserData} from '../contexts/auth-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {updateProfile} from '../apis/user';
@@ -50,7 +47,6 @@ const UserModificationScreen = ({navigation}) => {
     if (data.status === 200) {
       navigation.goBack();
     }
-    // setAccessTokens({...accessTokens, userInfo: data.data});
   };
 
   return (
