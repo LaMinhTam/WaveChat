@@ -10,7 +10,7 @@ export const SocketProvider = ({children}) => {
   const {userInfo} = useUserData();
   const [currentConversation, setCurrentConversation] = useState({});
   const [conversations, setConversations] = useState([]);
-  const [messages, setMessages] = useState([{}]);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const user = userInfo;
