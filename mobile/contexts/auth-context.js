@@ -1,6 +1,6 @@
-import {onAuthStateChanged} from 'firebase/auth';
+// import {onAuthStateChanged} from 'firebase/auth';
 import React from 'react';
-import {auth} from '../utils/firebaseConfig';
+// import {auth} from '../utils/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AuthContext = React.createContext();
@@ -17,11 +17,11 @@ export function UserDataProvider(props) {
   const [accessTokens, setAccessTokens] = React.useState({});
   const [friends, setFriends] = React.useState([]);
 
-  React.useEffect(() => {
-    onAuthStateChanged(auth, user => {
-      setUserInfo(user);
-    });
-  }, []);
+  // React.useEffect(() => {
+  //   onAuthStateChanged(auth, user => {
+  //     setUserInfo(user);
+  //   });
+  // }, []);
 
   const storeAccessToken = async (userId, token) => {
     try {

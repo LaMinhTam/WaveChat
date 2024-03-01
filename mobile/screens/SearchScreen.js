@@ -12,7 +12,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {findUserByPhoneNumber} from '../apis/user';
 import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 import {RenderView} from '../components/RenderView';
-import {set} from 'firebase/database';
 
 const SearchScreen = ({navigation}) => {
   const {accessTokens} = useUserData();
