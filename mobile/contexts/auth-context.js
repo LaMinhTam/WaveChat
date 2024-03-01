@@ -58,6 +58,6 @@ export function UserDataProvider(props) {
 export function useUserData() {
   const context = React.useContext(AuthContext);
   if (typeof context === 'undefined')
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error('useUserData must be used within AuthProvider');
   return context;
 }

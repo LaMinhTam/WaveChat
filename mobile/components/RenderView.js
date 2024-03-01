@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
+import {MAIN_COLOR} from '../styles/styles';
 const RenderView = ({user, phoneNumber}) => {
   if (phoneNumber.length < 10) {
     return (

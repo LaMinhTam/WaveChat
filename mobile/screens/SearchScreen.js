@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useAuth} from '../contexts/auth-context';
+import {useUserData} from '../contexts/auth-context';
 import {
   View,
   TextInput,
@@ -11,11 +11,11 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {findUserByPhoneNumber} from '../apis/user';
 import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
-import {RenderView} from '../screens/RenderView';
+import {RenderView} from '../components/RenderView';
 import {set} from 'firebase/database';
 
 const SearchScreen = ({navigation}) => {
-  const {accessTokens} = useAuth();
+  const {accessTokens} = useUserData();
   const [user, setUser] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
 
@@ -47,7 +47,7 @@ const SearchScreen = ({navigation}) => {
           <Icon name="arrow-left" size={24} color="#fff"></Icon>
         </TouchableOpacity>
         <View style={{flex: 1}}>
-          <TouchableOpacity
+          <View
             style={{
               flex: 1,
               flexDirection: 'row',
@@ -80,10 +80,10 @@ const SearchScreen = ({navigation}) => {
                 }
               }}
             />
-          </TouchableOpacity>
+          </View>
         </View>
         <TouchableOpacity style={styles.touchAble}>
-          <Icon name="qrcode" size={34} color="#fff" />
+          <Icon name="qrcode" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
       <RenderView user={user} phoneNumber={phoneNumber} />
