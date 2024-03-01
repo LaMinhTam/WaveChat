@@ -18,7 +18,7 @@ const UserDetailScreen = ({navigation}) => {
   const {userInfo} = useUserData();
 
   const getGender = () => {
-    return userInfo.gender === 0 ? 'Nam' : 'Nữ';
+    return userInfo.gender === 1 ? 'Nam' : 'Nữ';
   };
 
   const navigateModificationScreen = () => {
