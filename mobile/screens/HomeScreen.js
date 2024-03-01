@@ -4,14 +4,16 @@ import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSocket} from '../contexts/SocketProvider';
 import {getConversations} from '../apis/conversation';
+import {useUserData} from '../contexts/auth-context';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
+  const {accessTokens} = useUserData();
 
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const conversation = await getConversations(user.access_token);
+        const conversation = await getConversations(accessTokens.accessToken);
         setConversations(conversation.data);
       } catch (error) {
         console.error('Error fetching conversations:', error);

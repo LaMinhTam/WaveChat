@@ -15,15 +15,12 @@ const SignIn = () => {
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
     const data = await Login(formattedPhoneNumber, password);
-
     if (data.status === 200) {
       user = data.data;
-      profile = null;
       profile = await getProfile(user._id, user.access_token);
       user = {...user, ...profile.data};
-
       setUserInfo(user);
-      storeAccessToken('accessToken', user.access_token);
+      storeAccessToken('accessToken', data.data.access_token);
     } else if (data.status === 401) {
       setErrorMessage('Sai tài khoản hoặc mật khẩu');
     }
