@@ -17,4 +17,6 @@ export const waveChatApi = {
   revokeFriendRequest: id =>
     `${waveChatEndpoint}/friend/remove-request?_id=${id}`,
   removeFriend: id => `${waveChatEndpoint}/friend/remove-friend?_id=${id}`,
+  findUserByPhoneNumber: phoneNumber =>
+    `${waveChatEndpoint}/user/find-phone?phone=${phoneNumber}`,
 };

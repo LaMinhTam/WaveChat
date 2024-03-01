@@ -4,7 +4,7 @@ import {globalScreenOptions} from '../styles';
 import AuthenScreen from '../screens/AuthenScreen';
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
-import OTPScreen from '../screens/OTPScreen';
+// import OTPScreen from '../screens/OTPScreen';
 import GenderDOBSelectionScreen from '../screens/GenderDOBSelectionScreen';
 
 const Stack = createStackNavigator();
@@ -27,11 +27,11 @@ const LoginStackNavigator = () => {
         component={SignUp}
         options={{title: 'Tạo tài khoản'}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="OTPScreen"
         component={OTPScreen}
         options={{title: 'Nhập mã xác thực'}}
-      />
+      /> */}
       <Stack.Screen
         name="GenderDOBSelectionScreen"
         component={GenderDOBSelectionScreen}

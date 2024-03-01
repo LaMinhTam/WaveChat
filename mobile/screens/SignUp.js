@@ -9,7 +9,7 @@ import {
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {useUserData} from '../contexts/auth-context';
-import firestore from '@react-native-firebase/firestore';
+// import firestore from '@react-native-firebase/firestore';
 import {Login, authSignUp} from '../apis/authenApi';
 // import auth from '@react-native-firebase/auth';
 
@@ -42,20 +42,20 @@ const SignUp = ({navigation}) => {
         const user = data.data;
         setUserInfo(user);
 
-        firestore()
-          .collection('users')
-          .doc(user._id)
-          .set({
-            id: user._id,
-            name: user.full_name,
-            phone: user.phone,
-            password: user.password,
-            avatar: 'https://source.unsplash.com/random',
-            createdAt: user.created_at,
-          })
-          .then(() => {
-            console.log('User added!');
-          });
+        // firestore()
+        //   .collection('users')
+        //   .doc(user._id)
+        //   .set({
+        //     id: user._id,
+        //     name: user.full_name,
+        //     phone: user.phone,
+        //     password: user.password,
+        //     avatar: 'https://source.unsplash.com/random',
+        //     createdAt: user.created_at,
+        //   })
+        //   .then(() => {
+        //     console.log('User added!');
+        //   });
 
         const logUser = await Login(user.phone, password);
 

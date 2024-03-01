@@ -16,6 +16,7 @@ import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
 const UserModificationScreen = ({navigation}) => {
   const {userInfo, setUserInfo, accessTokens} = useUserData();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [checked, setChecked] = useState(userInfo.gender === 1 ? true : false);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -34,8 +35,9 @@ const UserModificationScreen = ({navigation}) => {
     hideDatePicker();
   };
 
-  const handleDateChange = value => {
-    setUserInfo({...userInfo, gender: value === 'Nam' ? 0 : 1});
+  const handleGenderChange = value => {
+    setChecked(value === 'Nam' ? true : false);
+    setUserInfo({...userInfo, gender: value === 'Nam' ? 1 : 0});
   };
 
   const handleInputChange = value => {
@@ -44,6 +46,7 @@ const UserModificationScreen = ({navigation}) => {
 
   const handleUpdateProfile = async () => {
     const data = await updateProfile(userInfo, accessTokens.accessToken);
+    console.log(userInfo);
     if (data.status === 200) {
       navigation.goBack();
     }
@@ -73,21 +76,21 @@ const UserModificationScreen = ({navigation}) => {
             />
           </View>
           <View>
-            <RadioButton.Group onValueChange={handleDateChange}>
+            <RadioButton.Group onValueChange={handleGenderChange}>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
                 <RadioButton.Item
                   label="Nam"
                   value="Nam"
                   labelStyle={{fontSize: 20}}
-                  status={userInfo.gender === 0 ? 'checked' : 'unchecked'}
+                  status={checked === true ? 'checked' : 'unchecked'}
                   color="#1dc071"
                   position="leading"
                 />
                 <RadioButton.Item
                   label="Nữ"
                   value="Nữ"
-                  status={userInfo.gender === 1 ? 'checked' : 'unchecked'}
+                  status={checked === false ? 'checked' : 'unchecked'}
                   labelStyle={{fontSize: 20}}
                   color="#1dc071"
                   position="leading"
