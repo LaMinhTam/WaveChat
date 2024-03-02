@@ -1,5 +1,4 @@
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import useToggleValue from "../hooks/useToggleValue";
 import LayoutAuthentication from "../layout/LayoutAuthentication";
 import { Button } from "../components/button";
@@ -13,11 +12,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import PhoneInput from "react-phone-input-2";
 import { useEffect } from "react";
-import handleSendOTP from "../utils/handleSendOTP";
-import { setIsLogin, setOpenModal } from "../store/commonSlice";
 import { useAuth } from "../contexts/auth-context";
-import { getToken } from "../utils/auth";
+import { getToken, saveToken, saveUserId } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
+import axios from "../api/axios";
 
 const schema = yup.object({
     password: yup
@@ -39,14 +37,13 @@ const LoginPage = () => {
         control,
         formState: { isValid, errors, isSubmitting },
     } = useForm({ resolver: yupResolver(schema) });
-    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setConfirmationResult, userInfo, setValues, loading } = useAuth();
+    const { userInfo, loading } = useAuth();
     const token = getToken();
 
     useEffect(() => {
         if (token) {
-            if (!loading && userInfo && !isTokenExpire(token)) {
+            if (!loading && !isTokenExpire(token)) {
                 navigate("/");
             }
         }
@@ -54,15 +51,24 @@ const LoginPage = () => {
     const handleSignIn = async (values) => {
         if (!isValid) return;
         try {
-            const confirmationResult = await handleSendOTP(values.phone);
-            setConfirmationResult(confirmationResult);
-            dispatch(setIsLogin(true));
-            setValues({
-                name: "",
-                phone: values.phone,
+            var newPhone = values.phone;
+            if (values.phone.length === 12) {
+                newPhone = values.phone.slice(2);
+            }
+            if (values.phone.length === 11) {
+                newPhone = `0${values.phone.slice(2)}`;
+            }
+            const res = await axios.post("/auth/sign-in", {
+                phone: newPhone,
                 password: values.password,
             });
-            dispatch(setOpenModal(true));
+            if (res.data.status === 200) {
+                saveUserId(res.data.data?._id);
+                saveToken(res.data.data?.access_token);
+                toast.success("Sign in successfully");
+            } else {
+                toast.error(res.data.data.message);
+            }
         } catch (error) {
             toast.error("Login failed, please try again later");
         }

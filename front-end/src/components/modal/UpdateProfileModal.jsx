@@ -6,16 +6,21 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowUpdateProfile } from "../../store/commonSlice";
 import { useChat } from "../../contexts/chat-context";
-import formatDate, { formatBirthDay } from "../../utils/formatDate";
+import { formatBirthDay } from "../../utils/formatDate";
 import { axiosPrivate } from "../../api/axios";
 import { toast } from "react-toastify";
 import { setUserProfile } from "../../store/userSlice";
 
 const UpdateProfileModal = () => {
     const userProfile = useSelector((state) => state.user.userProfile);
-    const [startDate, setStartDate] = useState(
-        userProfile.birthday ? formatDate(userProfile.birthday) : new Date()
-    );
+    console.log("UpdateProfileModal ~ userProfile:", userProfile);
+    const [startDate, setStartDate] = useState(() => {
+        if (userProfile.birthday) {
+            const [day, month, year] = userProfile.birthday.split("/");
+            return new Date(`${month}/${day}/${year}`);
+        }
+        return new Date();
+    });
     const [nickName, setNickName] = useState(userProfile.nick_name);
     const [gender, setGender] = useState(userProfile.gender);
     const { setShowProfileDetails } = useChat();

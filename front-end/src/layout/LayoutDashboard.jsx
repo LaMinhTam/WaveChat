@@ -2,26 +2,26 @@ import Overlay from "../components/common/Overlay";
 import DashboardSideBar from "../modules/dashboard/DashboardSideBar";
 import { Outlet } from "react-router-dom";
 import DashboardListOptions from "../modules/dashboard/DashboardListOptions";
-import { getToken, getUserId } from "../utils/auth";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { axiosPrivate } from "../api/axios";
-import { setUserProfile } from "../store/userSlice";
-import { setCurrentUserName } from "../store/commonSlice";
 import Modal from "../components/modal/Modal";
+import { useEffect } from "react";
+import fetchUserProfile from "../api/fetchUserProfile";
+import { getUserId } from "../utils/auth";
+import { useDispatch } from "react-redux";
+import { setUserProfile } from "../store/userSlice";
 const LayoutDashboard = () => {
-    const id = getUserId();
-    const access_token = getToken();
+    const currentUserId = getUserId();
     const dispatch = useDispatch();
     useEffect(() => {
         async function fetchProfileData() {
-            const res = await axiosPrivate.get(`/user/profile?_id=${id}`);
-            dispatch(setUserProfile(res.data.data));
-            dispatch(setCurrentUserName(res.data.data.nick_name));
+            try {
+                const user = await fetchUserProfile(currentUserId);
+                dispatch(setUserProfile(user));
+            } catch (error) {
+                console.log("error", error);
+            }
         }
         fetchProfileData();
-    }, [access_token, dispatch, id]);
-
+    }, [currentUserId, dispatch]);
     return (
         <>
             <Modal />

@@ -6,7 +6,7 @@ import { getToken } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
 const RequiredAuthPage = ({ children }) => {
     const navigate = useNavigate();
-    const { loading, userInfo } = useAuth();
+    const { loading } = useAuth();
     const token = getToken();
     const checkExp = isTokenExpire(token);
 
@@ -14,11 +14,11 @@ const RequiredAuthPage = ({ children }) => {
         if (!token) {
             navigate("/login");
         } else {
-            if (!loading && (checkExp || !userInfo)) {
+            if (!loading && checkExp) {
                 navigate("/login");
             }
         }
-    }, [loading, checkExp, navigate, token, userInfo]);
+    }, [loading, checkExp, navigate, token]);
 
     if (loading) {
         return (

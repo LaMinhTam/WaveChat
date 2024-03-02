@@ -8,19 +8,18 @@ import { toast } from "react-toastify";
 const ProfileModal = () => {
     const { nodeRef, setShowProfileDetails, setShow } = useChat();
     const { setUserInfo } = useAuth();
+    const userProfile = useSelector((state) => state.user.userProfile);
     const navigate = useNavigate();
     const handleLogout = () => {
-        setUserInfo("");
+        setUserInfo(null);
         saveToken();
+        setShow(false);
         toast.success("Đăng xuất thành công");
         navigate("/login");
     };
-    const currentUserName = useSelector(
-        (state) => state.common.currentUserName
-    );
     return (
         <div ref={nodeRef}>
-            <h2 className="text-xl font-semibold">{currentUserName}</h2>
+            <h2 className="text-xl font-semibold">{userProfile.full_name}</h2>
             <hr />
             <div className="my-1 text-sm font-normal">
                 <button

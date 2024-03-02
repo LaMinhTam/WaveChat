@@ -23,81 +23,58 @@ import { saveToken, saveUserId } from "../utils/auth";
 const LayoutAuthentication = ({ children, heading = "" }) => {
     const openModal = useSelector((state) => state.common.openModal);
     const otpCode = useSelector((state) => state.common.otpCode);
-    const isRegister = useSelector((state) => state.common.isRegister);
-    const isLogin = useSelector((state) => state.common.isLogin);
     const [isLoading, setIsLoading] = React.useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { confirmationResult, values } = useAuth();
+
+    // add function onEnter to run handleVerify
+    const onEnter = async (e) => {
+        if (e.key === "Enter" && otpCode.length > 0) {
+            await handleVerify();
+        }
+    };
+
     const handleVerify = async () => {
         setIsLoading(true);
         const isValid = await handleVerifyOTP(confirmationResult, otpCode);
         if (isValid) {
-            if (isRegister) {
-                try {
-                    const hashedPassword = await bcrypt.hash(
-                        values.password,
-                        10
-                    );
-                    await setDoc(doc(db, "users", auth.currentUser.uid), {
-                        id: auth.currentUser.uid,
-                        name: values.name,
-                        phone: values.phone,
-                        password: hashedPassword,
-                        avatar: "https://source.unsplash.com/random",
-                        createdAt: serverTimestamp(),
-                    });
-                    const res = await axios.post("/auth/sign-up", {
-                        full_name: values.name,
-                        nick_name: values.name,
+            try {
+                const hashedPassword = await bcrypt.hash(values.password, 10);
+                await setDoc(doc(db, "users", auth.currentUser.uid), {
+                    id: auth.currentUser.uid,
+                    name: values.name,
+                    phone: values.phone,
+                    password: hashedPassword,
+                    avatar: "https://source.unsplash.com/random",
+                    createdAt: serverTimestamp(),
+                });
+                const res = await axios.post("/auth/sign-up", {
+                    full_name: values.name,
+                    nick_name: values.name,
+                    phone: values.phone,
+                    password: values.password,
+                });
+                if (res.data.status === 200) {
+                    const resLogin = await axios.post("/auth/sign-in", {
                         phone: values.phone,
                         password: values.password,
                     });
                     if (res.data.status === 200) {
-                        const resLogin = await axios.post("/auth/sign-in", {
-                            phone: values.phone,
-                            password: values.password,
-                        });
-                        if (res.data.status === 200) {
-                            saveUserId(resLogin.data.data._id);
-                            saveToken(resLogin.data.data.access_token);
-                            toast.success("Sign up successfully");
-                        } else {
-                            toast.error(resLogin.data.data.message);
-                        }
+                        saveUserId(resLogin.data.data._id);
+                        saveToken(resLogin.data.data.access_token);
+                        toast.success("Sign up successfully");
+                        setIsLoading(false);
+                        navigate("/");
                     } else {
-                        toast.error(res.data.data.response.message);
+                        toast.error(resLogin.data.data.message);
                     }
-                } catch (error) {
-                    toast.error("Sign up failed, please try again later");
+                } else {
+                    toast.error(res.data.data.response.message);
                 }
+            } catch (error) {
+                toast.error("Sign up failed, please try again later");
             }
-            if (isLogin) {
-                try {
-                    var newPhone = values.phone;
-                    if (values.phone.length === 12) {
-                        newPhone = values.phone.slice(2);
-                    }
-                    if (values.phone.length === 11) {
-                        newPhone = `0${values.phone.slice(2)}`;
-                    }
-                    const res = await axios.post("/auth/sign-in", {
-                        phone: newPhone,
-                        password: values.password,
-                    });
-                    if (res.data.status === 200) {
-                        saveUserId(res.data.data?._id);
-                        saveToken(res.data.data?.access_token);
-                        toast.success("Sign in successfully");
-                    } else {
-                        toast.error(res.data.data.message);
-                    }
-                } catch (error) {
-                    toast.error("Sign in failed, please try again later");
-                }
-            }
-            setIsLoading(false);
-            navigate("/");
         } else {
             setIsLoading(false);
         }
@@ -136,6 +113,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     value={otpCode}
                     onChange={(e) => dispatch(setOtpCode(e.target.value))}
                     autoFocus
+                    onKeyDown={onEnter}
                 />
                 <Button
                     kind="primary"

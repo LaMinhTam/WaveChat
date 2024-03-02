@@ -21,6 +21,7 @@ const ConversationChatInput = ({ user_id, socket }) => {
             const res = await axiosPrivate.post("/conversation/create", {
                 member_id: user_id,
             });
+            console.log("handleSendMessage ~ res:", res);
             setConversationId(res.data.data.conversation_id);
             const message = {
                 conversation_id: res.data.data.conversation_id,

@@ -15,7 +15,7 @@ import PhoneInput from "react-phone-input-2";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import handleSendOTP from "../utils/handleSendOTP";
-import { setIsRegister, setOpenModal } from "../store/commonSlice";
+import { setOpenModal } from "../store/commonSlice";
 import { useAuth } from "../contexts/auth-context";
 import { getToken } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
@@ -49,7 +49,6 @@ const RegisterPage = () => {
         try {
             const confirmationResult = await handleSendOTP(values.phone);
             setConfirmationResult(confirmationResult);
-            dispatch(setIsRegister(true));
             setValues(values);
             dispatch(setOpenModal(true));
         } catch (error) {

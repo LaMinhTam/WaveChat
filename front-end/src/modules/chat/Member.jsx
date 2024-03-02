@@ -24,9 +24,7 @@ const Member = ({ user }) => {
     );
     let otherUserId = null;
     if (user.type === 2) {
-        otherUserId = user.members.find(
-            (member) => member._id !== current_userId
-        );
+        otherUserId = user.members.find((member) => member !== current_userId);
     }
 
     const otherUserInfo = {
