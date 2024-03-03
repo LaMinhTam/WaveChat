@@ -10,6 +10,7 @@ import {View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
+import CreateGroupScreen from '../screens/CreateGroupScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +24,7 @@ const ConversationStackNavigator = () => {
           headerStyle: {backgroundColor: MAIN_COLOR},
           headerTitle: () => <HeaderTitle navigation={navigation} />,
           headerLeft: () => <HeaderLeft navigation={navigation} />,
-          headerRight: () => <HeaderRight />,
+          headerRight: () => <HeaderRight navigation={navigation} />,
         })}
       />
       <Stack.Screen name="ChatScreen" component={PrivateChatScreen} />
@@ -32,6 +33,7 @@ const ConversationStackNavigator = () => {
         component={SearchScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen name="GroupCreate" component={CreateGroupScreen} />
     </Stack.Navigator>
   );
 };

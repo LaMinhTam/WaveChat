@@ -5,12 +5,13 @@ import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
 import {useUserData} from '../contexts/auth-context';
 import {getProfile} from '../apis/user';
+import {getFriends} from '../apis/friend';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
   const [password, setPassword] = useState('123456789');
   const [errorMessage, setErrorMessage] = useState('');
-  const {setUserInfo, storeAccessToken} = useUserData();
+  const {setUserInfo, setFriends, storeAccessToken} = useUserData();
 
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
@@ -20,9 +21,27 @@ const SignIn = () => {
       profile = await getProfile(user._id, user.access_token);
       user = {...user, ...profile.data};
       setUserInfo(user);
+      fetchFriends(data.data.access_token);
       storeAccessToken('accessToken', data.data.access_token);
     } else if (data.status === 401) {
       setErrorMessage('Sai tài khoản hoặc mật khẩu');
+    }
+  };
+
+  const fetchFriends = async access_token => {
+    try {
+      const friendsDataType1 = await getFriends(4, access_token);
+      const friendsDataType2 = await getFriends(2, access_token);
+      const friendsDataType3 = await getFriends(3, access_token);
+      //combine 3 type
+      friendsData = [
+        ...friendsDataType1.data,
+        ...friendsDataType2.data,
+        ...friendsDataType3.data,
+      ];
+      setFriends(friendsData);
+    } catch (error) {
+      console.error('Error fetching friends:', error);
     }
   };
 

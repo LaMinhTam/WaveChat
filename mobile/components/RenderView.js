@@ -2,7 +2,36 @@ import React from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles/styles';
+import {
+  acceptFriendRequest,
+  revokeFriendRequest,
+  sendFriendRequest,
+} from '../apis/friend';
+import {useUserData} from '../contexts/auth-context';
+
 const RenderView = ({user, phoneNumber}) => {
+  const {accessTokens, friends, setFriends} = useUserData();
+  console.log(friends);
+  let buttonTitle = 'Kết bạn';
+  let onPressButton = () => handleSendFriendRequest();
+
+  const exist = friends.find(
+    friend => user && friend.user_id === user.user._id,
+  );
+
+  if (user && exist) {
+    if (exist.contact_type == 3) {
+      buttonTitle = 'THU HỒI';
+      onPressButton = () => handleRevokeFriendRequest(exist.user_id);
+    } else if (exist.contact_type == 2) {
+      buttonTitle = 'CHẤP NHẬN';
+      onPressButton = () => handleAcceptFriendRequest(exist.user_id);
+    } else {
+      buttonTitle = 'NHẮN TIN';
+      onPressButton = () => {};
+    }
+  }
+
   if (phoneNumber.length < 10) {
     return (
       <View style={styles.container}>
@@ -13,6 +42,40 @@ const RenderView = ({user, phoneNumber}) => {
       </View>
     );
   }
+
+  const handleSendFriendRequest = async () => {
+    const data = await sendFriendRequest(
+      user.user._id,
+      accessTokens.accessToken,
+    );
+
+    if (data.status === 200) {
+      friendFormatted = {...user.user, user_id: user.user._id, contact_type: 3};
+      setFriends(prevFriends => [...prevFriends, friendFormatted]);
+    }
+  };
+
+  const handleRevokeFriendRequest = async friendId => {
+    const data = await revokeFriendRequest(friendId, accessTokens.accessToken);
+
+    if (data.status === 200) {
+      setFriends(prevFriends =>
+        prevFriends.filter(friend => friend.user_id !== friendId),
+      );
+    }
+  };
+
+  const handleAcceptFriendRequest = async friendId => {
+    const data = await acceptFriendRequest(friendId, accessTokens.accessToken);
+    if (data.status === 200) {
+      setFriends(prevFriends =>
+        prevFriends.map(friend =>
+          friend.user_id === friendId ? {...friend, contact_type: 4} : friend,
+        ),
+      );
+    }
+  };
+
   return (
     <>
       {user === null ? (
@@ -39,9 +102,13 @@ const RenderView = ({user, phoneNumber}) => {
                 <Text style={styles.phoneNumber}>{user.user.phone}</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.addButton}>
-              <Text style={styles.addButtonText}>Kết bạn</Text>
-            </TouchableOpacity>
+            {buttonTitle ? (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={onPressButton}>
+                <Text style={styles.addButtonText}>{buttonTitle}</Text>
+              </TouchableOpacity>
+            ) : null}
           </TouchableOpacity>
         </View>
       )}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles';
-import {getFriends} from '../apis/user';
 import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
@@ -17,12 +16,8 @@ import {useSocket} from '../contexts/SocketProvider';
 const Separator = () => <View style={styles.separator} />;
 
 const FriendScreen = ({navigation}) => {
-  const {accessTokens, userInfo, friends, setFriends} = useUserData();
+  const {userInfo, friends} = useUserData();
   const {setCurrentConversation, conversations} = useSocket();
-
-  useEffect(() => {
-    fetchFriends();
-  }, []);
 
   const handlePressFriend = friend => {
     const existingConversation = conversations.find(conversation =>
@@ -50,19 +45,11 @@ const FriendScreen = ({navigation}) => {
     navigation.navigate('ChatScreen');
   };
 
-  const fetchFriends = async () => {
-    try {
-      const friendsData = await getFriends(4, accessTokens.accessToken);
-      setFriends(friendsData.data);
-    } catch (error) {
-      console.error('Error fetching friends:', error);
-    }
-  };
-
   const renderFriendsByCharacter = () => {
     const friendsByCharacter = {};
+    const currentFriends = friends.filter(friend => friend.contact_type == 4);
 
-    friends.forEach(item => {
+    currentFriends.forEach(item => {
       const firstChar = item.full_name[0].toUpperCase();
 
       if (!friendsByCharacter[firstChar]) {
@@ -72,22 +59,24 @@ const FriendScreen = ({navigation}) => {
       friendsByCharacter[firstChar].push(item);
     });
 
-    return Object.keys(friendsByCharacter).map(char => (
-      <View key={char}>
-        <Text style={styles.sectionTitle}>{char}</Text>
-        {friendsByCharacter[char].map(friend => (
-          <TouchableOpacity
-            key={friend.user_id}
-            style={styles.friendRow}
-            onPress={() => handlePressFriend(friend)}>
-            <Image source={{uri: friend.avatar}} style={styles.avatar} />
-            <Text style={{color: '#000', fontSize: 16}}>
-              {friend.full_name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    ));
+    return Object.keys(friendsByCharacter)
+      .sort()
+      .map(char => (
+        <View key={char}>
+          <Text style={styles.sectionTitle}>{char}</Text>
+          {friendsByCharacter[char].map(friend => (
+            <TouchableOpacity
+              key={friend.user_id}
+              style={styles.friendRow}
+              onPress={() => handlePressFriend(friend)}>
+              <Image source={{uri: friend.avatar}} style={styles.avatar} />
+              <Text style={{color: '#000', fontSize: 16}}>
+                {friend.full_name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ));
   };
 
   return (

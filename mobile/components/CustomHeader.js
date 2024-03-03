@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export const HeaderTitle = ({navigation}) => (
   <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -20,9 +21,9 @@ export const HeaderLeft = ({navigation}) => (
       onPress={() => {
         navigation.navigate('SearchScreen');
       }}>
-      <Icon
+      <FontAwesomeIcon
         name="search"
-        size={26}
+        size={20}
         color="#fff"
         style={{paddingHorizontal: '5%'}}
       />
@@ -30,13 +31,18 @@ export const HeaderLeft = ({navigation}) => (
   </View>
 );
 
-export const HeaderRight = () => (
-  <View style={{flexDirection: 'row', gap: 10, padding: 10}}>
-    <TouchableOpacity>
-      <Icon name="qrcode" size={30} color="#fff" />
-    </TouchableOpacity>
-    <TouchableOpacity onPress={() => {}}>
-      <Icon name="plus" size={30} color="#fff" />
-    </TouchableOpacity>
-  </View>
-);
+export const HeaderRight = ({navigation}) => {
+  return (
+    <View style={{flexDirection: 'row', gap: 10, padding: 10}}>
+      <TouchableOpacity>
+        <MaterialIcon name="qrcode-scan" size={26} color="#fff" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('GroupCreate');
+        }}>
+        <MaterialIcon name="account-multiple-plus" size={26} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+};

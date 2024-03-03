@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import {getFriends} from '../apis/user';
 import {useUserData} from '../contexts/auth-context';
 import {
   BACKGROUND_COLOR,
@@ -10,6 +9,7 @@ import {
 } from '../styles/styles';
 import {
   acceptFriendRequest,
+  getFriends,
   removeFriend,
   revokeFriendRequest,
 } from '../apis/friend';
