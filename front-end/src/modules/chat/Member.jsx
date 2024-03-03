@@ -14,7 +14,6 @@ import { axiosPrivate } from "../../api/axios";
 import { useChat } from "../../contexts/chat-context";
 
 const Member = ({ user }) => {
-    console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
     const { setMessage } = useChat();
     const current_userId = getUserId();

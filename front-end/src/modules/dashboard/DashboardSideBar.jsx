@@ -9,6 +9,10 @@ import {
 import { useChat } from "../../contexts/chat-context";
 import { setCurrentTab } from "../../store/chatSlice";
 import s3ImageUrl from "../../utils/s3ImageUrl";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/auth-context";
+import { saveToken } from "../../utils/auth";
 
 const sidebarLinks = [
     {
@@ -40,9 +44,11 @@ const sidebarLinks = [
 
 const DashboardSideBar = () => {
     const dispatch = useDispatch();
+    const { setUserInfo } = useAuth();
     const { setShow } = useChat();
     const currentTab = useSelector((state) => state.chat.currentTab);
     const userProfile = useSelector((state) => state.user.userProfile);
+    const navigate = useNavigate();
     return (
         <div className="flex flex-col w-[64px] min-h-screen items-center bg-primary text-lite">
             {sidebarLinks.map((item) => {
@@ -71,7 +77,7 @@ const DashboardSideBar = () => {
                     return (
                         <button
                             key={item.title}
-                            className="w-[64px] h-[64px] flex items-center justify-center mt-auto"
+                            className="w-[64px] h-[64px] flex items-center justify-center mt-auto hover:bg-secondary hover:bg-opacity-50"
                         >
                             <span>{item.icon}</span>
                         </button>
@@ -83,7 +89,18 @@ const DashboardSideBar = () => {
                     return (
                         <button
                             key={item.title}
-                            className="w-[64px] h-[64px] flex items-center justify-center"
+                            className="w-[64px] h-[64px] flex items-center justify-center hover:bg-secondary hover:bg-opacity-50"
+                            onClick={
+                                item.title === "Logout"
+                                    ? () => {
+                                          setUserInfo(null);
+                                          saveToken();
+                                          setShow(false);
+                                          toast.success("Đăng xuất thành công");
+                                          navigate("/login");
+                                      }
+                                    : item.onClick
+                            }
                         >
                             <span>{item.icon}</span>
                         </button>
@@ -93,7 +110,9 @@ const DashboardSideBar = () => {
                         <button
                             key={item.title}
                             className={`w-[64px] h-[64px] flex items-center justify-center ${
-                                currentTab === item.title ? "bg-secondary" : ""
+                                currentTab === item.title
+                                    ? "bg-secondary"
+                                    : "hover:bg-secondary hover:bg-opacity-50"
                             }`}
                             onClick={() => dispatch(setCurrentTab(item.title))}
                         >

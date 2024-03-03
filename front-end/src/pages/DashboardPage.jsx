@@ -7,6 +7,7 @@ import fetchCurrentUserFriends from "../api/fetchCurrentUserFriends";
 import { setListFriend } from "../store/userSlice";
 import fetchConversations from "../api/fetchConversations";
 import { setConversations } from "../store/conversationSlice";
+import DashboardWelcome from "../modules/dashboard/DashboardWelcome";
 
 const DashboardPage = () => {
     const showConversation = useSelector(
@@ -32,6 +33,7 @@ const DashboardPage = () => {
         <RequiredAuthPage>
             {/* <DashboardWelcome /> */}
             {currentTab === "Chat" && showConversation && <Conversation />}
+            {currentTab === "Chat" && !showConversation && <DashboardWelcome />}
         </RequiredAuthPage>
     );
 };

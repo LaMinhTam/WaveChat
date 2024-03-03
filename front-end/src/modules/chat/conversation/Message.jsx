@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import formatDate from "../../../utils/formatDate";
-import s3ConversationImageUrl from "../../../utils/s3ConversationImageUrl";
 import { v4 as uuidv4 } from "uuid";
 import {
     IconCSV,
@@ -12,6 +11,9 @@ import {
 } from "../../../components/icons";
 import formatSize from "../../../utils/formatSize";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
+import Viewer from "react-viewer";
+import { useState } from "react";
+import s3ConversationUrl from "../../../utils/s3ConversationUrl";
 const Message = ({ msg, type }) => {
     let time;
     if (msg.createdAt) {
@@ -19,6 +21,17 @@ const Message = ({ msg, type }) => {
     } else {
         time = formatDate(msg.created_at);
     }
+    const [isOpenImage, setIsOpenImage] = useState(false);
+    const handleDownloadFile = (fileName) => {
+        const link = document.createElement("a");
+        link.href = s3ConversationUrl(fileName, msg.user_id, "file");
+        link.setAttribute("download", fileName);
+        link.setAttribute("target", "_blank");
+        document.body.appendChild(link);
+        console.log("handleDownloadFile ~ link:", link);
+        link.click();
+        link.remove();
+    };
     return (
         <div
             className={`max-w-[75%] w-full h-full m-2 ${
@@ -43,7 +56,7 @@ const Message = ({ msg, type }) => {
                         msg.media.map((media) => {
                             let fileType = media.split(";")[0];
                             let fileName = media.split(";")[1];
-                            const imageUri = s3ConversationImageUrl(
+                            const imageUri = s3ConversationUrl(
                                 fileName,
                                 msg.user_id
                             );
@@ -53,7 +66,10 @@ const Message = ({ msg, type }) => {
                             return (
                                 <div key={uuidv4()}>
                                     {type === "image" ? (
-                                        <div className="w-[250px] h-[250px] rounded">
+                                        <div
+                                            className="w-[250px] h-[250px] rounded cursor-pointer"
+                                            onClick={() => setIsOpenImage(true)}
+                                        >
                                             <img
                                                 src={imageUri}
                                                 alt=""
@@ -88,12 +104,26 @@ const Message = ({ msg, type }) => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <button className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite">
+                                                <button
+                                                    className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite"
+                                                    onClick={() =>
+                                                        handleDownloadFile(
+                                                            fileName
+                                                        )
+                                                    }
+                                                >
                                                     <IconDownload />
                                                 </button>
                                             </div>
                                         </div>
                                     )}
+                                    <Viewer
+                                        visible={isOpenImage}
+                                        onClose={() => {
+                                            setIsOpenImage(false);
+                                        }}
+                                        images={[{ src: imageUri, alt: "" }]}
+                                    />
                                 </div>
                             );
                         })}
