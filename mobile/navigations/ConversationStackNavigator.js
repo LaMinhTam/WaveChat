@@ -1,14 +1,10 @@
-import React, {useLayoutEffect} from 'react';
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {globalScreenOptions} from '../styles';
 import HomeScreen from '../screens/HomeScreen';
-import PrivateChatScreen from '../screens/ChatScreen';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import ChatScreen from '../screens/ChatScreen';
 import SearchScreen from '../screens/SearchScreen';
 import {MAIN_COLOR} from '../styles/styles';
-import {View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Text} from 'react-native-paper';
 import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
 import CreateGroupScreen from '../screens/CreateGroupScreen';
 
@@ -27,7 +23,7 @@ const ConversationStackNavigator = () => {
           headerRight: () => <HeaderRight navigation={navigation} />,
         })}
       />
-      <Stack.Screen name="ChatScreen" component={PrivateChatScreen} />
+      <Stack.Screen name="ChatScreen" component={ChatScreen} />
       <Stack.Screen
         name="SearchScreen"
         component={SearchScreen}

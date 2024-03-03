@@ -5,7 +5,7 @@ import ContactScreen from '../screens/ContactScreen';
 import {globalScreenOptions} from '../styles';
 import PhoneContacts from '../screens/PhoneContacts';
 import FriendRequestTabNavigator from './FriendRequestTabNavigator';
-import PrivateChatScreen from '../screens/ChatScreen';
+import ChatScreen from '../screens/ChatScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles/styles';
 import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
@@ -34,7 +34,7 @@ const UserStackNavigator = () => {
         component={PhoneContacts}
         options={{title: 'Danh bạ máy'}}
       />
-      <Stack.Screen name="ChatScreen" component={PrivateChatScreen} />
+      <Stack.Screen name="ChatScreen" component={ChatScreen} />
     </Stack.Navigator>
   );
 };

@@ -9,10 +9,21 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useUserData} from '../contexts/auth-context';
-import {BACKGROUND_COLOR, SECOND_COLOR} from '../styles/styles';
+import {
+  BACKGROUND_COLOR,
+  MAIN_COLOR,
+  PRIMARY_TEXT_COLOR,
+  SECOND_COLOR,
+} from '../styles/styles';
+import {
+  createGroupConversation,
+  getConversationDetail,
+} from '../apis/conversation';
+import {useSocket} from '../contexts/SocketProvider';
 
-const CreateGroupScreen = () => {
-  const {friends} = useUserData();
+const CreateGroupScreen = ({navigation}) => {
+  const {accessTokens, friends} = useUserData();
+  const {setCurrentConversation, setConversations} = useSocket();
   const [groupName, setGroupName] = useState('');
   const [searchText, setSearchText] = useState('');
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -33,6 +44,28 @@ const CreateGroupScreen = () => {
   const filteredFriends = friends.filter(friend =>
     friend.full_name.toLowerCase().includes(searchText.toLowerCase()),
   );
+
+  const handleCreateGroup = async () => {
+    const data = await createGroupConversation(
+      groupName,
+      selectedFriends.map(friend => friend.user_id),
+      accessTokens.accessToken,
+    );
+
+    let currentConversation = {
+      ...(await getConversationDetail(
+        data.data.conversation_id,
+        accessTokens.accessToken,
+      )),
+      _id: data.data.conversation_id,
+    };
+    setCurrentConversation(currentConversation);
+    setConversations(prevConversations => {
+      return [currentConversation, ...prevConversations];
+    });
+    navigation.pop();
+    navigation.navigate('ChatScreen');
+  };
 
   return (
     <View style={{flex: 1, padding: 20, backgroundColor: SECOND_COLOR}}>
@@ -95,19 +128,18 @@ const CreateGroupScreen = () => {
       />
       <TouchableOpacity
         style={{
-          backgroundColor:
-            groupName.length > 0 && selectedFriends.length >= 2
-              ? 'blue'
-              : 'rgba(0, 0, 255, 0.5)',
+          backgroundColor: MAIN_COLOR,
+          opacity:
+            groupName.length > 0 && selectedFriends.length >= 2 ? 1 : 0.5,
           padding: 10,
           borderRadius: 5,
           alignItems: 'center',
         }}
         onPress={() => {
-          console.log('Selected Friends:', selectedFriends);
+          handleCreateGroup();
         }}
         disabled={!groupName.length > 0 || selectedFriends.length < 2}>
-        <Text style={{color: 'white'}}>Create Group</Text>
+        <Text style={{color: PRIMARY_TEXT_COLOR}}>Tạo nhóm mới</Text>
       </TouchableOpacity>
     </View>
   );
