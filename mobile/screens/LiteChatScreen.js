@@ -8,6 +8,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {MAIN_COLOR, PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 import {TruncatedText} from '../utils/TruncatedText';
 import {useSocket} from '../contexts/SocketProvider';
+import AvatarUser from '../components/AvatarUser';
+import {USER_INFO} from '../apis/constants';
+import {formatTimeLastActivity} from '../utils/format-time-message.util';
 
 const PrivateChatScreen = ({navigation}) => {
   const {userInfo, accessTokens} = useUserData();
@@ -92,10 +95,10 @@ const PrivateChatScreen = ({navigation}) => {
   const renderMessageItem = ({item}) => {
     const isCurrentUser = item.user_id === userInfo._id;
 
-    const messageTime = new Date(item.created_at).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    // const messageTime = new Date(item.created_at).toLocaleTimeString([], {
+    //   hour: '2-digit',
+    //   minute: '2-digit',
+    // });
     return (
       <View
         style={{
@@ -105,14 +108,10 @@ const PrivateChatScreen = ({navigation}) => {
           marginVertical: 5,
         }}>
         {!isCurrentUser && (
-          <Image
-            source={{uri: item.avatar}}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              marginRight: 10,
-            }}
+          <AvatarUser
+            avatarUrl={item.user.avatar}
+            style={USER_INFO.AVATAR_USER_STYLES_DEFAULT}
+            type={CONVERSATION_TYPE.PERSONAL}
           />
         )}
         <View
@@ -129,18 +128,14 @@ const PrivateChatScreen = ({navigation}) => {
           }}>
           <TruncatedText text={item.message} />
           <Text style={{color: '#777', fontSize: 12, marginTop: 5}}>
-            {messageTime}
+            {formatTimeLastActivity(item.created_at)}
           </Text>
         </View>
         {isCurrentUser && (
-          <Image
-            source={{uri: item.avatar}}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              marginLeft: 10,
-            }}
+          <AvatarUser
+            avatarUrl={item.user.avatar}
+            style={USER_INFO.AVATAR_USER_STYLES_DEFAULT}
+            type={CONVERSATION_TYPE.PERSONAL}
           />
         )}
       </View>

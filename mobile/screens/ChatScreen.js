@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {useUserData} from '../contexts/auth-context';
-import {useSocket} from '../contexts/SocketProvider';
 import {getMessage} from '../apis/conversation';
-import Message from '../components/Message';
 import ChatTextInput from '../components/ChatTextInput';
+import Message from '../components/Message';
+import {useSocket} from '../contexts/SocketProvider';
+import {useUserData} from '../contexts/auth-context';
 
 const PrivateChatScreen = ({navigation}) => {
   const {userInfo, accessTokens} = useUserData();
@@ -36,6 +36,10 @@ const PrivateChatScreen = ({navigation}) => {
     loadMessages();
   }, []);
 
+  const handleCall = () => {
+    navigation.navigate('CallPhoneScreen');
+  };
+
   const loadMessages = async () => {
     const messages = await getMessage(
       currentConversation._id,
@@ -46,8 +50,11 @@ const PrivateChatScreen = ({navigation}) => {
   };
 
   const renderMessageItem = ({item}) => {
-    return <Message item={item} userInfo={userInfo} />;
+    if (currentConversation._id == item.conversation_id)
+      return <Message item={item} userInfo={userInfo} />;
   };
+
+  // TODO: to call phone
 
   const otherUser = currentConversation.members.find(
     member => member._id !== userInfo._id,

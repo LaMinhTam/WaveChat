@@ -16,7 +16,7 @@ function FriendRequestTabNavigator() {
         tabBarPressColor: 'transparent',
       }}>
       <Tab.Screen name="receiveRequest" component={ReceiveFriendRequest} />
-      <Tab.Screen name="sendRequset" component={SendFriendRequest} />
+      <Tab.Screen name="sendRequest" component={SendFriendRequest} />
     </Tab.Navigator>
   );
 }
