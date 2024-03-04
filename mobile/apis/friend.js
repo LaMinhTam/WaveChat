@@ -1,6 +1,16 @@
 import axios from 'axios';
 import {waveChatApi} from './constants';
 
+export async function getFriends(type, accessToken) {
+  const res = await axios.get(waveChatApi.getFriends(type), {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return res.data;
+}
+
 export async function sendFriendRequest(id, accessToken) {
   const res = await axios.post(
     waveChatApi.sendFriendRequest(id),
@@ -30,7 +40,6 @@ export async function acceptFriendRequest(id, accessToken) {
 }
 
 export async function revokeFriendRequest(id, accessToken) {
-  console.log(id, accessToken);
   const res = await axios.post(
     waveChatApi.revokeFriendRequest(id),
     {},

@@ -1,15 +1,14 @@
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
-import UserDetailScreen from '../screens/UserDetailScreen';
-import UserSettingListScreen from '../screens/UserSettingListScreen';
-import UserInformationScreen from '../screens/UserInformationScreen';
 import {createStackNavigator} from '@react-navigation/stack';
 import ContactScreen from '../screens/ContactScreen';
 import {globalScreenOptions} from '../styles';
-import FriendRequest from '../screens/FriendRequest';
 import PhoneContacts from '../screens/PhoneContacts';
 import FriendRequestTabNavigator from './FriendRequestTabNavigator';
-import PrivateChatScreen from '../screens/ChatScreen';
+import ChatScreen from '../screens/ChatScreen';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {MAIN_COLOR} from '../styles/styles';
+import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
@@ -18,7 +17,12 @@ const UserStackNavigator = () => {
       <Stack.Screen
         name="ContactScreen"
         component={ContactScreen}
-        options={{headerShown: false}}
+        options={({navigation}) => ({
+          headerStyle: {backgroundColor: MAIN_COLOR},
+          headerTitle: () => <HeaderTitle navigation={navigation} />,
+          headerLeft: () => <HeaderLeft navigation={navigation} />,
+          headerRight: () => <HeaderRight />,
+        })}
       />
       <Stack.Screen
         name="FriendRequest"
@@ -30,7 +34,7 @@ const UserStackNavigator = () => {
         component={PhoneContacts}
         options={{title: 'Danh bạ máy'}}
       />
-      <Stack.Screen name="ChatScreen" component={PrivateChatScreen} />
+      <Stack.Screen name="ChatScreen" component={ChatScreen} />
     </Stack.Navigator>
   );
 };

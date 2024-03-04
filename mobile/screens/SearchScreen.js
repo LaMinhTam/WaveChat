@@ -1,16 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState} from 'react';
 import {useUserData} from '../contexts/auth-context';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {View, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {findUserByPhoneNumber} from '../apis/user';
-import {BACKGROUND_COLOR, MAIN_COLOR, SECOND_COLOR} from '../styles/styles';
+import {BACKGROUND_COLOR, MAIN_COLOR} from '../styles/styles';
 import {RenderView} from '../components/RenderView';
 
 const SearchScreen = ({navigation}) => {
@@ -43,25 +36,15 @@ const SearchScreen = ({navigation}) => {
             setPhoneNumber('');
             navigation.goBack();
           }}>
-          <Icon name="arrow-left" size={24} color="#fff"></Icon>
+          <Icon name="arrow-left" size={20} color="#fff"></Icon>
         </TouchableOpacity>
         <View style={{flex: 1}}>
           <View
             style={{
               flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
               backgroundColor: '#fff',
-              borderRadius: 15,
-              marginHorizontal: '2%',
+              borderRadius: 10,
             }}>
-            <Icon
-              name="search"
-              size={20}
-              color="#ccc"
-              style={{paddingHorizontal: 10}}
-            />
             <TextInput
               autoFocus={true}
               placeholder="Tìm kiếm"
@@ -82,7 +65,7 @@ const SearchScreen = ({navigation}) => {
           </View>
         </View>
         <TouchableOpacity style={styles.touchAble}>
-          <Icon name="qrcode" size={24} color="#fff" />
+          <Icon name="qrcode-scan" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
       <RenderView user={user} phoneNumber={phoneNumber} />
@@ -93,7 +76,6 @@ const SearchScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
     backgroundColor: '#000',
     height: '100%',
     backgroundColor: BACKGROUND_COLOR,
@@ -103,6 +85,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     padding: '2%',
+    alignItems: 'center',
   },
   avatar: {
     width: 60,

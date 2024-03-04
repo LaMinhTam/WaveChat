@@ -7,7 +7,7 @@ import Message from '../components/Message';
 import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 
-const PrivateChatScreen = ({navigation}) => {
+const ChatScreen = ({navigation}) => {
   const {userInfo, accessTokens} = useUserData();
   const {currentConversation, messages, setMessages} = useSocket();
 
@@ -45,7 +45,6 @@ const PrivateChatScreen = ({navigation}) => {
       currentConversation._id,
       accessTokens.accessToken,
     );
-
     setMessages(messages);
   };
 
@@ -77,4 +76,4 @@ const PrivateChatScreen = ({navigation}) => {
   );
 };
 
-export default PrivateChatScreen;
+export default ChatScreen;

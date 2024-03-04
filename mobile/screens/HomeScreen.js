@@ -3,16 +3,18 @@ import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {getConversations} from '../apis/conversation';
 import {useSocket} from '../contexts/SocketProvider';
+import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {formatTimeLastActivity} from '../utils/format-time-message.util';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
+  const {accessTokens} = useUserData();
 
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const conversation = await getConversations(user.access_token);
+        const conversation = await getConversations(accessTokens.accessToken);
         setConversations(conversation.data);
       } catch (error) {
         console.error('Error fetching conversations:', error);
