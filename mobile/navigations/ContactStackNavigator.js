@@ -1,4 +1,3 @@
-import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import ContactScreen from '../screens/ContactScreen';
@@ -6,7 +5,6 @@ import {globalScreenOptions} from '../styles';
 import PhoneContacts from '../screens/PhoneContacts';
 import FriendRequestTabNavigator from './FriendRequestTabNavigator';
 import ChatScreen from '../screens/ChatScreen';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles/styles';
 import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
 const Stack = createStackNavigator();

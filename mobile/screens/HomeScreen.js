@@ -9,7 +9,7 @@ import {formatTimeLastActivity} from '../utils/format-time-message.util';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
-  const {accessTokens} = useUserData();
+  const {accessTokens, userInfo} = useUserData();
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -42,7 +42,16 @@ const HomeScreen = ({navigation}) => {
           />
 
           <View style={styles.infoColumn}>
-            <Text style={styles.name}>{conversation.name}</Text>
+            <View>
+              <Text style={styles.name}>{conversation.name}</Text>
+              <Text style={styles.lastMessage}>
+                {(conversation.last_message.user._id === userInfo._id
+                  ? 'Bạn'
+                  : conversation.last_message.user.full_name) +
+                  ': ' +
+                  conversation.last_message.message}
+              </Text>
+            </View>
             <Text style={styles.lastActivity}>
               {formatTimeLastActivity(conversation.last_activity)}
             </Text>
@@ -54,17 +63,16 @@ const HomeScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {padding: 13},
   conversationRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
     marginBottom: 16,
-    paddingHorizontal: 16,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 45,
+    height: 45,
+    borderRadius: 50,
     marginRight: 12,
   },
   infoColumn: {
@@ -82,6 +90,10 @@ const styles = StyleSheet.create({
     color: '#73787C',
     fontSize: 12,
     marginLeft: 'auto',
+  },
+  lastMessage: {
+    color: '#aaa',
+    fontSize: 14,
   },
 });
 

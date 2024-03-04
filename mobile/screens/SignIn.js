@@ -8,8 +8,8 @@ import {getProfile} from '../apis/user';
 import {getFriends} from '../apis/friend';
 
 const SignIn = () => {
-  const [phone, setPhone] = useState('+849000000002');
-  const [password, setPassword] = useState('test1234');
+  const [phone, setPhone] = useState('+84886700046');
+  const [password, setPassword] = useState('123456789');
   const [errorMessage, setErrorMessage] = useState('');
   const {setUserInfo, setFriends, storeAccessToken} = useUserData();
 
@@ -30,16 +30,8 @@ const SignIn = () => {
 
   const fetchFriends = async access_token => {
     try {
-      const friendsDataType1 = await getFriends(4, access_token);
-      const friendsDataType2 = await getFriends(2, access_token);
-      const friendsDataType3 = await getFriends(3, access_token);
-      //combine 3 type
-      friendsData = [
-        ...friendsDataType1.data,
-        ...friendsDataType2.data,
-        ...friendsDataType3.data,
-      ];
-      setFriends(friendsData);
+      const friendsData = await getFriends(0, access_token);
+      setFriends(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
     }

@@ -1,11 +1,8 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import {default as React, default as React} from 'react';
+import React from 'react';
 import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
 import CallPhoneScreen from '../screens/CallPhoneScreen';
-import {
-  default as ChatScreen,
-  default as PrivateChatScreen,
-} from '../screens/ChatScreen';
+import ChatScreen from '../screens/ChatScreen';
 import CreateGroupScreen from '../screens/CreateGroupScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
@@ -33,7 +30,6 @@ const ConversationStackNavigator = () => {
         component={SearchScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen name="ChatScreen" component={PrivateChatScreen} />
       <Stack.Screen name="CallPhoneScreen" component={CallPhoneScreen} />
       <Stack.Screen name="GroupCreate" component={CreateGroupScreen} />
     </Stack.Navigator>

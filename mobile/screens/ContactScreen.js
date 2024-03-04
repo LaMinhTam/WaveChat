@@ -20,9 +20,11 @@ const FriendScreen = ({navigation}) => {
   const {setCurrentConversation, conversations} = useSocket();
 
   const handlePressFriend = friend => {
-    const existingConversation = conversations.find(conversation =>
-      conversation.members.some(member => member._id === friend.user_id),
-    );
+    const existingConversation = conversations.find(conversation => {
+      if (conversation.type === 2) {
+        return conversation.members.some(member => member === friend.user_id);
+      }
+    });
 
     const newConversation = {
       name: friend.full_name,
