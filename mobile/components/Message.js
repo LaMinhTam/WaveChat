@@ -1,22 +1,13 @@
 import React from 'react';
-import {View, Text, Image} from 'react-native';
+import {Text, View} from 'react-native';
+import {CONVERSATION_TYPE, USER_INFO} from '../apis/constants';
 import {TruncatedText} from '../utils/TruncatedText';
-import MessageImage from './MessageImage';
+import {formatTimeLastActivity} from '../utils/format-time-message.util';
+import AvatarUser from './AvatarUser';
 import MessageFile from './MessageFile';
+import MessageImage from './MessageImage';
 
 const Message = ({item, userInfo}) => {
-  const formatTime = time => {
-    return (
-      new Date(time).toLocaleTimeString('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }) +
-      ' ' +
-      new Date(time).toLocaleDateString('vi-VN')
-    );
-  };
-
-  // console.log('item', item);
   const isCurrentUser = item.user._id === userInfo._id;
 
   const renderContent = () => {
@@ -41,11 +32,13 @@ const Message = ({item, userInfo}) => {
         marginVertical: 5,
       }}>
       {!isCurrentUser && (
-        <Image
-          source={{uri: item.user.avatar}}
-          style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
+        <AvatarUser
+          avatarUrl={item.user.avatar}
+          style={USER_INFO.AVATAR_USER_STYLES_DEFAULT}
+          type={CONVERSATION_TYPE.PERSONAL}
         />
       )}
+
       <View
         style={{
           maxWidth: '60%',
@@ -59,14 +52,17 @@ const Message = ({item, userInfo}) => {
           elevation: 3,
         }}>
         {renderContent()}
+
         <Text style={{color: '#777', fontSize: 12, marginTop: 5}}>
-          {formatTime(item.created_at)}
+          {formatTimeLastActivity(item.created_at)}
         </Text>
       </View>
+
       {isCurrentUser && (
-        <Image
-          source={{uri: item.user.avatar}}
-          style={{width: 40, height: 40, borderRadius: 20, marginLeft: 10}}
+        <AvatarUser
+          avatarUrl={item.user.avatar}
+          style={USER_INFO.AVATAR_USER_STYLES_DEFAULT}
+          type={CONVERSATION_TYPE.PERSONAL}
         />
       )}
     </View>

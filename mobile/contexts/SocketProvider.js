@@ -32,6 +32,7 @@ export const SocketProvider = ({children}) => {
 
     newSocket.on('message', incomingMessage => {
       const {message} = incomingMessage;
+
       setMessages(prevMessages => [message, ...prevMessages]);
 
       // setConversations(prevConversations => {

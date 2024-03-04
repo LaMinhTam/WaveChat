@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
-import {View, Text, Image, StyleSheet, ScrollView} from 'react-native';
-import {PRIMARY_TEXT_COLOR} from '../styles/styles';
+import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useSocket} from '../contexts/SocketProvider';
 import {getConversations} from '../apis/conversation';
+import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
+import {PRIMARY_TEXT_COLOR} from '../styles/styles';
+import {formatTimeLastActivity} from '../utils/format-time-message.util';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
@@ -22,32 +23,6 @@ const HomeScreen = ({navigation}) => {
 
     fetchConversations();
   }, []);
-
-  const formatLastActivity = timestamp => {
-    const now = new Date();
-    const activityDate = new Date(timestamp);
-
-    const timeDiffInMilliseconds = now - activityDate;
-    const timeDiffInMinutes = Math.floor(timeDiffInMilliseconds / (1000 * 60));
-    const timeDiffInHours = Math.floor(timeDiffInMinutes / 60);
-
-    const optionsDate = {day: '2-digit', month: '2-digit', year: '2-digit'};
-    const optionsMonth = {day: '2-digit', month: '2-digit'};
-
-    if (timeDiffInHours >= 24) {
-      return now.getFullYear() !== activityDate.getFullYear()
-        ? activityDate
-            .toLocaleDateString('vi-VN', optionsDate)
-            .replace(/-/g, '/')
-        : activityDate
-            .toLocaleDateString('vi-VN', optionsMonth)
-            .replace(/-/g, '/');
-    } else if (timeDiffInMinutes >= 60) {
-      return `${timeDiffInHours} giờ`;
-    } else {
-      return `${timeDiffInMinutes} phút`;
-    }
-  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -69,7 +44,7 @@ const HomeScreen = ({navigation}) => {
           <View style={styles.infoColumn}>
             <Text style={styles.name}>{conversation.name}</Text>
             <Text style={styles.lastActivity}>
-              {formatLastActivity(conversation.last_activity)}
+              {formatTimeLastActivity(conversation.last_activity)}
             </Text>
           </View>
         </TouchableOpacity>

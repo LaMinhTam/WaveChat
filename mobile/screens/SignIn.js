@@ -8,8 +8,8 @@ import {getProfile} from '../apis/user';
 import {getFriends} from '../apis/friend';
 
 const SignIn = () => {
-  const [phone, setPhone] = useState('+84886700046');
-  const [password, setPassword] = useState('123456789');
+  const [phone, setPhone] = useState('+849000000002');
+  const [password, setPassword] = useState('test1234');
   const [errorMessage, setErrorMessage] = useState('');
   const {setUserInfo, setFriends, storeAccessToken} = useUserData();
 

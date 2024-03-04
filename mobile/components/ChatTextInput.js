@@ -93,6 +93,8 @@ const ChatTextInput = ({accessTokens, memberId}) => {
       type: type,
       created_at: new Date().getTime(),
     };
+    console.log('handleMessage ~ message:', message);
+
     socket.emit('message', message);
   };
   return (
