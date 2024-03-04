@@ -16,6 +16,7 @@ const Message = ({item, userInfo}) => {
     );
   };
 
+  // console.log('item', item);
   const isCurrentUser = item.user._id === userInfo._id;
 
   const renderContent = () => {

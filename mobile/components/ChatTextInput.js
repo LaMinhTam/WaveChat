@@ -18,12 +18,12 @@ const ChatTextInput = ({accessTokens, memberId}) => {
   } = useSocket();
 
   const getConversationId = async accessToken => {
-    if (!currentConversation.conversation_id) {
+    if (!currentConversation._id) {
       const newConversation = await createConversation(memberId, accessToken);
 
       const updateConversation = {
         ...currentConversation,
-        conversation_id: newConversation.data.conversation_id,
+        _id: newConversation.data.conversation_id,
       };
 
       setCurrentConversation(updateConversation);
@@ -34,7 +34,7 @@ const ChatTextInput = ({accessTokens, memberId}) => {
 
       return newConversation.data.conversation_id;
     }
-    return currentConversation.conversation_id;
+    return currentConversation._id;
   };
 
   const handleSendMessage = async () => {
@@ -112,7 +112,8 @@ const ChatTextInput = ({accessTokens, memberId}) => {
       {newMessage.trim() ? (
         <TouchableOpacity
           onPress={handleSendMessage}
-          disabled={!newMessage.trim()}>
+          disabled={!newMessage.trim()}
+          style={{paddingHorizontal: 10}}>
           <Ionicons name="send" size={24} color={MAIN_COLOR} />
         </TouchableOpacity>
       ) : (

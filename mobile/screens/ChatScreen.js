@@ -54,16 +54,13 @@ const ChatScreen = ({navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#e4f2eb'}}>
-      {messages.length > 0 && (
-        <FlatList
-          data={messages}
-          keyExtractor={item => item._id}
-          renderItem={renderMessageItem}
-          inverted
-          style={{padding: 5}}
-        />
-      )}
-
+      <FlatList
+        data={messages}
+        keyExtractor={item => item._id}
+        renderItem={renderMessageItem}
+        inverted
+        style={{padding: 5}}
+      />
       <ChatTextInput accessTokens={accessTokens} memberId={otherUser} />
     </View>
   );
