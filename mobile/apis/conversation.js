@@ -25,7 +25,7 @@ export async function createConversation(member_id, token) {
   const res = await axios.post(
     waveChatApi.createConversation(),
     {
-      member_id,
+      member_id: member_id,
     },
     {
       headers: {
@@ -39,7 +39,7 @@ export async function createConversation(member_id, token) {
 
 export async function createGroupConversation(groupName, member_ids, token) {
   const res = await axios.post(
-    waveChatApi.createConversation(),
+    waveChatApi.createGroupConversation(),
     {
       member_ids: member_ids,
       name: groupName,

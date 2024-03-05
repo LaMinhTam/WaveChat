@@ -12,7 +12,8 @@ export const waveChatApi = {
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
   getMessages: id => `${waveChatEndpoint}/message/${id}`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
-  createConversation: () => `${waveChatEndpoint}/conversation-group/create`,
+  createGroupConversation: () =>
+    `${waveChatEndpoint}/conversation-group/create`,
   sendFriendRequest: id => `${waveChatEndpoint}/friend/send?_id=${id}`,
   acceptFriendRequest: id => `${waveChatEndpoint}/friend/accept?_id=${id}`,
   revokeFriendRequest: id =>

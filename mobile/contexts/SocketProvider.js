@@ -32,20 +32,20 @@ export const SocketProvider = ({children}) => {
 
     newSocket.on('message', incomingMessage => {
       const {message} = incomingMessage;
-
       setMessages(prevMessages => [message, ...prevMessages]);
 
-      // setConversations(prevConversations => {
-      //   return prevConversations.map(conversation => {
-      //     if (conversation.conversation_id === message.conversation_id) {
-      //       return {
-      //         ...conversation,
-      //         messages: [...(conversation.messages || []), message],
-      //       };
-      //     }
-      //     return conversation;
-      //   });
-      // });
+      setConversations(prevConversations => {
+        return prevConversations.map(conversation => {
+          if (conversation._id === message.conversation_id) {
+            return {
+              ...conversation,
+              last_message: message,
+              last_activity: message.created_at,
+            };
+          }
+          return conversation;
+        });
+      });
     });
 
     setSocket(newSocket);

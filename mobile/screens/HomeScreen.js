@@ -26,38 +26,40 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {conversations.map(conversation => (
-        <TouchableOpacity
-          key={conversation._id}
-          style={styles.conversationRow}
-          onPress={() => {
-            setCurrentConversation(conversation);
-            navigation.navigate('ChatScreen');
-          }}>
-          <Image
-            style={styles.avatar}
-            source={{
-              uri: conversation.avatar || 'https://source.unsplash.com/random',
-            }}
-          />
-
-          <View style={styles.infoColumn}>
-            <View>
-              <Text style={styles.name}>{conversation.name}</Text>
-              <Text style={styles.lastMessage}>
-                {(conversation.last_message.user._id === userInfo._id
-                  ? 'Bạn'
-                  : conversation.last_message.user.full_name) +
-                  ': ' +
-                  conversation.last_message.message}
+      {conversations
+        .sort((a, b) => new Date(b.last_activity) - new Date(a.last_activity))
+        .map(conversation => (
+          <TouchableOpacity
+            key={conversation._id}
+            style={styles.conversationRow}
+            onPress={() => {
+              setCurrentConversation(conversation);
+              navigation.navigate('ChatScreen');
+            }}>
+            <Image
+              style={styles.avatar}
+              source={{
+                uri:
+                  conversation.avatar || 'https://source.unsplash.com/random',
+              }}
+            />
+            <View style={styles.infoColumn}>
+              <View>
+                <Text style={styles.name}>{conversation.name}</Text>
+                <Text style={styles.lastMessage}>
+                  {(conversation.last_message.user._id === userInfo._id
+                    ? 'Bạn'
+                    : conversation.last_message.user.full_name) +
+                    ': ' +
+                    conversation.last_message.message}
+                </Text>
+              </View>
+              <Text style={styles.lastActivity}>
+                {formatTimeLastActivity(conversation.last_activity)}
               </Text>
             </View>
-            <Text style={styles.lastActivity}>
-              {formatTimeLastActivity(conversation.last_activity)}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ))}
+          </TouchableOpacity>
+        ))}
     </ScrollView>
   );
 };

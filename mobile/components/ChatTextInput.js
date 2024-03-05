@@ -19,7 +19,10 @@ const ChatTextInput = ({accessTokens, memberId}) => {
 
   const getConversationId = async accessToken => {
     if (!currentConversation._id) {
-      const newConversation = await createConversation(memberId, accessToken);
+      const newConversation = await createConversation(
+        memberId._id,
+        accessToken,
+      );
 
       const updateConversation = {
         ...currentConversation,
@@ -39,7 +42,6 @@ const ChatTextInput = ({accessTokens, memberId}) => {
 
   const handleSendMessage = async () => {
     let conversationID = await getConversationId(accessTokens.accessToken);
-
     handleMessage(conversationID, newMessage, 1);
     setNewMessage('');
   };
@@ -93,7 +95,6 @@ const ChatTextInput = ({accessTokens, memberId}) => {
       type: type,
       created_at: new Date().getTime(),
     };
-    console.log('handleMessage ~ message:', message);
 
     socket.emit('message', message);
   };
