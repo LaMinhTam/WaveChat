@@ -30,10 +30,6 @@ const ChatTextInput = ({accessTokens, memberId}) => {
       };
 
       setCurrentConversation(updateConversation);
-      setConversations(prevConversations => [
-        ...prevConversations,
-        updateConversation,
-      ]);
 
       return newConversation.data.conversation_id;
     }

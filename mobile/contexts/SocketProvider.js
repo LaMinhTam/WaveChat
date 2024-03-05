@@ -2,12 +2,13 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import io from 'socket.io-client';
 import HOST_IP from '../apis/host';
 import {useUserData} from './auth-context';
+import {getConversations} from '../apis/conversation';
 
 const SocketContext = createContext();
 
 export const SocketProvider = ({children}) => {
   const [socket, setSocket] = useState(null);
-  const {userInfo} = useUserData();
+  const {userInfo, accessTokens} = useUserData();
   const [currentConversation, setCurrentConversation] = useState({});
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -33,19 +34,7 @@ export const SocketProvider = ({children}) => {
     newSocket.on('message', incomingMessage => {
       const {message} = incomingMessage;
       setMessages(prevMessages => [message, ...prevMessages]);
-
-      setConversations(prevConversations => {
-        return prevConversations.map(conversation => {
-          if (conversation._id === message.conversation_id) {
-            return {
-              ...conversation,
-              last_message: message,
-              last_activity: message.created_at,
-            };
-          }
-          return conversation;
-        });
-      });
+      handleConversationOnIncomingMessage(message);
     });
 
     setSocket(newSocket);
@@ -54,6 +43,29 @@ export const SocketProvider = ({children}) => {
       newSocket.disconnect();
     };
   }, []);
+
+  const handleConversationOnIncomingMessage = async message => {
+    let isNewConversation = true;
+    setConversations(prevConversations => {
+      return prevConversations.map(conversation => {
+        if (conversation._id === message.conversation_id) {
+          isExist = false;
+          return {
+            ...conversation,
+            last_message: message,
+            last_activity: message.created_at,
+          };
+        }
+        return conversation;
+      });
+    });
+    if (isNewConversation) {
+      const conversation = await getConversations(accessTokens.accessToken);
+      console.log(conversation.data, conversation.data);
+      setConversations(conversation.data);
+    }
+  };
+
   const contextValues = {
     socket,
     currentConversation,
