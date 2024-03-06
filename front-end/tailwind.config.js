@@ -18,6 +18,8 @@ export default {
                 text3: "#808191",
                 text4: "#B2B3BD",
                 text5: "#171725",
+                text6: "#eaedf0",
+                text7: "#7589a3",
                 iconColor: "#A2A2A8",
                 white: "#FFFFFF",
                 whiteSoft: "#FCFBFF",

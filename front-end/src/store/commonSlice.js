@@ -8,7 +8,7 @@ const commonSlice = createSlice({
         showUpdateAvatar: false,
         showConversation: false,
         activeConversation: "",
-        isSendFileLoading: false,
+        showConversationInfo: false,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -35,9 +35,9 @@ const commonSlice = createSlice({
             ...state,
             activeConversation: action.payload,
         }),
-        setIsSendFileLoading: (state, action) => ({
+        setShowConversationInfo: (state, action) => ({
             ...state,
-            isSendFileLoading: action.payload,
+            showConversationInfo: action.payload,
         }),
     },
 });
@@ -48,6 +48,6 @@ export const {
     setShowUpdateAvatar,
     setShowConversation,
     setActiveConversation,
-    setIsSendFileLoading,
+    setShowConversationInfo,
 } = commonSlice.actions;
 export default commonSlice.reducer;

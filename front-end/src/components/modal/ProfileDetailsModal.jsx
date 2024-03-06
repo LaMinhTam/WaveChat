@@ -64,7 +64,7 @@ const ProfileDetailsModal = () => {
                             />
 
                             <button
-                                className="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 rounded-full bg-[#eaedf0] btn_showUpdateAvatar hover:bg-opacity-90"
+                                className="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 rounded-full bg-text6 btn_showUpdateAvatar hover:bg-opacity-90"
                                 onClick={() =>
                                     dispatch(setShowUpdateAvatar(true))
                                 }
@@ -86,7 +86,7 @@ const ProfileDetailsModal = () => {
                             </button>
                         </div>
                     </div>
-                    <hr className="w-full h-1 bg-[#eaedf0]" />
+                    <hr className="w-full h-1 bg-text6" />
                     <div className="py-3">
                         <h4 className="font-semibold text-[16px]">
                             Thông tin cá nhân

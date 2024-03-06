@@ -18,7 +18,7 @@ const ConversationContent = () => {
                         {group.formattedTime}
                     </span>
                     {group.data.map((msg) =>
-                        msg?.user_id === currentUserId ? (
+                        msg?.user?._id === currentUserId ? (
                             <Message key={uuidv4()} msg={msg} type="send" />
                         ) : (
                             <Message key={uuidv4()} msg={msg} type="receive" />

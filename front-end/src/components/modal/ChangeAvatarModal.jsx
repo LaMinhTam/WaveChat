@@ -91,7 +91,7 @@ const ChangeAvatarModal = () => {
                     <IconClose />
                 </button>
             </div>
-            <hr className="w-full h-[1px] bg-[#eaedf0]" />
+            <hr className="w-full h-[1px] bg-text6" />
             <div>
                 <div className="w-full px-4 mt-2 mb-6">
                     <button className="w-full">

@@ -62,7 +62,7 @@ const CreateGroupChatModal = () => {
                     <div></div>
                     <div className="flex items-center ml-auto gap-x-3">
                         <button
-                            className="px-4 py-2 bg-[#eaedf0]"
+                            className="px-4 py-2 bg-text6"
                             onClick={() => setShowCreateGroupChat(false)}
                         >
                             Hủy

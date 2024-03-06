@@ -74,7 +74,7 @@ const UpdateProfileModal = () => {
                     <IconClose />
                 </button>
             </div>
-            <hr className="w-full h-[1px] bg-[#eaedf0]" />
+            <hr className="w-full h-[1px] bg-text6" />
             <div className="w-full h-[368px]">
                 <div className="px-4 py-3 text-sm font-normal">
                     <span>Tên hiển thị</span>
@@ -120,7 +120,7 @@ const UpdateProfileModal = () => {
                     </div>
                 </div>
             </div>
-            <hr className="w-full h-[1px] bg-[#eaedf0]" />
+            <hr className="w-full h-[1px] bg-text6" />
             <div className="flex items-center justify-center w-full px-4 py-2">
                 <div className="flex items-center justify-center ml-auto gap-x-2">
                     <button

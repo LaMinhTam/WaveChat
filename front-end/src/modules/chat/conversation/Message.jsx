@@ -52,7 +52,7 @@ const Message = ({ msg, type }) => {
                     className={`flex flex-col items-start justify-center p-3 rounded gap-y-2 bg-tertiary custom-message__block ml-auto`}
                 >
                     <span>{msg.media.length <= 0 && msg?.message}</span>
-                    {msg.media.length > 0 &&
+                    {msg?.media?.length > 0 &&
                         msg.media.map((media) => {
                             let fileType = media.split(";")[0];
                             let fileName = media.split(";")[1];

@@ -22,6 +22,7 @@ const DashboardPage = () => {
                 const friends = await fetchCurrentUserFriends();
                 dispatch(setListFriend(friends));
                 const conversations = await fetchConversations();
+                console.log("fetchData ~ conversations:", conversations);
                 dispatch(setConversations(conversations));
             } catch (error) {
                 console.log(error);
@@ -31,7 +32,6 @@ const DashboardPage = () => {
     }, [dispatch, id]);
     return (
         <RequiredAuthPage>
-            {/* <DashboardWelcome /> */}
             {currentTab === "Chat" && showConversation && <Conversation />}
             {currentTab === "Chat" && !showConversation && <DashboardWelcome />}
         </RequiredAuthPage>

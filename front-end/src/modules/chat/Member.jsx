@@ -38,6 +38,7 @@ const Member = ({ user }) => {
         try {
             const res = await axiosPrivate.get(`/message/${user._id}`);
             const data = res.data;
+            console.log("handleClickedMember ~ data:", data);
             data.reverse();
             setMessage(data);
             dispatch(setActiveConversation(user._id));
