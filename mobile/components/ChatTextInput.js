@@ -7,15 +7,11 @@ import {createConversation} from '../apis/conversation';
 import ImagePicker from 'react-native-image-crop-picker';
 import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
 import DocumentPicker from 'react-native-document-picker';
+import {notifyMessageToOtherMembers} from '../utils/SendMessage';
 
-const ChatTextInput = ({accessTokens, memberId}) => {
+const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   const [newMessage, setNewMessage] = useState('');
-  const {
-    socket,
-    currentConversation,
-    setCurrentConversation,
-    setConversations,
-  } = useSocket();
+  const {socket, currentConversation, setCurrentConversation} = useSocket();
 
   const getConversationId = async accessToken => {
     if (!currentConversation._id) {
@@ -93,6 +89,8 @@ const ChatTextInput = ({accessTokens, memberId}) => {
     };
 
     socket.emit('message', message);
+
+    notifyMessageToOtherMembers(message, currentConversation, userInfo);
   };
   return (
     <View

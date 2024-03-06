@@ -32,7 +32,6 @@ const ChatScreen = ({navigation}) => {
         </View>
       ),
     });
-
     loadMessages();
   }, []);
 
@@ -68,7 +67,11 @@ const ChatScreen = ({navigation}) => {
         inverted
         style={{padding: 5}}
       />
-      <ChatTextInput accessTokens={accessTokens} memberId={otherUser} />
+      <ChatTextInput
+        accessTokens={accessTokens}
+        memberId={otherUser}
+        userInfo={userInfo}
+      />
     </View>
   );
 };

@@ -6,6 +6,7 @@ import {Login} from '../apis/authenApi';
 import {useUserData} from '../contexts/auth-context';
 import {getProfile} from '../apis/user';
 import {getFriends} from '../apis/friend';
+import {addNewFCMToken} from '../utils/firestoreManage';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
@@ -23,6 +24,7 @@ const SignIn = () => {
       setUserInfo(user);
       fetchFriends(data.data.access_token);
       storeAccessToken('accessToken', data.data.access_token);
+      addNewFCMToken(user);
     } else if (data.status === 401) {
       setErrorMessage('Sai tài khoản hoặc mật khẩu');
     }
