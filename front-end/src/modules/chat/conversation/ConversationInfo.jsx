@@ -10,8 +10,8 @@ const ConversationInfo = () => {
         <div className="min-w-[344px] h-screen flex flex-col justify-start bg-lite shadow-md overflow-x-hidden overflow-y-scroll custom-scrollbar">
             <InfoHeader />
             <div className="flex-1">
-                <InfoUser />
-                <InfoOption />
+                <InfoUser name="Nguyễn Văn A" />
+                <InfoOption number={4} />
                 <InfoImage />
                 <InfoFile />
                 <button className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error">
