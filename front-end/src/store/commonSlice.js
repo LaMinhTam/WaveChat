@@ -9,6 +9,7 @@ const commonSlice = createSlice({
         showConversation: false,
         activeConversation: "",
         showConversationInfo: false,
+        showStorage: false,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -39,6 +40,10 @@ const commonSlice = createSlice({
             ...state,
             showConversationInfo: action.payload,
         }),
+        setShowStorage: (state, action) => ({
+            ...state,
+            showStorage: action.payload,
+        }),
     },
 });
 export const {
@@ -49,5 +54,6 @@ export const {
     setShowConversation,
     setActiveConversation,
     setShowConversationInfo,
+    setShowStorage,
 } = commonSlice.actions;
 export default commonSlice.reducer;

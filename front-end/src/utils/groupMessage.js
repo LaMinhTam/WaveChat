@@ -4,7 +4,7 @@ export default function groupMessages(messages) {
     let currentGroup = null;
 
     messages.forEach((message) => {
-        const messageTime = moment(message.created_at);
+        let messageTime = moment(message.updated_at);
         if (currentGroup && messageTime.diff(currentGroup.time, "hours") < 1) {
             // If the message is less than 1 hour apart from the current group, add it to the group
             currentGroup.data.push(message);

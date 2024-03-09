@@ -14,11 +14,56 @@ const Conversation = () => {
     const friendInfo = useSelector((state) => state.user.friendInfo);
     const [socket, setSocket] = useState(null);
     const accessToken = getToken();
-    const { setMessage } = useChat();
+    const { message, setMessage } = useChat();
     const currentUserId = getUserId();
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
+
+    const [imageMessage, setImageMessage] = useState([]);
+    const [fileMessage, setFileMessage] = useState([]);
+
+    useEffect(() => {
+        setImageMessage([]);
+        setFileMessage([]);
+        message.forEach((msg) => {
+            if (msg.type === 2) {
+                setImageMessage((prev) =>
+                    Array.isArray(prev)
+                        ? [
+                              ...prev,
+                              {
+                                  id: msg.user._id,
+                                  media: msg.media[0],
+                              },
+                          ]
+                        : [
+                              {
+                                  id: msg.user._id,
+                                  media: msg.media[0],
+                              },
+                          ]
+                );
+            } else if (msg.type === 5) {
+                setFileMessage((prev) =>
+                    Array.isArray(prev)
+                        ? [
+                              ...prev,
+                              {
+                                  id: msg.user._id,
+                                  media: msg.media[0],
+                              },
+                          ]
+                        : [
+                              {
+                                  id: msg.user._id,
+                                  media: msg.media[0],
+                              },
+                          ]
+                );
+            }
+        });
+    }, [message]);
 
     useEffect(() => {
         // Connect to the WebSocket server
@@ -66,7 +111,7 @@ const Conversation = () => {
                     avatar={friendInfo.avatar}
                     userId={friendInfo._id}
                 />
-                <ConversationContent />
+                <ConversationContent message={message} />
                 <div className="mt-auto shadow-md">
                     <ConversationToolbar
                         user_id={friendInfo._id}
@@ -85,7 +130,13 @@ const Conversation = () => {
                     exit={{ x: "344px" }}
                     transition={{ duration: 0.3 }}
                 >
-                    <ConversationInfo name={friendInfo.full_name} />
+                    <ConversationInfo
+                        name={friendInfo.full_name}
+                        avatar={friendInfo.avatar}
+                        userId={friendInfo._id}
+                        images={imageMessage}
+                        files={fileMessage}
+                    />
                 </motion.div>
             )}
         </div>

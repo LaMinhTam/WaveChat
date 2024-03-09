@@ -5,13 +5,14 @@ import {
     IconPin,
 } from "../../../../components/icons";
 import PropTypes from "prop-types";
+import s3ImageUrl from "../../../../utils/s3ImageUrl";
 
-const InfoUser = ({ name }) => {
+const InfoUser = ({ name, avatar, userId }) => {
     return (
         <div className="flex flex-col items-center px-4 py-3 border-b-8">
             <div className="my-3 rounded-full w-14 h-14">
                 <img
-                    src="https://source.unsplash.com/random"
+                    src={s3ImageUrl(avatar, userId)}
                     alt=""
                     className="object-cover w-full h-full rounded-full"
                 />
@@ -62,6 +63,8 @@ const InfoUser = ({ name }) => {
 
 InfoUser.propTypes = {
     name: PropTypes.string.isRequired,
+    avatar: PropTypes.string,
+    userId: PropTypes.string,
 };
 
 export default InfoUser;

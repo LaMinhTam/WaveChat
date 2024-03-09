@@ -6,6 +6,7 @@ import { useChat } from "../../../contexts/chat-context";
 import { axiosPrivate } from "../../../api/axios";
 import useS3ImageConversation from "../../../hooks/useS3ImageConversation";
 import { toast } from "react-toastify";
+import { formatUnixTimestamp } from "../../../utils/formatTime";
 
 const ConversationToolbar = ({ socket, user_id }) => {
     const { setValue, getValues } = useForm();
@@ -18,11 +19,7 @@ const ConversationToolbar = ({ socket, user_id }) => {
         const file = e.target.files[0];
         if (!file) return;
         setValue("file_name", file.name);
-        const date = new Date();
-        const formattedDate = date
-            .toLocaleString("en-GB")
-            .replace(/\/|,|:/g, "-")
-            .replace(" ", "_");
+        const timestamp = new Date().getTime();
         const type = file.type;
         const fileType = file.type.split("/")[0];
         const fileName = file.name;
@@ -31,29 +28,24 @@ const ConversationToolbar = ({ socket, user_id }) => {
             toast.error("Please select a file");
             return;
         } else {
-            handleUploadFile(file, formattedDate);
-            await handleSendFile(fileName, type, size, formattedDate);
+            handleUploadFile(file, timestamp);
+            await handleSendFile(fileName, type, size, timestamp);
         }
         e.target.value = null;
     };
 
     const handleSelectImage = async (e) => {
-        console.log("run");
         const file = e.target.files[0];
         if (!file) return;
         setValue("file_name", file.name);
-        const date = new Date();
-        const formattedDate = date
-            .toLocaleString("en-GB")
-            .replace(/\/|,|:/g, "-")
-            .replace(" ", "_");
+        const timestamp = new Date().getTime();
         const type = file.type;
         const fileType = file.type.split("/")[0];
         const fileName = file.name;
         const size = file.size;
         if (fileType === "image") {
-            handleUploadImage(file, formattedDate);
-            await handleSendFile(fileName, type, size, formattedDate);
+            handleUploadImage(file, timestamp);
+            await handleSendFile(fileName, type, size, timestamp);
         } else {
             toast.error("Please select a image");
             return;
@@ -61,13 +53,11 @@ const ConversationToolbar = ({ socket, user_id }) => {
         e.target.value = null;
     };
 
-    const handleSendFile = async (
-        fileName,
-        fileType,
-        size = 0,
-        formattedDate
-    ) => {
+    const handleSendFile = async (fileName, fileType, size = 0, timestamp) => {
         const type = fileType.split("/")[0];
+        const now = new Date();
+        const unixTimestamp = now.getTime();
+        const formattedTime = formatUnixTimestamp(unixTimestamp);
         if (!socket) return;
         if (!conversationId) {
             const res = await axiosPrivate.post("/conversation/create", {
@@ -78,20 +68,18 @@ const ConversationToolbar = ({ socket, user_id }) => {
                 conversation_id: res.data.data.conversation_id,
                 type: type === "image" ? 2 : 5,
                 message: type === "image" ? "Hình ảnh" : "Tệp tin",
-                media: `${fileType};${formattedDate}_${fileName};${size}`,
-                created_at: "",
+                media: `${fileType};${timestamp}-${fileName};${size}`,
+                created_at: formattedTime,
             };
-            console.log(clientFile);
             socket.emit("message", clientFile);
         } else {
             const clientFile = {
                 conversation_id: conversationId,
                 type: type === "image" ? 2 : 5,
                 message: type === "image" ? "Hình ảnh" : "Tệp tin",
-                media: `${fileType};${formattedDate}_${fileName};${size}`,
-                created_at: "",
+                media: `${fileType};${timestamp}-${fileName};${size}`,
+                created_at: formattedTime,
             };
-            console.log(clientFile);
             socket.emit("message", clientFile);
         }
     };

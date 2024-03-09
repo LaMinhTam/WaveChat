@@ -20,3 +20,11 @@ export default function formatTime(updated_at) {
         return updatedAt.format("DD/MM/YY");
     }
 }
+
+export function formatUnixTimestamp(unixTimestamp) {
+    const date = moment.unix(unixTimestamp / 1000);
+
+    const formattedTime = date.format("DD-MM-YYYY HH:mm:ss");
+
+    return formattedTime;
+}

@@ -16,10 +16,10 @@ import { useState } from "react";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
 const Message = ({ msg, type }) => {
     let time;
-    if (msg.createdAt) {
-        time = formatDate(msg.createdAt);
-    } else {
+    if (msg.created_at) {
         time = formatDate(msg.created_at);
+    } else {
+        time = formatDate(msg.updated_at);
     }
     const [isOpenImage, setIsOpenImage] = useState(false);
     const handleDownloadFile = (fileName) => {
@@ -55,6 +55,7 @@ const Message = ({ msg, type }) => {
                         msg.media.map((media) => {
                             let fileType = media.split(";")[0];
                             let fileName = media.split(";")[1];
+                            let file_name = fileName.split("-")[1];
                             const imageUri = s3ConversationUrl(
                                 fileName,
                                 msg.user._id
@@ -96,7 +97,7 @@ const Message = ({ msg, type }) => {
                                                         "txt" && <IconTxt />}
                                                     <div className="flex flex-col">
                                                         <span className="text-sm text-wrap">
-                                                            {fileName}
+                                                            {file_name}
                                                         </span>
                                                         <span className="text-xs text-text3">
                                                             {formatSize(size)}

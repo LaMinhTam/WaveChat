@@ -1,15 +1,14 @@
-import { useChat } from "../../../contexts/chat-context";
 import { getUserId } from "../../../utils/auth";
 import groupMessages from "../../../utils/groupMessage";
 import Message from "./Message";
 import { v4 as uuidv4 } from "uuid";
+import PropTypes from "prop-types";
 
-const ConversationContent = () => {
-    const { message } = useChat();
-    console.log("ConversationContent ~ message:", message);
+const ConversationContent = ({ message }) => {
     const currentUserId = getUserId();
 
     const groupedMessages = groupMessages(message);
+    console.log("ConversationContent ~ groupedMessages:", groupedMessages);
 
     return (
         <div className="flex-1 w-full h-full max-h-[570px] overflow-y-auto custom-scrollbar bg-strock p-2">
@@ -29,6 +28,10 @@ const ConversationContent = () => {
             ))}
         </div>
     );
+};
+
+ConversationContent.propTypes = {
+    message: PropTypes.array,
 };
 
 export default ConversationContent;
