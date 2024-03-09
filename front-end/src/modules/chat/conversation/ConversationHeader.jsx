@@ -31,6 +31,7 @@ const ConversationHeader = ({ name, status, avatar, userId }) => {
                     <IconAddGroup />
                 </button>
                 <button
+                    className={showConversationInfo ? "text-secondary" : ""}
                     onClick={() =>
                         dispatch(setShowConversationInfo(!showConversationInfo))
                     }

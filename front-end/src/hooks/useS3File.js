@@ -16,10 +16,10 @@ const useS3File = (getValues = () => {}, cb = null) => {
 
     const s3 = new AWS.S3();
 
-    const handleUploadFile = (file) => {
+    const handleUploadFile = (file, formattedDate) => {
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `conversations/${userProfile._id}/files/` + file.name,
+            Key: `conversations/${userProfile._id}/files/${formattedDate}_${file.name}`,
             Body: file,
             ACL: "public-read",
         };
@@ -37,11 +37,11 @@ const useS3File = (getValues = () => {}, cb = null) => {
             });
     };
 
-    const handleDeleteFile = () => {
+    const handleDeleteFile = (formattedDate) => {
         const fileName = getValues("file_name");
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `conversations/${userProfile._id}/files/` + fileName,
+            Key: `conversations/${userProfile._id}/files/${formattedDate}_${fileName}`,
         };
 
         s3.deleteObject(params, (err) => {

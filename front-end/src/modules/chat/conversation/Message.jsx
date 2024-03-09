@@ -28,7 +28,6 @@ const Message = ({ msg, type }) => {
         link.setAttribute("download", fileName);
         link.setAttribute("target", "_blank");
         document.body.appendChild(link);
-        console.log("handleDownloadFile ~ link:", link);
         link.click();
         link.remove();
     };
@@ -58,7 +57,7 @@ const Message = ({ msg, type }) => {
                             let fileName = media.split(";")[1];
                             const imageUri = s3ConversationUrl(
                                 fileName,
-                                msg.user_id
+                                msg.user._id
                             );
                             let type = fileType.split("/")[0];
                             let fileExtension = fileName.split(".")[1];

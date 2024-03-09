@@ -85,7 +85,7 @@ const Conversation = () => {
                     exit={{ x: "344px" }}
                     transition={{ duration: 0.3 }}
                 >
-                    <ConversationInfo />
+                    <ConversationInfo name={friendInfo.full_name} />
                 </motion.div>
             )}
         </div>

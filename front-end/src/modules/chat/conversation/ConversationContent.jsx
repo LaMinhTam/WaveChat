@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const ConversationContent = () => {
     const { message } = useChat();
+    console.log("ConversationContent ~ message:", message);
     const currentUserId = getUserId();
 
     const groupedMessages = groupMessages(message);
