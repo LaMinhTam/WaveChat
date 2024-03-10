@@ -35,12 +35,14 @@ const Conversation = () => {
                               {
                                   id: msg.user._id,
                                   media: msg.media[0],
+                                  created_at: msg.created_at,
                               },
                           ]
                         : [
                               {
                                   id: msg.user._id,
                                   media: msg.media[0],
+                                  created_at: msg.created_at,
                               },
                           ]
                 );
@@ -52,12 +54,14 @@ const Conversation = () => {
                               {
                                   id: msg.user._id,
                                   media: msg.media[0],
+                                  created_at: msg.created_at,
                               },
                           ]
                         : [
                               {
                                   id: msg.user._id,
                                   media: msg.media[0],
+                                  created_at: msg.created_at,
                               },
                           ]
                 );
@@ -83,9 +87,6 @@ const Conversation = () => {
         });
 
         newSocket.on("message", (incomingMessage) => {
-            // handle created_at has time format like createAt
-            incomingMessage.message.created_at =
-                incomingMessage.message.createdAt;
             setMessage((prev) =>
                 Array.isArray(prev)
                     ? [...prev, incomingMessage.message]

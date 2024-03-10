@@ -6,7 +6,6 @@ import { useChat } from "../../../contexts/chat-context";
 import { axiosPrivate } from "../../../api/axios";
 import useS3ImageConversation from "../../../hooks/useS3ImageConversation";
 import { toast } from "react-toastify";
-import { formatUnixTimestamp } from "../../../utils/formatTime";
 
 const ConversationToolbar = ({ socket, user_id }) => {
     const { setValue, getValues } = useForm();
@@ -55,9 +54,6 @@ const ConversationToolbar = ({ socket, user_id }) => {
 
     const handleSendFile = async (fileName, fileType, size = 0, timestamp) => {
         const type = fileType.split("/")[0];
-        const now = new Date();
-        const unixTimestamp = now.getTime();
-        const formattedTime = formatUnixTimestamp(unixTimestamp);
         if (!socket) return;
         if (!conversationId) {
             const res = await axiosPrivate.post("/conversation/create", {
@@ -69,7 +65,7 @@ const ConversationToolbar = ({ socket, user_id }) => {
                 type: type === "image" ? 2 : 5,
                 message: type === "image" ? "Hình ảnh" : "Tệp tin",
                 media: `${fileType};${timestamp}-${fileName};${size}`,
-                created_at: formattedTime,
+                created_at: "",
             };
             socket.emit("message", clientFile);
         } else {
@@ -78,7 +74,7 @@ const ConversationToolbar = ({ socket, user_id }) => {
                 type: type === "image" ? 2 : 5,
                 message: type === "image" ? "Hình ảnh" : "Tệp tin",
                 media: `${fileType};${timestamp}-${fileName};${size}`,
-                created_at: formattedTime,
+                created_at: "",
             };
             socket.emit("message", clientFile);
         }

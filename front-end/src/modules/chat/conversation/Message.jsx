@@ -15,12 +15,6 @@ import Viewer from "react-viewer";
 import { useState } from "react";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
 const Message = ({ msg, type }) => {
-    let time;
-    if (msg.created_at) {
-        time = formatDate(msg.created_at);
-    } else {
-        time = formatDate(msg.updated_at);
-    }
     const [isOpenImage, setIsOpenImage] = useState(false);
     const handleDownloadFile = (fileName) => {
         const link = document.createElement("a");
@@ -127,7 +121,9 @@ const Message = ({ msg, type }) => {
                                 </div>
                             );
                         })}
-                    <span className="text-sm text-text3">{time}</span>
+                    <span className="text-sm text-text3">
+                        {formatDate(msg.created_at)}
+                    </span>
                 </div>
             </div>
         </div>

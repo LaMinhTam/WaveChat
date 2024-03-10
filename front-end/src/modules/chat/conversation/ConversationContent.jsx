@@ -8,7 +8,6 @@ const ConversationContent = ({ message }) => {
     const currentUserId = getUserId();
 
     const groupedMessages = groupMessages(message);
-    console.log("ConversationContent ~ groupedMessages:", groupedMessages);
 
     return (
         <div className="flex-1 w-full h-full max-h-[570px] overflow-y-auto custom-scrollbar bg-strock p-2">

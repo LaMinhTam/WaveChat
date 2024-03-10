@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { axiosPrivate } from "../../../api/axios";
 import { useChat } from "../../../contexts/chat-context";
 import { useState } from "react";
-import { formatUnixTimestamp } from "../../../utils/formatTime";
 
 const ConversationChatInput = ({ user_id, socket }) => {
     const [messageSend, setMessageSend] = useState("");
@@ -18,9 +17,6 @@ const ConversationChatInput = ({ user_id, socket }) => {
 
     const handleSendMessage = async () => {
         if (!socket) return;
-        const now = new Date();
-        const unixTimestamp = now.getTime();
-        const formattedTime = formatUnixTimestamp(unixTimestamp);
         if (!conversationId) {
             const res = await axiosPrivate.post("/conversation/create", {
                 member_id: user_id,
@@ -30,7 +26,7 @@ const ConversationChatInput = ({ user_id, socket }) => {
                 conversation_id: res.data.data.conversation_id,
                 message: messageSend,
                 type: 1,
-                created_at: formattedTime,
+                created_at: "",
             };
             socket.emit("message", message);
             setMessageSend("");
@@ -39,7 +35,7 @@ const ConversationChatInput = ({ user_id, socket }) => {
                 conversation_id: conversationId,
                 message: messageSend,
                 type: 1,
-                created_at: formattedTime,
+                created_at: "",
             };
             socket.emit("message", message);
             setMessageSend("");

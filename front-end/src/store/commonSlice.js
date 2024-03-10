@@ -10,6 +10,7 @@ const commonSlice = createSlice({
         activeConversation: "",
         showConversationInfo: false,
         showStorage: false,
+        storageOption: "image",
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -44,6 +45,10 @@ const commonSlice = createSlice({
             ...state,
             showStorage: action.payload,
         }),
+        setStorageOption: (state, action) => ({
+            ...state,
+            storageOption: action.payload,
+        }),
     },
 });
 export const {
@@ -55,5 +60,6 @@ export const {
     setActiveConversation,
     setShowConversationInfo,
     setShowStorage,
+    setStorageOption,
 } = commonSlice.actions;
 export default commonSlice.reducer;
