@@ -1,13 +1,13 @@
 export const REACTIONS = ['👍', '♥️', '😄', '😲', '😭', '😡'];
 
 export const FILE_TYPE = {
-  TEXT: 1,
-  IMAGE: 2,
-  VIDEO: 3,
-  AUDIO: 4,
-  FILE: 5,
-  REPLY: 6,
-  STICKER: 16,
+  1: 'Text',
+  2: 'Hình ảnh',
+  3: 'Video',
+  4: 'Audio',
+  5: 'File',
+  6: 'Reply',
+  16: 'Sticker',
 };
 
 export function handleConvertFileTypeToNumber(fileName) {
@@ -21,28 +21,28 @@ export function handleConvertFileTypeToNumber(fileName) {
     case 'DOC':
     case 'TXT':
     case 'RTF':
-      typeNumber = FILE_TYPE.FILE;
+      typeNumber = 5;
       break;
     case 'JPG':
     case 'JPEG':
     case 'PNG':
     case 'GIF':
-      typeNumber = FILE_TYPE.IMAGE;
+      typeNumber = 2;
       break;
     case 'MP4':
     case 'AVI':
     case 'MKV':
     case 'MOV':
-      typeNumber = FILE_TYPE.VIDEO;
+      typeNumber = 3;
       break;
     case 'MP3':
     case 'WAV':
     case 'FLAC':
     case 'AAC':
-      typeNumber = FILE_TYPE.AUDIO;
+      typeNumber = 4;
       break;
     default:
-      typeNumber = FILE_TYPE.FILE;
+      typeNumber = 5;
       break;
   }
 

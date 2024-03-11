@@ -65,17 +65,7 @@ const ChatScreen = ({navigation}) => {
       accessTokens.accessToken,
     );
 
-    setMessages([...newMessages, ...messages]);
-  };
-
-  const loadMoreMessage = async () => {
-    let newMessages = await getMessage(
-      currentConversation._id,
-      accessTokens.accessToken,
-      messages.length,
-    );
-
-    setMessages([...messages, ...newMessages]);
+    setMessages(newMessages);
   };
 
   const renderMessageItem = ({item}) => {
@@ -100,7 +90,6 @@ const ChatScreen = ({navigation}) => {
         onScroll={({nativeEvent}) => {
           if (isCloseToBottom(nativeEvent)) {
             console.log('top');
-            loadMoreMessage();
           }
         }}
       />

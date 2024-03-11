@@ -6,10 +6,29 @@ import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {formatTimeLastActivity} from '../utils/format-time-message.util';
+import {FILE_TYPE, handleConvertFileTypeToNumber} from '../constants';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
   const {accessTokens, userInfo} = useUserData();
+
+  const constructMessage = (lastMessage, userInfo) => {
+    if (lastMessage.media[0]) {
+      const type = handleConvertFileTypeToNumber(lastMessage.media[0]);
+      return `[${FILE_TYPE[type]}] ${lastMessage.media[0]}`;
+    } else {
+      const senderName =
+        lastMessage.user._id === userInfo._id
+          ? 'Bạn'
+          : lastMessage.user.full_name;
+      return `${senderName}: ${lastMessage.message}`;
+    }
+  };
+
+  const LastMessage = item => {
+    let message = constructMessage(item.item.last_message, userInfo);
+    return <Text style={styles.lastMessage}>{message}</Text>;
+  };
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -46,13 +65,7 @@ const HomeScreen = ({navigation}) => {
             <View style={styles.infoColumn}>
               <View>
                 <Text style={styles.name}>{conversation.name}</Text>
-                <Text style={styles.lastMessage}>
-                  {(conversation.last_message.user._id === userInfo._id
-                    ? 'Bạn'
-                    : conversation.last_message.user.full_name) +
-                    ': ' +
-                    conversation.last_message.message}
-                </Text>
+                <LastMessage item={conversation} />
               </View>
               <Text style={styles.lastActivity}>
                 {formatTimeLastActivity(conversation.last_activity)}

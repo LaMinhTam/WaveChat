@@ -1,9 +1,15 @@
 import {RNS3} from 'react-native-aws3';
+import {
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_REGION,
+  AWS_BUCKET,
+} from '@env';
 
-const accessKey = 'AKIAZQ3DS6OMBWWL3X53';
-const secretKey = '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';
-const region = 'ap-southeast-1';
-const bucket = 'wavechat';
+const accessKey = AWS_ACCESS_KEY_ID;
+const secretKey = AWS_SECRET_ACCESS_KEY;
+const region = AWS_REGION;
+const bucket = AWS_BUCKET;
 
 export const sendImageMessage = async (image, conversationID) => {
   const name = image.path.split('/').pop();
