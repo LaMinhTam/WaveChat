@@ -1,7 +1,7 @@
 import {RNS3} from 'react-native-aws3';
 
-const accessKey = 'AKIAZQ3DS6OMCMIHTFUR';
-const secretKey = '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';
+const accessKey = 'AKIAZQ3DS6OMBWWL3X53';
+const secretKey = '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';
 const region = 'ap-southeast-1';
 const bucket = 'wavechat';
 

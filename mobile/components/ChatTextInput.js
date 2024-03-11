@@ -8,10 +8,18 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
 import DocumentPicker from 'react-native-document-picker';
 import {notifyMessageToOtherMembers} from '../utils/SendMessage';
+import {FILE_TYPE, handleConvertFileTypeToNumber} from '../constants';
 
 const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   const [newMessage, setNewMessage] = useState('');
   const {socket, currentConversation, setCurrentConversation} = useSocket();
+
+  function handleFileType(fileName) {
+    const fileType = fileName.split('.');
+    const type = fileType[fileType.length - 1];
+    const typeNumber = handleConvertFileTypeToNumber(type);
+    return typeNumber;
+  }
 
   const getConversationId = async accessToken => {
     if (!currentConversation._id) {
@@ -48,8 +56,8 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
 
           await sendImageMessage(image, conversationID);
 
-          const content = image.path.split('/').pop();
-          handleMessage(conversationID, content, 2);
+          const fileName = image.path.split('/').pop();
+          handleMessage(conversationID, '', 2, fileName);
         });
       })
       .catch(error => {
@@ -65,11 +73,12 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
         allowMultiSelection: true,
       });
       results.forEach(async file => {
+        let type = handleFileType(file.name);
         let conversationID = await getConversationId(accessTokens.accessToken);
 
         await uploadFileToS3(file, conversationID);
 
-        handleMessage(conversationID, file.name, 3);
+        handleMessage(conversationID, '', type, file.name);
       });
     } catch (error) {
       if (DocumentPicker.isCancel(error)) {
@@ -80,12 +89,13 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
     }
   };
 
-  const handleMessage = (conversationID, messageContent, type) => {
+  const handleMessage = (conversationID, messageContent, type, fileName) => {
     const message = {
       conversation_id: conversationID,
       message: messageContent,
       type: type,
       created_at: new Date().getTime(),
+      ...(fileName && {media: [fileName]}),
     };
 
     socket.emit('message', message);

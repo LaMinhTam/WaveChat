@@ -100,7 +100,7 @@ const MessageFile = ({item}) => {
         <View>
           <View>
             <Text style={{color: PRIMARY_TEXT_COLOR}}>
-              {truncateFileName(item.message, 20)}
+              {truncateFileName(item.media[0], 20)}
             </Text>
             {downloaded && (
               <View>
@@ -108,8 +108,6 @@ const MessageFile = ({item}) => {
                   {formatFileSize(fileInfo?.size)}
                   {' \u2022 '}
                   {item.message.split('.').pop()}
-                </Text>
-                <Text style={{color: SECONDARY_TEXT_COLOR}}>
                   Dã có trên máy
                 </Text>
               </View>

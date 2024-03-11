@@ -44,6 +44,7 @@ const Message = ({item, userInfo}) => {
           maxWidth: '60%',
           backgroundColor: isCurrentUser ? '#d6ffeb' : '#F0F0F0',
           padding: 10,
+          marginHorizontal: 10,
           borderRadius: 10,
           shadowColor: '#000',
           shadowOffset: {width: 0, height: 2},
@@ -58,13 +59,13 @@ const Message = ({item, userInfo}) => {
         </Text>
       </View>
 
-      {isCurrentUser && (
+      {/* {isCurrentUser && (
         <AvatarUser
           avatarUrl={item.user.avatar}
           style={USER_INFO.AVATAR_USER_STYLES_DEFAULT}
           type={CONVERSATION_TYPE.PERSONAL}
         />
-      )}
+      )} */}
     </View>
   );
 };

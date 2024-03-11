@@ -61,7 +61,6 @@ export const SocketProvider = ({children}) => {
     });
     if (isNewConversation) {
       const conversation = await getConversations(accessTokens.accessToken);
-      console.log(conversation.data, conversation.data);
       setConversations(conversation.data);
     }
   };

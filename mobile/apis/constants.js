@@ -10,7 +10,7 @@ export const waveChatApi = {
   getConversations: () => `${waveChatEndpoint}/conversation`,
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
-  getMessages: id => `${waveChatEndpoint}/message/${id}`,
+  getMessages: id => `${waveChatEndpoint}/message/${id}?limit=20`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
   createGroupConversation: () =>
     `${waveChatEndpoint}/conversation-group/create`,
@@ -32,8 +32,8 @@ const AVATAR_USER_STYLES_DEFAULT = {
   width: 40,
   height: 40,
   borderRadius: 20,
-  marginRight: 10,
-  marginLeft: 10,
+  // marginRight: 10,
+  // marginLeft: 10,
 };
 
 export const CONVERSATION_BACKGROUND_STATUS = {

@@ -14,6 +14,7 @@ const MessageImage = ({item}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleImagePress = uri => {
+    console.log(item);
     setSelectedImage(uri);
     setModalVisible(true);
   };
@@ -23,12 +24,12 @@ const MessageImage = ({item}) => {
       <TouchableOpacity
         onPress={() =>
           handleImagePress(
-            `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.message}`,
+            `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
           )
         }>
         <Image
           source={{
-            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.message}`,
+            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
           }}
           style={{width: '100%', aspectRatio: 1}}
           resizeMode="cover"

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {getMessage} from '../apis/conversation';
@@ -13,6 +13,20 @@ const ChatScreen = ({navigation}) => {
 
   useEffect(() => {
     navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+            setMessages([]);
+          }}>
+          <FeatherIcon
+            name="arrow-left"
+            size={24}
+            color="#fff"
+            style={{marginLeft: 10}}
+          />
+        </TouchableOpacity>
+      ),
       headerTitle: () => (
         <Text style={{fontSize: 16, fontWeight: '700', color: '#fff'}}>
           {currentConversation.name}
@@ -39,12 +53,29 @@ const ChatScreen = ({navigation}) => {
     navigation.navigate('CallPhoneScreen');
   };
 
+  function isCloseToBottom({layoutMeasurement, contentOffset, contentSize}) {
+    return (
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 20
+    );
+  }
+
   const loadMessages = async () => {
-    const messages = await getMessage(
+    let newMessages = await getMessage(
       currentConversation._id,
       accessTokens.accessToken,
     );
-    setMessages(messages);
+
+    setMessages([...newMessages, ...messages]);
+  };
+
+  const loadMoreMessage = async () => {
+    let newMessages = await getMessage(
+      currentConversation._id,
+      accessTokens.accessToken,
+      messages.length,
+    );
+
+    setMessages([...messages, ...newMessages]);
   };
 
   const renderMessageItem = ({item}) => {
@@ -66,6 +97,12 @@ const ChatScreen = ({navigation}) => {
         renderItem={renderMessageItem}
         inverted
         style={{padding: 5}}
+        onScroll={({nativeEvent}) => {
+          if (isCloseToBottom(nativeEvent)) {
+            console.log('top');
+            loadMoreMessage();
+          }
+        }}
       />
       <ChatTextInput
         accessTokens={accessTokens}
