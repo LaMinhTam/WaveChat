@@ -20,12 +20,11 @@ const SignIn = () => {
     if (data.status === 200) {
       user = data.data;
       profile = await getProfile(user._id, user.access_token);
-      // values = {phone: formattedPhoneNumber, password: password};
-      // await setValues(values);
+      values = {phone: formattedPhoneNumber, password: password};
       user = {...user, ...profile.data};
       setUserInfo(user);
       fetchFriends(data.data.access_token);
-      storeAccessToken(data.data.access_token);
+      storeAccessToken(data.data.access_token, values);
       addNewFCMToken(user);
     } else if (data.status === 401) {
       setErrorMessage('Sai tài khoản hoặc mật khẩu');

@@ -11,7 +11,6 @@ import {useUserData} from '../contexts/auth-context';
 
 const RenderView = ({user, phoneNumber}) => {
   const {accessTokens, friends, setFriends} = useUserData();
-  console.log(friends);
   let buttonTitle = 'Kết bạn';
   let onPressButton = () => handleSendFriendRequest();
 

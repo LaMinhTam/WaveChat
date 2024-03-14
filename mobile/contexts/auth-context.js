@@ -2,6 +2,9 @@
 import React from 'react';
 // import {auth} from '../utils/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {getFriends} from '../apis/friend';
+import {getProfile} from '../apis/user';
+import {Login} from '../apis/authenApi';
 
 const AuthContext = React.createContext();
 
@@ -23,16 +26,36 @@ export function UserDataProvider(props) {
 
   const isLogining = async () => {
     const accessToken = await AsyncStorage.getItem('accessToken');
-    setAccessTokens(accessToken);
+    const phone = await AsyncStorage.getItem('phone');
+    const password = await AsyncStorage.getItem('password');
+    if (accessToken) {
+      const data = await Login(phone, password);
+      user = data.data;
+      setAccessTokens(accessToken);
+      profile = await getProfile(user._id, accessToken);
+      user = {...user, ...profile.data};
+      setUserInfo(user);
+      fetchFriends();
+      setUserInfo(user);
+    }
   };
 
-  const storeAccessToken = async token => {
+  const fetchFriends = async () => {
+    try {
+      const friendsData = await getFriends(0, accessTokens);
+      setFriends(friendsData.data);
+      console.log('friends', friendsData.data);
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+    }
+  };
+
+  const storeAccessToken = async (token, values) => {
     try {
       setAccessTokens(token);
       await AsyncStorage.setItem('accessToken', token);
-      // await AsyncStorage.setItem('phone', values.phone);
-      // await AsyncStorage.setItem('password', values.password);
-      console.log('valuse', values);
+      await AsyncStorage.setItem('phone', values.phone);
+      await AsyncStorage.setItem('password', values.password);
     } catch (error) {
       console.error('Error storing access token:', error);
     }

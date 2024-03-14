@@ -14,11 +14,9 @@ export const SocketProvider = ({children}) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const user = userInfo;
-
     const newSocket = io(`ws://${HOST_IP}:3000`, {
       extraHeaders: {
-        Authorization: user.access_token,
+        Authorization: accessTokens,
       },
       query: {device: user._id},
     });
