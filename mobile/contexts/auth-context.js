@@ -37,6 +37,7 @@ export function UserDataProvider(props) {
       setUserInfo(user);
       fetchFriends();
       setUserInfo(user);
+      await AsyncStorage.setItem('accessToken', data.data.access_token);
     }
   };
 
