@@ -49,14 +49,11 @@ const CreateGroupScreen = ({navigation}) => {
     const data = await createGroupConversation(
       groupName,
       selectedFriends.map(friend => friend.user_id),
-      accessTokens.accessToken,
+      accessTokens,
     );
 
     let currentConversation = {
-      ...(await getConversationDetail(
-        data.data.conversation_id,
-        accessTokens.accessToken,
-      )),
+      ...(await getConversationDetail(data.data.conversation_id, accessTokens)),
       _id: data.data.conversation_id,
     };
     setCurrentConversation(currentConversation);

@@ -41,7 +41,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   };
 
   const handleSendMessage = async () => {
-    let conversationID = await getConversationId(accessTokens.accessToken);
+    let conversationID = await getConversationId(accessTokens);
     handleMessage(conversationID, newMessage, 1);
     setNewMessage('');
   };
@@ -50,9 +50,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
     ImagePicker.openPicker({multiple: true, cropping: false})
       .then(images => {
         images.map(async image => {
-          let conversationID = await getConversationId(
-            accessTokens.accessToken,
-          );
+          let conversationID = await getConversationId(accessTokens);
 
           await sendImageMessage(image, conversationID);
 
@@ -74,7 +72,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
       });
       results.forEach(async file => {
         let type = handleFileType(file.name);
-        let conversationID = await getConversationId(accessTokens.accessToken);
+        let conversationID = await getConversationId(accessTokens);
 
         await uploadFileToS3(file, conversationID);
 

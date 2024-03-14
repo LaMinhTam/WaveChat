@@ -44,10 +44,7 @@ const RenderView = ({user, phoneNumber}) => {
   }
 
   const handleSendFriendRequest = async () => {
-    const data = await sendFriendRequest(
-      user.user._id,
-      accessTokens.accessToken,
-    );
+    const data = await sendFriendRequest(user.user._id, accessTokens);
 
     if (data.status === 200) {
       friendFormatted = {...user.user, user_id: user.user._id, contact_type: 3};
@@ -56,7 +53,7 @@ const RenderView = ({user, phoneNumber}) => {
   };
 
   const handleRevokeFriendRequest = async friendId => {
-    const data = await revokeFriendRequest(friendId, accessTokens.accessToken);
+    const data = await revokeFriendRequest(friendId, accessTokens);
 
     if (data.status === 200) {
       setFriends(prevFriends =>
@@ -66,7 +63,7 @@ const RenderView = ({user, phoneNumber}) => {
   };
 
   const handleAcceptFriendRequest = async friendId => {
-    const data = await acceptFriendRequest(friendId, accessTokens.accessToken);
+    const data = await acceptFriendRequest(friendId, accessTokens);
     if (data.status === 200) {
       setFriends(prevFriends =>
         prevFriends.map(friend =>

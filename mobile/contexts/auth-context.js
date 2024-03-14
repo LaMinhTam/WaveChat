@@ -14,24 +14,36 @@ export function UserDataProvider(props) {
 
   const [userInfo, setUserInfo] = React.useState('');
   const [confirmationResult, setConfirmationResult] = React.useState(null);
-  const [accessTokens, setAccessTokens] = React.useState({});
+  const [accessTokens, setAccessTokens] = React.useState();
   const [friends, setFriends] = React.useState([]);
 
-  // React.useEffect(() => {
-  //   onAuthStateChanged(auth, user => {
-  //     setUserInfo(user);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    isLogining();
+  }, []);
 
-  const storeAccessToken = async (userId, token) => {
+  const isLogining = async () => {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    setAccessTokens(accessToken);
+  };
+
+  const storeAccessToken = async token => {
     try {
-      // Save the access token to AsyncStorage
-      await AsyncStorage.setItem(`accessToken_${userId}`, token);
-
-      // Update the accessTokens state
-      setAccessTokens(prevTokens => ({...prevTokens, [userId]: token}));
+      setAccessTokens(token);
+      await AsyncStorage.setItem('accessToken', token);
+      // await AsyncStorage.setItem('phone', values.phone);
+      // await AsyncStorage.setItem('password', values.password);
+      console.log('valuse', values);
     } catch (error) {
       console.error('Error storing access token:', error);
+    }
+  };
+
+  const removeAccessToken = async () => {
+    try {
+      await AsyncStorage.removeItem('accessToken');
+      setAccessTokens(null);
+    } catch (error) {
+      console.error('Error removing access token:', error);
     }
   };
 

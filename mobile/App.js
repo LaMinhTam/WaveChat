@@ -30,7 +30,7 @@ const Main = () => {
   const {accessTokens} = useUserData();
   return (
     <>
-      {accessTokens.accessToken ? (
+      {accessTokens ? (
         <SocketProvider>
           <TabNavigator />
         </SocketProvider>

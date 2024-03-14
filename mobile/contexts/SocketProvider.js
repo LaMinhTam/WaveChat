@@ -60,7 +60,7 @@ export const SocketProvider = ({children}) => {
       });
     });
     if (isNewConversation) {
-      const conversation = await getConversations(accessTokens.accessToken);
+      const conversation = await getConversations(accessTokens);
       setConversations(conversation.data);
     }
   };

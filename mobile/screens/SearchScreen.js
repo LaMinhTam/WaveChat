@@ -13,10 +13,7 @@ const SearchScreen = ({navigation}) => {
 
   async function fetchUser(phoneNumber) {
     if (phoneNumber.length === 10) {
-      const res = await findUserByPhoneNumber(
-        phoneNumber,
-        accessTokens.accessToken,
-      );
+      const res = await findUserByPhoneNumber(phoneNumber, accessTokens);
       if (res.status === 200) {
         setUser(res.data);
       } else {

@@ -45,7 +45,7 @@ const UserModificationScreen = ({navigation}) => {
   };
 
   const handleUpdateProfile = async () => {
-    const data = await updateProfile(userInfo, accessTokens.accessToken);
+    const data = await updateProfile(userInfo, accessTokens);
     console.log(userInfo);
     if (data.status === 200) {
       navigation.goBack();

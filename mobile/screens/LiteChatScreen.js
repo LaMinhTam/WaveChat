@@ -79,7 +79,7 @@ const PrivateChatScreen = ({navigation}) => {
 
     attachInfoForMessage();
     // loadMessages();
-  }, [accessTokens.accessToken, userInfo._id, newMessage]);
+  }, [accessTokens, userInfo._id, newMessage]);
 
   const loadMessages = async () => {
     try {
@@ -148,7 +148,7 @@ const PrivateChatScreen = ({navigation}) => {
       if (!currentConversation.conversation_id) {
         const newConversation = await createConversation(
           currentConversation.members[1]._id,
-          accessTokens.accessToken,
+          accessTokens,
         );
         conversationID = newConversation.data.conversation_id;
         let updateConversation = {

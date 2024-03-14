@@ -37,7 +37,7 @@ const GenderDOBSelectionScreen = ({navigation, route}) => {
     try {
       const {_id, ...userInfoWithoutId} = userInfo;
       await updateProfile(userInfoWithoutId, accessToken);
-      storeAccessToken('accessToken', accessToken);
+      storeAccessToken(accessToken);
     } catch (error) {
       console.log(error);
     }

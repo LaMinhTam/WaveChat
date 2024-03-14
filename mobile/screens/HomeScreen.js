@@ -6,15 +6,15 @@ import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {formatTimeLastActivity} from '../utils/format-time-message.util';
-import {FILE_TYPE, handleConvertFileTypeToNumber} from '../constants';
+import {FILE_TYPE} from '../constants';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
   const {accessTokens, userInfo} = useUserData();
 
   const constructMessage = (lastMessage, userInfo) => {
-    if (lastMessage.media[0]) {
-      const type = handleConvertFileTypeToNumber(lastMessage.media[0]);
+    const type = lastMessage.type;
+    if (type != 1) {
       return `[${FILE_TYPE[type]}] ${lastMessage.media[0]}`;
     } else {
       const senderName =
@@ -33,7 +33,7 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const conversation = await getConversations(accessTokens.accessToken);
+        const conversation = await getConversations(accessTokens);
         setConversations(conversation.data);
       } catch (error) {
         console.error('Error fetching conversations:', error);

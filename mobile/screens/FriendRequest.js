@@ -54,7 +54,7 @@ const ReceiveFriendRequest = ({navigation}) => {
 
   const fetchFriends = async () => {
     try {
-      const friendsData = await getFriends(2, accessTokens.accessToken);
+      const friendsData = await getFriends(2, accessTokens);
       setFriendsData(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
@@ -90,7 +90,7 @@ const ReceiveFriendRequest = ({navigation}) => {
 
   const handleReject = async friend => {
     // Implement reject logic
-    const data = await removeFriend(friend.user_id, accessTokens.accessToken);
+    const data = await removeFriend(friend.user_id, accessTokens);
     if (data.status === 200) {
       setFriendsData(
         friendsData.filter(
@@ -102,10 +102,7 @@ const ReceiveFriendRequest = ({navigation}) => {
 
   const handleAccept = async friend => {
     // Implement accept api
-    const data = await acceptFriendRequest(
-      friend.user_id,
-      accessTokens.accessToken,
-    );
+    const data = await acceptFriendRequest(friend.user_id, accessTokens);
     if (data.status === 200) {
       setFriendsData(
         friendsData.filter(
@@ -143,7 +140,7 @@ const SendFriendRequest = ({navigation}) => {
 
   const fetchFriends = async () => {
     try {
-      const friendsData = await getFriends(3, accessTokens.accessToken);
+      const friendsData = await getFriends(3, accessTokens);
       setFriendsData(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
@@ -175,10 +172,7 @@ const SendFriendRequest = ({navigation}) => {
 
   const handleRevoke = async friend => {
     // Implement reject logic
-    const data = await revokeFriendRequest(
-      friend.user_id,
-      accessTokens.accessToken,
-    );
+    const data = await revokeFriendRequest(friend.user_id, accessTokens);
     if (data.status === 200) {
       setFriendsData(
         friendsData.filter(

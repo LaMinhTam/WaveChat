@@ -52,7 +52,7 @@ const CallPhoneScreen = ({navigation}) => {
 
   const fetchFriends = async () => {
     try {
-      const friendsData = await getFriends(4, accessTokens.accessToken);
+      const friendsData = await getFriends(4, accessTokens);
       setFriends(friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);

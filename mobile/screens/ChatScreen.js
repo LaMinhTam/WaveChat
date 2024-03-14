@@ -60,10 +60,7 @@ const ChatScreen = ({navigation}) => {
   }
 
   const loadMessages = async () => {
-    let newMessages = await getMessage(
-      currentConversation._id,
-      accessTokens.accessToken,
-    );
+    let newMessages = await getMessage(currentConversation._id, accessTokens);
 
     setMessages(newMessages);
   };

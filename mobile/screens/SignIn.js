@@ -12,7 +12,7 @@ const SignIn = () => {
   const [phone, setPhone] = useState('+84886700046');
   const [password, setPassword] = useState('123456789');
   const [errorMessage, setErrorMessage] = useState('');
-  const {setUserInfo, setFriends, storeAccessToken} = useUserData();
+  const {setUserInfo, setValues, setFriends, storeAccessToken} = useUserData();
 
   const handleSignIn = async () => {
     const formattedPhoneNumber = '0' + phone.slice(3);
@@ -20,10 +20,12 @@ const SignIn = () => {
     if (data.status === 200) {
       user = data.data;
       profile = await getProfile(user._id, user.access_token);
+      // values = {phone: formattedPhoneNumber, password: password};
+      // await setValues(values);
       user = {...user, ...profile.data};
       setUserInfo(user);
       fetchFriends(data.data.access_token);
-      storeAccessToken('accessToken', data.data.access_token);
+      storeAccessToken(data.data.access_token);
       addNewFCMToken(user);
     } else if (data.status === 401) {
       setErrorMessage('Sai tài khoản hoặc mật khẩu');
