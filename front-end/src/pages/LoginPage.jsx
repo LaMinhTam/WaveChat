@@ -22,14 +22,14 @@ import { isTokenExpire } from "../utils/isTokenExpire";
 const schema = yup.object({
     password: yup
         .string()
-        .min(8, "Your password must be at least 8 character or greater")
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            {
-                message:
-                    "Your password must have at least with one lowercase, uppercase, digit and special character",
-            }
-        )
+        // .min(8, "Your password must be at least 8 character or greater")
+        // .matches(
+        //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        //     {
+        //         message:
+        //             "Your password must have at least with one lowercase, uppercase, digit and special character",
+        //     }
+        // )
         .required("This field is required"),
 });
 
@@ -54,7 +54,7 @@ const LoginPage = () => {
     const handleSignIn = async (values) => {
         if (!isValid) return;
         try {
-            const confirmationResult = await handleSendOTP(values.phone);
+            const confirmationResult = true
             setConfirmationResult(confirmationResult);
             dispatch(setIsLogin(true));
             setValues({
@@ -64,7 +64,7 @@ const LoginPage = () => {
             });
             dispatch(setOpenModal(true));
         } catch (error) {
-            toast.error("Login failed, please try again later");
+            toast.error(error);
         }
     };
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
