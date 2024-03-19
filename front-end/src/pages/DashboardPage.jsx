@@ -8,6 +8,7 @@ import { setListFriend } from "../store/userSlice";
 import fetchConversations from "../api/fetchConversations";
 import { setConversations } from "../store/conversationSlice";
 import DashboardWelcome from "../modules/dashboard/DashboardWelcome";
+import { getToken } from "../utils/auth";
 
 const DashboardPage = () => {
     const showConversation = useSelector(
@@ -16,20 +17,22 @@ const DashboardPage = () => {
     const dispatch = useDispatch();
     const currentTab = useSelector((state) => state.chat.currentTab);
     const id = useSelector((state) => state.conversation.id);
+    const token = getToken();
     useEffect(() => {
         async function fetchData() {
-            try {
-                const friends = await fetchCurrentUserFriends();
-                dispatch(setListFriend(friends));
-                const conversations = await fetchConversations();
-                console.log("fetchData ~ conversations:", conversations);
-                dispatch(setConversations(conversations));
-            } catch (error) {
-                console.log(error);
+            if (token) {
+                try {
+                    const friends = await fetchCurrentUserFriends();
+                    dispatch(setListFriend(friends));
+                    const conversations = await fetchConversations();
+                    dispatch(setConversations(conversations));
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
         fetchData();
-    }, [dispatch, id]);
+    }, [dispatch, id, token]);
     return (
         <RequiredAuthPage>
             {currentTab === "Chat" && showConversation && <Conversation />}

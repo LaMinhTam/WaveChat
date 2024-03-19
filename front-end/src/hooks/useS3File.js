@@ -1,11 +1,12 @@
 import { useState } from "react";
 import AWS from "aws-sdk";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { setCurrentFileName, setProgress } from "../store/commonSlice";
 
 const useS3File = (getValues = () => {}, cb = null) => {
-    const [progress, setProgress] = useState(0);
     const [file, setFile] = useState("");
+    const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.userProfile);
 
     AWS.config.update({
@@ -23,16 +24,20 @@ const useS3File = (getValues = () => {}, cb = null) => {
             Body: file,
             ACL: "public-read",
         };
+        dispatch(setCurrentFileName(file.name));
 
         s3.upload(params)
             .on("httpUploadProgress", (evt) => {
-                setProgress(Math.round((evt.loaded / evt.total) * 100));
+                dispatch(
+                    setProgress(Math.round((evt.loaded / evt.total) * 100))
+                );
             })
             .send((err, data) => {
                 if (err) {
                     console.log("handleUploadFile ~ error:", err);
                 } else {
                     setFile(data.Location);
+                    dispatch(setProgress(0));
                 }
             });
     };
@@ -52,7 +57,7 @@ const useS3File = (getValues = () => {}, cb = null) => {
             } else {
                 toast.success("File deleted successfully");
                 setFile("");
-                setProgress(0);
+                dispatch(setProgress(0));
                 cb && cb();
             }
         });
@@ -60,15 +65,12 @@ const useS3File = (getValues = () => {}, cb = null) => {
 
     const handleResetUpload = () => {
         setFile("");
-        setProgress(0);
+        dispatch(setProgress(0));
     };
 
     return {
-        progress,
         file,
-        setProgress,
         setFile,
-        // handleSelectFile,
         handleUploadFile,
         handleDeleteFile,
         handleResetUpload,

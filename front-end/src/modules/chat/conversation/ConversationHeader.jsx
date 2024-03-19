@@ -3,12 +3,30 @@ import PropTypes from "prop-types";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { useDispatch, useSelector } from "react-redux";
 import { setShowConversationInfo } from "../../../store/commonSlice";
+import { useChat } from "../../../contexts/chat-context";
+import { useEffect, useState } from "react";
+import fetchUserProfile from "../../../api/fetchUserProfile";
 
-const ConversationHeader = ({ name, status, avatar, userId }) => {
+const ConversationHeader = ({ name, avatar, userId }) => {
+    const [profile, setProfile] = useState({});
     const dispatch = useDispatch();
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
+    const { setShowCreateGroupChat, showCreateGroupChat, setSelectedList } =
+        useChat();
+    useEffect(() => {
+        async function fetchProfileFriendData() {
+            try {
+                const user = await fetchUserProfile(userId);
+                setProfile(user);
+            } catch (error) {
+                console.log("error", error);
+            }
+        }
+        fetchProfileFriendData();
+    }, [dispatch, userId]);
+
     return (
         <div className="flex items-center justify-center px-4 min-h-[68px] bg-lite shadow-md">
             <div className="flex items-center justify-center mr-auto gap-x-2">
@@ -22,12 +40,19 @@ const ConversationHeader = ({ name, status, avatar, userId }) => {
                 <div>
                     <h3 className="text-lg font-semibold">{name}</h3>
                     <span className="text-sm font-normal text-text3">
-                        {status}
+                        Truy cập vào {profile?.last_connect}
                     </span>
                 </div>
             </div>
             <div className="flex items-center justify-center gap-x-2">
-                <button>
+                <button
+                    className="w-[32px] h-[32px] flex items-center justify-center"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedList([profile]);
+                        setShowCreateGroupChat(!showCreateGroupChat);
+                    }}
+                >
                     <IconAddGroup />
                 </button>
                 <button
@@ -45,7 +70,6 @@ const ConversationHeader = ({ name, status, avatar, userId }) => {
 
 ConversationHeader.propTypes = {
     name: PropTypes.string,
-    status: PropTypes.string,
     avatar: PropTypes.string,
     userId: PropTypes.string,
 };

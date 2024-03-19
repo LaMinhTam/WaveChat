@@ -6,6 +6,7 @@ import IconCSV from "./IconCSV";
 import IconCamera from "./IconCamera";
 import IconCard from "./IconCard";
 import IconChat from "./IconChat";
+import IconChevronDown from "./IconChevronDown";
 import IconClock from "./IconClock";
 import IconClose from "./IconClose";
 import IconContact from "./IconContact";
@@ -61,4 +62,5 @@ export {
     IconClock,
     IconMore,
     IconTrash,
+    IconChevronDown,
 };

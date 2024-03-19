@@ -11,6 +11,8 @@ const commonSlice = createSlice({
         showConversationInfo: false,
         showStorage: false,
         storageOption: "image",
+        progress: 0,
+        currentFileName: "",
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -49,6 +51,14 @@ const commonSlice = createSlice({
             ...state,
             storageOption: action.payload,
         }),
+        setProgress: (state, action) => ({
+            ...state,
+            progress: action.payload,
+        }),
+        setCurrentFileName: (state, action) => ({
+            ...state,
+            currentFileName: action.payload,
+        }),
     },
 });
 export const {
@@ -61,5 +71,7 @@ export const {
     setShowConversationInfo,
     setShowStorage,
     setStorageOption,
+    setProgress,
+    setCurrentFileName,
 } = commonSlice.actions;
 export default commonSlice.reducer;

@@ -14,17 +14,22 @@ import s3ImageUrl from "../../../utils/s3ImageUrl";
 import Viewer from "react-viewer";
 import { useState } from "react";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
+import { useSelector } from "react-redux";
 const Message = ({ msg, type }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const handleDownloadFile = (fileName) => {
         const link = document.createElement("a");
-        link.href = s3ConversationUrl(fileName, msg.user_id, "file");
+        link.href = s3ConversationUrl(fileName, msg.user._id, "file");
         link.setAttribute("download", fileName);
         link.setAttribute("target", "_blank");
         document.body.appendChild(link);
         link.click();
         link.remove();
     };
+    const progress = useSelector((state) => state.common.progress);
+    const currentFileName = useSelector(
+        (state) => state.common.currentFileName
+    );
     return (
         <div
             className={`max-w-[75%] w-full h-full m-2 ${
@@ -93,13 +98,31 @@ const Message = ({ msg, type }) => {
                                                         <span className="text-sm text-wrap">
                                                             {file_name}
                                                         </span>
-                                                        <span className="text-xs text-text3">
-                                                            {formatSize(size)}
-                                                        </span>
+
+                                                        <div className="flex items-center justify-between">
+                                                            {progress > 0 &&
+                                                                currentFileName ===
+                                                                    file_name && (
+                                                                    <div className="w-full h-2 bg-gray-200 rounded">
+                                                                        <div
+                                                                            className="h-full text-xs text-center text-white bg-blue-500 rounded"
+                                                                            style={{
+                                                                                width: `${progress}%`,
+                                                                            }}
+                                                                        ></div>
+                                                                    </div>
+                                                                )}
+                                                            <span className="flex-shrink-0 text-xs text-text3">
+                                                                {formatSize(
+                                                                    size
+                                                                )}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <button
                                                     className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite"
+                                                    disabled={progress > 0}
                                                     onClick={() =>
                                                         handleDownloadFile(
                                                             fileName

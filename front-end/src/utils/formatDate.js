@@ -2,7 +2,9 @@ import moment from "moment-timezone";
 export default function formatDate(timestamp) {
     if (!timestamp) return;
     else {
-        const date = moment(timestamp).tz("Asia/Ho_Chi_Minh");
+        const date = moment(timestamp, "DD-MM-YYYY HH:mm:ss").tz(
+            "Asia/Ho_Chi_Minh"
+        );
         let hours = date.hours();
         let minutes = date.minutes();
 

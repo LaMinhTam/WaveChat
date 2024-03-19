@@ -16,8 +16,6 @@ import { useAuth } from "../contexts/auth-context";
 import { getToken, saveToken, saveUserId } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
 import axios from "../api/axios";
-import { useDispatch } from "react-redux";
-import { setId } from "../store/conversationSlice";
 
 const schema = yup.object({
     password: yup
@@ -42,7 +40,6 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const { userInfo, loading } = useAuth();
     const token = getToken();
-    const dispatch = useDispatch();
 
     useEffect(() => {
         if (token) {
@@ -68,8 +65,8 @@ const LoginPage = () => {
             if (res.data.status === 200) {
                 saveUserId(res.data.data?._id);
                 saveToken(res.data.data?.access_token);
-                dispatch(setId(res.data.data?._id));
                 toast.success("Sign in successfully");
+                navigate("/");
             } else {
                 toast.error(res.data.data.message);
             }

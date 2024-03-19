@@ -108,7 +108,6 @@ const Conversation = () => {
             <div className="flex flex-col w-full h-full min-h-screen">
                 <ConversationHeader
                     name={friendInfo.full_name}
-                    status={"Vừa truy cập"}
                     avatar={friendInfo.avatar}
                     userId={friendInfo._id}
                 />
