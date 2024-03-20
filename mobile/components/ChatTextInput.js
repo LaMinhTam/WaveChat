@@ -8,7 +8,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
 import DocumentPicker from 'react-native-document-picker';
 import {notifyMessageToOtherMembers} from '../utils/SendMessage';
-import {FILE_TYPE, handleConvertFileTypeToNumber} from '../constants';
+import {handleConvertFileTypeToNumber} from '../constants';
 
 const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   const [newMessage, setNewMessage] = useState('');
@@ -58,9 +58,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
           handleMessage(conversationID, '', 2, fileName);
         });
       })
-      .catch(error => {
-        console.error('error', error);
-      });
+      .catch(error => {});
   };
 
   const handleSelectDocument = async () => {

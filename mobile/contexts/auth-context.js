@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getFriends} from '../apis/friend';
 import {getProfile} from '../apis/user';
 import {Login} from '../apis/authenApi';
+import {addNewFCMToken} from '../utils/firestoreManage';
 
 const AuthContext = React.createContext();
 
@@ -30,33 +31,23 @@ export function UserDataProvider(props) {
     const password = await AsyncStorage.getItem('password');
     if (accessToken) {
       const data = await Login(phone, password);
-      user = data.data;
-      setAccessTokens(accessToken);
-      profile = await getProfile(user._id, accessToken);
-      user = {...user, ...profile.data};
-      setUserInfo(user);
-      fetchFriends();
-      setUserInfo(user);
-      await AsyncStorage.setItem('accessToken', data.data.access_token);
+      await handleLoginSuccess(data.data);
     }
   };
 
-  const fetchFriends = async () => {
+  const fetchFriends = async accessToken => {
     try {
-      const friendsData = await getFriends(0, accessTokens);
+      const friendsData = await getFriends(0, accessToken);
       setFriends(friendsData.data);
-      console.log('friends', friendsData.data);
     } catch (error) {
       console.error('Error fetching friends:', error);
     }
   };
 
-  const storeAccessToken = async (token, values) => {
+  const storeAccessToken = async token => {
     try {
       setAccessTokens(token);
       await AsyncStorage.setItem('accessToken', token);
-      await AsyncStorage.setItem('phone', values.phone);
-      await AsyncStorage.setItem('password', values.password);
     } catch (error) {
       console.error('Error storing access token:', error);
     }
@@ -71,6 +62,33 @@ export function UserDataProvider(props) {
     }
   };
 
+  const handleLoginSuccess = async user => {
+    profile = await getProfile(user._id, user.access_token);
+    user = {
+      ...user,
+      ...profile.data,
+      avatar: `https://wavechat.s3.ap-southeast-1.amazonaws.com/profile/${user._id}/${profile.data.avatar}`,
+      cover: `https://wavechat.s3.ap-southeast-1.amazonaws.com/profile/${user._id}/${profile.data.cover}`,
+    };
+
+    setUserInfo(user);
+    fetchFriends(user.access_token);
+    addNewFCMToken(user);
+    setAccessTokens(user.access_token);
+    await AsyncStorage.setItem('accessToken', user.access_token);
+  };
+
+  const handleSignIn = async (phone, password) => {
+    const data = await Login(phone, password);
+    if (data.status === 200) {
+      await handleLoginSuccess(data.data);
+      await AsyncStorage.setItem('phone', phone);
+      await AsyncStorage.setItem('password', password);
+    } else if (data.status === 401) {
+      setErrorMessage('Sai tài khoản hoặc mật khẩu');
+    }
+  };
+
   const contextValues = {
     values,
     userInfo,
@@ -82,6 +100,8 @@ export function UserDataProvider(props) {
     setConfirmationResult,
     accessTokens,
     storeAccessToken,
+    removeAccessToken,
+    handleSignIn,
   };
   return (
     <AuthContext.Provider

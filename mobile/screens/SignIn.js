@@ -7,50 +7,17 @@ import {useUserData} from '../contexts/auth-context';
 import {getProfile} from '../apis/user';
 import {getFriends} from '../apis/friend';
 import {addNewFCMToken} from '../utils/firestoreManage';
+import {TextInput} from 'react-native-gesture-handler';
 
 const SignIn = () => {
-  const [phone, setPhone] = useState('+84886700046');
+  const [phone, setPhone] = useState('0886700046');
   const [password, setPassword] = useState('123456789');
   const [errorMessage, setErrorMessage] = useState('');
-  const {setUserInfo, setValues, setFriends, storeAccessToken} = useUserData();
-
-  const handleSignIn = async () => {
-    const formattedPhoneNumber = '0' + phone.slice(3);
-    const data = await Login(formattedPhoneNumber, password);
-    if (data.status === 200) {
-      user = data.data;
-      profile = await getProfile(user._id, user.access_token);
-      values = {phone: formattedPhoneNumber, password: password};
-      user = {...user, ...profile.data};
-      setUserInfo(user);
-      fetchFriends(data.data.access_token);
-      storeAccessToken(data.data.access_token, values);
-      addNewFCMToken(user);
-    } else if (data.status === 401) {
-      setErrorMessage('Sai tài khoản hoặc mật khẩu');
-    }
-  };
-
-  const fetchFriends = async access_token => {
-    try {
-      const friendsData = await getFriends(0, access_token);
-      setFriends(friendsData.data);
-    } catch (error) {
-      console.error('Error fetching friends:', error);
-    }
-  };
+  const {handleSignIn, setFriends} = useUserData();
 
   return (
     <View style={styles.container}>
-      <PhoneInput
-        onChangePhoneNumber={setPhone}
-        initialCountry="vn"
-        style={styles.phoneInput}
-        textProps={{
-          color: '#000',
-          value: phone,
-        }}
-      />
+      <TextInput onChange={setPhone} value={phone} style={styles.phoneInput} />
 
       <PasswordField
         placeholder="Mật khẩu"
@@ -58,7 +25,9 @@ const SignIn = () => {
         value={password}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => handleSignIn()}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleSignIn(phone, password)}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
 
@@ -80,6 +49,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderBottomWidth: 1,
     borderColor: '#1DC071',
+    color: '#000',
     padding: 10,
     width: '90%',
   },

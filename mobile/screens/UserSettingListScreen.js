@@ -6,21 +6,20 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import {MAIN_COLOR, PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
+import {PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
+import {useUserData} from '../contexts/auth-context';
+import ImagePicker from 'react-native-image-crop-picker';
+import {uploadImageToS3} from '../utils/S3Bucket';
+import {updateProfile} from '../apis/user';
 
 const UserSettingListScreen = ({navigation}) => {
+  const {userInfo, setUserInfo, accessTokens, removeAccessToken} =
+    useUserData();
   const listData = [
     {id: 1, title: 'Thông tin'},
     {id: 2, title: 'Đổi ảnh đại diện'},
     {id: 3, title: 'Đổi ảnh bìa'},
-    {id: 4, title: 'Cập nhật giới thiệu bản thân'},
-  ];
-
-  const listDataSetting = [
-    {id: 5, title: 'Mã QR của tôi'},
-    {id: 6, title: 'Quyền riêng tư'},
-    {id: 7, title: 'Quản lý tài khoản'},
-    {id: 8, title: 'Cài đặt chung'},
+    {id: 4, title: 'Đăng xuất'},
   ];
 
   const itemRender = ({item}) => (
@@ -34,7 +33,50 @@ const UserSettingListScreen = ({navigation}) => {
       case 1:
         navigation.navigate('Chi tiết người dùng');
         break;
-      case 'value2':
+      case 2:
+        ImagePicker.openPicker({
+          cropping: true,
+          mediaType: 'photo',
+        })
+          .then(async image => {
+            let imageName = 'avatar.' + image.path.split('.').pop();
+            image = {
+              ...image,
+              name: imageName,
+            };
+            const location = await uploadImageToS3(
+              image,
+              `profile/${userInfo._id}/`,
+            );
+            let newUserInfo = {...userInfo, avatar: location};
+            setUserInfo(newUserInfo);
+            await updateProfile(newUserInfo, imageName);
+          })
+          .catch(error => {});
+        break;
+      case 3:
+        ImagePicker.openPicker({
+          cropping: true,
+          mediaType: 'photo',
+        })
+          .then(async image => {
+            let imageName = 'cover.' + image.path.split('.').pop();
+            image = {
+              ...image,
+              name: imageName,
+            };
+            const location = await uploadImageToS3(
+              image,
+              `profile/${userInfo._id}/`,
+            );
+            let newUserInfo = {...userInfo, cover: location};
+            setUserInfo(newUserInfo);
+            await updateProfile(newUserInfo, imageName);
+          })
+          .catch(error => {});
+        break;
+      case 4:
+        removeAccessToken();
         break;
       default:
     }
@@ -43,16 +85,6 @@ const UserSettingListScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList data={listData} renderItem={itemRender} />
-      <Text
-        style={{
-          color: MAIN_COLOR,
-          fontSize: 20,
-          fontWeight: '700',
-          paddingLeft: 10,
-        }}>
-        Cài đặt
-      </Text>
-      <FlatList data={listDataSetting} renderItem={itemRender} />
     </SafeAreaView>
   );
 };

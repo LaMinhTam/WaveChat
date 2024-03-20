@@ -1,20 +1,12 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {View, Image, TouchableOpacity} from 'react-native';
+import MediaViewModal from './MediaViewModal';
 
 const MessageImage = ({item}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleImagePress = uri => {
-    console.log(item);
     setSelectedImage(uri);
     setModalVisible(true);
   };
@@ -35,48 +27,12 @@ const MessageImage = ({item}) => {
           resizeMode="cover"
         />
       </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <MediaViewModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalContainer}>
-          <Image
-            source={{uri: selectedImage}}
-            style={styles.modalImage}
-            resizeMode="contain"
-          />
-          <TouchableOpacity
-            style={styles.goBackButton}
-            onPress={() => setModalVisible(false)}>
-            <Ionicons
-              name="arrow-back"
-              style={{color: 'white', fontSize: 30}}
-            />
-          </TouchableOpacity>
-        </View>
-      </Modal>
+        item={item}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  goBackButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-  },
-});
-
 export default MessageImage;

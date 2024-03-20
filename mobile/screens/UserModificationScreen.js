@@ -36,8 +36,8 @@ const UserModificationScreen = ({navigation}) => {
   };
 
   const handleGenderChange = value => {
-    setChecked(value === 'Nam' ? true : false);
-    setUserInfo({...userInfo, gender: value === 'Nam' ? 1 : 0});
+    setChecked(value === 'Nữ' ? true : false);
+    setUserInfo({...userInfo, gender: value === 'Nữ' ? 1 : 0});
   };
 
   const handleInputChange = value => {
@@ -45,8 +45,12 @@ const UserModificationScreen = ({navigation}) => {
   };
 
   const handleUpdateProfile = async () => {
-    const data = await updateProfile(userInfo, accessTokens);
-    console.log(userInfo);
+    let userOriginalImageLink = {
+      ...userInfo,
+      avatar: userInfo.avatar.split('/').pop(),
+      cover: userInfo.cover.split('/').pop(),
+    };
+    const data = await updateProfile(userOriginalImageLink, accessTokens);
     if (data.status === 200) {
       navigation.goBack();
     }
@@ -83,14 +87,14 @@ const UserModificationScreen = ({navigation}) => {
                   label="Nam"
                   value="Nam"
                   labelStyle={{fontSize: 20}}
-                  status={checked === true ? 'checked' : 'unchecked'}
+                  status={checked === false ? 'checked' : 'unchecked'}
                   color="#1dc071"
                   position="leading"
                 />
                 <RadioButton.Item
                   label="Nữ"
                   value="Nữ"
-                  status={checked === false ? 'checked' : 'unchecked'}
+                  status={checked === true ? 'checked' : 'unchecked'}
                   labelStyle={{fontSize: 20}}
                   color="#1dc071"
                   position="leading"

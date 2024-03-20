@@ -18,7 +18,7 @@ export const SocketProvider = ({children}) => {
       extraHeaders: {
         Authorization: accessTokens,
       },
-      query: {device: user._id},
+      query: {device: userInfo._id},
     });
 
     newSocket.on('connect', () => {

@@ -6,6 +6,7 @@ import {formatTimeLastActivity} from '../utils/format-time-message.util';
 import AvatarUser from './AvatarUser';
 import MessageFile from './MessageFile';
 import MessageImage from './MessageImage';
+import MessageVideo from './MessageVideo';
 
 const Message = ({item, userInfo}) => {
   const isCurrentUser = item.user._id === userInfo._id;
@@ -16,6 +17,8 @@ const Message = ({item, userInfo}) => {
         return <TruncatedText text={item.message} />;
       case 2:
         return <MessageImage item={item} />;
+      case 3:
+        return <MessageVideo item={item} />;
       case 5:
         return <MessageFile item={item} />;
       default:

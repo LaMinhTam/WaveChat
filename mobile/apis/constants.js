@@ -10,7 +10,7 @@ export const waveChatApi = {
   getConversations: () => `${waveChatEndpoint}/conversation`,
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
-  getMessages: id => `${waveChatEndpoint}/message/${id}?limit=20`,
+  getMessages: id => `${waveChatEndpoint}/message/${id}?limit=100000`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
   createGroupConversation: () =>
     `${waveChatEndpoint}/conversation-group/create`,

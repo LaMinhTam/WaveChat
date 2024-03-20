@@ -7,6 +7,9 @@ import FriendRequestTabNavigator from './FriendRequestTabNavigator';
 import ChatScreen from '../screens/ChatScreen';
 import {MAIN_COLOR} from '../styles/styles';
 import {HeaderLeft, HeaderRight, HeaderTitle} from '../components/CustomHeader';
+import ChatControlPanel from '../screens/ChatControlPanel';
+import UserInformationScreen from '../screens/UserInformationScreen';
+import ImagesScreen from '../screens/ImagesScreen';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
@@ -33,6 +36,21 @@ const UserStackNavigator = () => {
         options={{title: 'Danh bạ máy'}}
       />
       <Stack.Screen name="ChatScreen" component={ChatScreen} />
+      <Stack.Screen
+        name="ChatControlPanel"
+        component={ChatControlPanel}
+        options={{headerTitle: 'Tùy chọn'}}
+      />
+      <Stack.Screen
+        name="UserInfomation"
+        component={UserInformationScreen}
+        options={{headerTitle: 'Hồ sơ'}}
+      />
+      <Stack.Screen
+        name="ImagesScreen"
+        component={ImagesScreen}
+        options={{headerTitle: 'Ảnh'}}
+      />
     </Stack.Navigator>
   );
 };

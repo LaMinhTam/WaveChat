@@ -59,7 +59,8 @@ const HomeScreen = ({navigation}) => {
               style={styles.avatar}
               source={{
                 uri:
-                  conversation.avatar || 'https://source.unsplash.com/random',
+                  conversation.avatar ||
+                  'https://wavechat.s3.ap-southeast-1.amazonaws.com/default-group-icon-dark.webp',
               }}
             />
             <View style={styles.infoColumn}>

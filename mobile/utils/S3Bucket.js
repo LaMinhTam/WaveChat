@@ -60,3 +60,27 @@ export const uploadFileToS3 = async (uploadFile, conversationID) => {
     throw error;
   }
 };
+
+export const uploadImageToS3 = async (image, keyPrefix) => {
+  const file = {
+    uri: image.path,
+    name: image.name,
+    type: image.mime,
+  };
+
+  const config = {
+    keyPrefix: keyPrefix,
+    bucket: bucket,
+    region: region,
+    accessKey: accessKey,
+    secretKey: secretKey,
+  };
+
+  try {
+    const response = await RNS3.put(file, config);
+    return response.body.postResponse.location;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error;
+  }
+};

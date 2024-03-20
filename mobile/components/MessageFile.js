@@ -3,25 +3,19 @@ import {Text, View, TouchableOpacity, Image, Linking} from 'react-native';
 import RNFS from 'react-native-fs';
 import {PRIMARY_TEXT_COLOR, SECONDARY_TEXT_COLOR} from '../styles/styles';
 
-const getFileIcon = fileName => {
-  const extensionIndex = fileName.lastIndexOf('.');
-  if (extensionIndex !== -1) {
-    const extension = fileName.substring(extensionIndex + 1).toLowerCase();
-    switch (extension) {
-      case 'pdf':
-        return require('../assets/pdf.png');
-      case 'doc':
-      case 'docx':
-        return require('../assets/txt.png');
-      case 'xls':
-      case 'xlsx':
-        return require('../assets/excel.png');
-      // Add cases for other file types as needed
-      default:
-        return require('../assets/excel.png');
-    }
+const getFileIcon = extension => {
+  switch (extension) {
+    case 'pdf':
+      return require('../assets/pdf.png');
+    case 'doc':
+    case 'docx':
+      return require('../assets/txt.png');
+    case 'xls':
+    case 'xlsx':
+      return require('../assets/excel.png');
+    default:
+      return require('../assets/file.png');
   }
-  return require('../assets/excel.png');
 };
 
 const formatFileSize = size => {
@@ -56,7 +50,7 @@ const MessageFile = ({item}) => {
 
   useEffect(() => {
     const checkFileExists = async () => {
-      const filePath = `${RNFS.DownloadDirectoryPath}/wavechat/${item.message}`;
+      const filePath = `${RNFS.DownloadDirectoryPath}/wavechat/${item.media[0]}`;
       const fileExists = await RNFS.exists(filePath);
 
       if (fileExists) {
@@ -71,13 +65,13 @@ const MessageFile = ({item}) => {
 
   const downloadFile = async () => {
     const destinationPath = `${RNFS.DownloadDirectoryPath}/wavechat`;
-    const filePath = `${destinationPath}/${item.message}`;
+    const filePath = `${destinationPath}/${item.media[0]}`;
     if (downloaded) {
       console.log(filePath);
     } else {
       await RNFS.mkdir(destinationPath);
       const res = await RNFS.downloadFile({
-        fromUrl: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.message}`,
+        fromUrl: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
         toFile: filePath,
       }).promise;
       setFileInfo({...fileInfo, size: res.bytesWritten});
@@ -94,7 +88,7 @@ const MessageFile = ({item}) => {
     <TouchableOpacity onPress={() => downloadFile()}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={getFileIcon(item.message)}
+          source={getFileIcon(item.media[0].split('.').pop())}
           style={{width: 24, height: 24, marginRight: 10}}
         />
         <View>
@@ -107,8 +101,7 @@ const MessageFile = ({item}) => {
                 <Text style={{color: SECONDARY_TEXT_COLOR}}>
                   {formatFileSize(fileInfo?.size)}
                   {' \u2022 '}
-                  {item.message.split('.').pop()}
-                  Dã có trên máy
+                  Đã có trên máy
                 </Text>
               </View>
             )}
