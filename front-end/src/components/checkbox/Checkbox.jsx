@@ -1,34 +1,36 @@
 import PropTypes from "prop-types";
+import { useController } from "react-hook-form";
 import classNames from "../../utils/classNames";
-const Checkbox = ({
-    checked = false,
-    onClick = () => {},
-    name = "",
-    children,
-    error = "",
-}) => {
+
+const Checkbox = ({ control, name = "", children, error = "" }) => {
+    const { field } = useController({
+        control,
+        name,
+        defaultValue: false,
+    });
+
     return (
         <div className="flex flex-col justify-center gap-y-2">
             <div className="flex items-start gap-x-5">
                 <div
                     className={classNames(
                         "inline-flex items-center justify-center w-5 h-5 border rounded cursor-pointer text-white",
-                        checked
+                        field.value
                             ? "bg-primary border-primary"
                             : "border-strock dark:border-text3"
                     )}
-                    onClick={onClick}
+                    onClick={() => field.onChange(!field.value)}
                 >
                     <input
                         type="checkbox"
                         className="hidden"
-                        checked={checked}
+                        checked={field.value}
                         name={name}
-                        onChange={() => {}}
+                        {...field}
                     />
                     <span
                         className={classNames(
-                            checked ? "" : "opacity-0 invisible"
+                            field.value ? "" : "opacity-0 invisible"
                         )}
                     >
                         <svg
@@ -47,7 +49,7 @@ const Checkbox = ({
                 </div>
                 {children && (
                     <div
-                        onClick={onClick}
+                        onClick={() => field.onChange(!field.value)}
                         className="cursor-pointer select-none"
                     >
                         {children}
@@ -62,12 +64,12 @@ const Checkbox = ({
         </div>
     );
 };
+
 Checkbox.propTypes = {
-    checked: PropTypes.bool,
-    name: PropTypes.string,
-    onClick: PropTypes.func,
-    children: PropTypes.node,
     error: PropTypes.string,
+    control: PropTypes.any.isRequired,
+    name: PropTypes.string,
+    children: PropTypes.node,
 };
 
 export default Checkbox;

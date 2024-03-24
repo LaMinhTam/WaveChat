@@ -9,7 +9,7 @@ export default async function handleVerifyOTP(confirmationResult, otp) {
         await confirmationResult.confirm(otp);
         return true;
     } catch (error) {
-        toast.error("Invalid OTP code, please try again later");
+        toast.error("Mã OTP không hợp lệ! Vui lòng thử lại.");
         return false;
     }
 }

@@ -33,6 +33,7 @@ const schema = yup.object({
             }
         )
         .required("This field is required"),
+    term: yup.bool().oneOf([true], "You must accept the terms and conditions"),
 });
 
 const RegisterPage = () => {
@@ -45,6 +46,7 @@ const RegisterPage = () => {
     const navigate = useNavigate();
     const { setConfirmationResult, setValues, userInfo, loading } = useAuth();
     const handleSignUp = async (values) => {
+        console.log("handleSignUp ~ values:", values);
         if (!isValid) return;
         try {
             const confirmationResult = await handleSendOTP(values.phone);
@@ -52,11 +54,9 @@ const RegisterPage = () => {
             setValues(values);
             dispatch(setOpenModal(true));
         } catch (error) {
-            toast.error("Sign up failed, please try again later");
+            toast.error("Đăng ký thất bại! Vui lòng thử lại sau.");
         }
     };
-    const { value: acceptTerm, handleToggleValue: handleToggleTerm } =
-        useToggleValue();
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
         useToggleValue();
     const token = getToken();
@@ -129,9 +129,9 @@ const RegisterPage = () => {
                 </FormGroup>
                 <div className="flex items-start mb-5 gap-x-5">
                     <Checkbox
+                        control={control}
                         name="term"
-                        checked={acceptTerm}
-                        onClick={handleToggleTerm}
+                        error={errors.term?.message}
                     >
                         <p className="flex-1 text-xs lg:text-sm text-text2 dark:text-text3">
                             I agree to the{" "}

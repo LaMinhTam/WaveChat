@@ -13,20 +13,22 @@ import handleVerifyOTP from "../utils/handleVerifyOTP";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
 import axios from "../api/axios";
 import { saveToken, saveUserId } from "../utils/auth";
+import handleSendOTP from "../utils/handleSendOTP";
 
 const LayoutAuthentication = ({ children, heading = "" }) => {
+    const [countdown, setCountdown] = useState(60);
     const openModal = useSelector((state) => state.common.openModal);
     const otpCode = useSelector((state) => state.common.otpCode);
     const [isLoading, setIsLoading] = React.useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { confirmationResult, values } = useAuth();
+    const { confirmationResult, values, setConfirmationResult } = useAuth();
 
     // add function onEnter to run handleVerify
     const onEnter = async (e) => {
@@ -35,50 +37,87 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
         }
     };
 
+    const resendOTP = async () => {
+        const confirmationResult = await handleSendOTP(
+            values.phone,
+            "recaptcha-id"
+        );
+        setConfirmationResult(confirmationResult);
+        toast.success("Đã gửi lại mã OTP!");
+        setCountdown(60);
+    };
+
     const handleVerify = async () => {
-        setIsLoading(true);
-        const isValid = await handleVerifyOTP(confirmationResult, otpCode);
-        if (isValid) {
-            try {
-                const hashedPassword = await bcrypt.hash(values.password, 10);
-                await setDoc(doc(db, "users", auth.currentUser.uid), {
-                    id: auth.currentUser.uid,
-                    name: values.name,
-                    phone: values.phone,
-                    password: hashedPassword,
-                    avatar: "https://source.unsplash.com/random",
-                    createdAt: serverTimestamp(),
-                });
-                const res = await axios.post("/auth/sign-up", {
-                    full_name: values.name,
-                    nick_name: values.name,
-                    phone: values.phone,
-                    password: values.password,
-                });
-                if (res.data.status === 200) {
-                    const resLogin = await axios.post("/auth/sign-in", {
-                        phone: values.phone,
+        const otpRegex = /^\d{6}$/;
+        if (otpRegex.test(otpCode)) {
+            setIsLoading(true);
+            const isValid = await handleVerifyOTP(confirmationResult, otpCode);
+            if (isValid) {
+                try {
+                    let newPhone = values.phone;
+                    if (values.phone.length === 12) {
+                        newPhone = values.phone.slice(2);
+                    }
+                    if (values.phone.length === 11) {
+                        newPhone = `0${values.phone.slice(2)}`;
+                    }
+                    const hashedPassword = await bcrypt.hash(
+                        values.password,
+                        10
+                    );
+                    await setDoc(doc(db, "users", auth.currentUser.uid), {
+                        id: auth.currentUser.uid,
+                        name: values.name,
+                        phone: newPhone,
+                        password: hashedPassword,
+                        avatar: "https://source.unsplash.com/random",
+                        createdAt: serverTimestamp(),
+                    });
+                    const res = await axios.post("/auth/sign-up", {
+                        full_name: values.name,
+                        nick_name: values.name,
+                        phone: newPhone,
                         password: values.password,
                     });
                     if (res.data.status === 200) {
-                        saveUserId(resLogin.data.data._id);
-                        saveToken(resLogin.data.data.access_token);
-                        toast.success("Sign up successfully");
-                        setIsLoading(false);
-                        navigate("/");
+                        const resLogin = await axios.post("/auth/sign-in", {
+                            phone: newPhone,
+                            password: values.password,
+                        });
+                        if (res.data.status === 200) {
+                            saveUserId(resLogin.data.data._id);
+                            saveToken(resLogin.data.data.access_token);
+                            toast.success("Đăng ký thành công");
+                            setIsLoading(false);
+                            navigate("/");
+                        } else {
+                            toast.error(resLogin.data.data.message);
+                        }
                     } else {
-                        toast.error(resLogin.data.data.message);
+                        setIsLoading(false);
+                        dispatch(setOpenModal(false));
+                        toast.error(res.data.data.response.message);
                     }
-                } else {
-                    toast.error(res.data.data.response.message);
+                } catch (error) {
+                    setIsLoading(false);
+                    dispatch(setOpenModal(false));
+                    toast.error("Đăng ký thất bại! Vui lòng thử lại sau.");
                 }
-            } catch (error) {
-                toast.error("Sign up failed, please try again later");
+            } else {
+                setIsLoading(false);
             }
         } else {
-            setIsLoading(false);
+            toast.error("Mã OTP phải là 6 chữ số!");
         }
     };
+
+    useEffect(() => {
+        let timer;
+        if (countdown > 0) {
+            timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [countdown]);
     return (
         <>
             <ReactModal
@@ -107,7 +146,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     </svg>
                 </button>
                 <input
-                    type="number"
+                    type="text"
                     placeholder="Enter OTP"
                     className="w-full px-6 py-4 mt-5 text-sm font-medium bg-transparent border rounded-xl placeholder:text-text4 dark:placeholder:text-text2 dark:text-white"
                     value={otpCode}
@@ -115,6 +154,20 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     autoFocus
                     onKeyDown={onEnter}
                 />
+                <p className="mt-3 text-sm font-normal text-text3 dark:text-white">
+                    {"Didn't receive the code?"}{" "}
+                    {countdown > 0 ? (
+                        <span>{`Resend available in ${countdown} seconds`}</span>
+                    ) : (
+                        <span
+                            className="cursor-pointer text-primary hover:underline"
+                            onClick={resendOTP}
+                        >
+                            Resend
+                        </span>
+                    )}
+                </p>
+                <div id="recaptcha-id" className="my-2"></div>
                 <Button
                     kind="primary"
                     className="w-[100px] mx-auto mt-5"

@@ -18,6 +18,7 @@ import IconEyeToggle from "./IconEyeToggle";
 import IconFile from "./IconFile";
 import IconHorizontalMore from "./IconHorizontalMore";
 import IconImage from "./IconImage";
+import IconLetter from "./IconLetter";
 import IconLight from "./IconLight";
 import IconLogout from "./IconLogout";
 import IconMore from "./IconMore";
@@ -63,4 +64,5 @@ export {
     IconMore,
     IconTrash,
     IconChevronDown,
+    IconLetter,
 };

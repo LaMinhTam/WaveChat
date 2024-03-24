@@ -12,7 +12,7 @@ export function AuthProvider(props) {
         password: "",
     });
     const [userInfo, setUserInfo] = React.useState("");
-    const [confirmationResult, setConfirmationResult] = React.useState(null); // Add this line
+    const [confirmationResult, setConfirmationResult] = React.useState(null);
     React.useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             setUserInfo(user);
@@ -25,8 +25,8 @@ export function AuthProvider(props) {
         userInfo,
         setValues,
         setUserInfo,
-        confirmationResult, // Add this line
-        setConfirmationResult, // And this line
+        confirmationResult,
+        setConfirmationResult,
     };
     return (
         <AuthContext.Provider

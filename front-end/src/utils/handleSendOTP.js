@@ -1,9 +1,12 @@
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
-export default async function handleSendOTP(phone) {
+export default async function handleSendOTP(
+    phone,
+    recaptcha = "recaptcha-container"
+) {
     let verify = new RecaptchaVerifier(
-        "recaptcha-container",
+        recaptcha,
         {
             size: "invisible",
         },

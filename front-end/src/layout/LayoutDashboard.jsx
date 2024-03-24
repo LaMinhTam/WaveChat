@@ -15,6 +15,7 @@ const LayoutDashboard = () => {
         async function fetchProfileData() {
             try {
                 const user = await fetchUserProfile(currentUserId);
+                console.log("fetchProfileData ~ user:", user);
                 dispatch(setUserProfile(user));
             } catch (error) {
                 console.log("error", error);

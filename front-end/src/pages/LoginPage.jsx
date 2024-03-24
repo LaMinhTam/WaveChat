@@ -50,28 +50,25 @@ const LoginPage = () => {
     }, [loading, navigate, token, userInfo]);
     const handleSignIn = async (values) => {
         if (!isValid) return;
-        try {
-            var newPhone = values.phone;
-            if (values.phone.length === 12) {
-                newPhone = values.phone.slice(2);
-            }
-            if (values.phone.length === 11) {
-                newPhone = `0${values.phone.slice(2)}`;
-            }
-            const res = await axios.post("/auth/sign-in", {
-                phone: newPhone,
-                password: values.password,
-            });
-            if (res.data.status === 200) {
-                saveUserId(res.data.data?._id);
-                saveToken(res.data.data?.access_token);
-                toast.success("Sign in successfully");
-                navigate("/");
-            } else {
-                toast.error(res.data.data.message);
-            }
-        } catch (error) {
-            toast.error("Login failed, please try again later");
+        let newPhone = values.phone;
+        if (values.phone.length === 12) {
+            newPhone = values.phone.slice(2);
+        }
+        if (values.phone.length === 11) {
+            newPhone = `0${values.phone.slice(2)}`;
+        }
+        const res = await axios.post("/auth/sign-in", {
+            phone: newPhone,
+            password: values.password,
+        });
+        console.log("handleSignIn ~ res:", res);
+        if (res.data.status === 200) {
+            saveUserId(res.data.data?._id);
+            saveToken(res.data.data?.access_token);
+            toast.success("Sign in successfully");
+            navigate("/");
+        } else {
+            toast.error("Mật khẩu hoặc số điện thoại không chính xác");
         }
     };
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
