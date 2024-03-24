@@ -19,6 +19,7 @@ const UserSettingListScreen = ({navigation}) => {
     {id: 1, title: 'Thông tin'},
     {id: 2, title: 'Đổi ảnh đại diện'},
     {id: 3, title: 'Đổi ảnh bìa'},
+    {id: 5, title: 'Cập nhật mật khẩu'},
     {id: 4, title: 'Đăng xuất'},
   ];
 
@@ -77,6 +78,9 @@ const UserSettingListScreen = ({navigation}) => {
         break;
       case 4:
         removeAccessToken();
+        break;
+      case 5:
+        navigation.navigate('Cập nhật mật khẩu');
         break;
       default:
     }

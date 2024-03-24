@@ -34,7 +34,13 @@ const UserInformationScreen = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{uri: userData ? userData.cover : userInfo.cover}}
+        source={{
+          uri: userData
+            ? userData.cover
+            : userInfo.cover
+            ? userInfo.cover
+            : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
+        }}
         style={styles.coverPage}>
         <View style={styles.header}>
           {!userData && (
@@ -49,7 +55,11 @@ const UserInformationScreen = ({navigation, route}) => {
       <View style={styles.profileContainer}>
         <Image
           source={{
-            uri: userData ? userData.avatar : userInfo.avatar,
+            uri: userData
+              ? userData.avatar
+              : userInfo.avatar
+              ? userInfo.avatar
+              : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
           }}
           style={styles.avatar}
         />

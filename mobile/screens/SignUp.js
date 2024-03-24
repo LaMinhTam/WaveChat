@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
@@ -14,7 +15,7 @@ import {addUserToFireStore} from '../utils/firestoreManage';
 // import auth from '@react-native-firebase/auth';
 
 const SignUp = ({navigation}) => {
-  const [phoneNumber, setPhoneNumber] = useState('+84886700046');
+  const [phoneNumber, setPhoneNumber] = useState('0886700046');
   const [username, setUsername] = useState('La Minh Tâm');
   const [password, setPassword] = useState('123456789');
   const {setConfirmationResult, setValues, setUserInfo} = useUserData();
@@ -32,10 +33,9 @@ const SignUp = ({navigation}) => {
     }
   };
 
-  createUser = async values => {
+  const createUser = async values => {
     var {name, phone, password} = values;
-    const formattedPhoneNumber = '0' + phone.slice(3);
-    const data = await authSignUp(name, formattedPhoneNumber, password);
+    const data = await authSignUp(name, phone, password);
 
     if (data.status == 200) {
       try {
@@ -61,16 +61,13 @@ const SignUp = ({navigation}) => {
     <View style={styles.container}>
       <View id="recaptcha-container"></View>
       <Text style={styles.label}>Số điện thoại</Text>
-      <PhoneInput
-        onChangePhoneNumber={number => {
+      <TextInput
+        onChangeText={number => {
           setPhoneNumber(number);
         }}
-        initialCountry="vn"
+        value={phoneNumber}
         style={styles.phoneInput}
-        textProps={{
-          color: '#000',
-          value: phoneNumber,
-        }}
+        color={'#000'}
       />
 
       <Text style={styles.label}>Tên đăng nhập</Text>

@@ -59,7 +59,14 @@ const UserModificationScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
-        <Image source={{uri: userInfo.avatar}} style={styles.avatar} />
+        <Image
+          source={{
+            uri: userInfo.avatar
+              ? userInfo.avatar
+              : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
+          }}
+          style={styles.avatar}
+        />
         <View style={{flex: 1}}>
           <View style={styles.row}>
             <TextInput

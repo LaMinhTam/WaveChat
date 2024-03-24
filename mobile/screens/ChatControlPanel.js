@@ -8,13 +8,8 @@ import {
   FlatList,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import ImagePicker from 'react-native-image-crop-picker';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {
-  BACKGROUND_COLOR,
-  MAIN_COLOR,
-  PRIMARY_TEXT_COLOR,
-} from '../styles/styles';
+import {MAIN_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
 
 const ChatControlPanel = ({navigation}) => {
@@ -32,12 +27,14 @@ const ChatControlPanel = ({navigation}) => {
 
   const renderImageItem = ({item}) => (
     <View style={styles.imageContainer}>
-      <Image
-        source={{
-          uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${currentConversation._id}/${item.media[0]}`,
-        }}
-        style={styles.image}
-      />
+      {item.type === 2 && (
+        <Image
+          source={{
+            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${currentConversation._id}/${item.media[0]}`,
+          }}
+          style={styles.image}
+        />
+      )}
     </View>
   );
 

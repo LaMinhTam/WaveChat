@@ -29,10 +29,21 @@ const UserDetailScreen = ({navigation}) => {
     <View style={styles.container}>
       <View style={styles.imageSection}>
         <ImageBackground
-          source={{uri: userInfo.cover}}
+          source={{
+            uri: userInfo.cover
+              ? userInfo.cover
+              : `https://source.unsplash.com/random`,
+          }}
           style={styles.coverPage}>
           <View style={styles.profileContainer}>
-            <Image source={{uri: userInfo.avatar}} style={styles.avatar} />
+            <Image
+              source={{
+                uri: userInfo.avatar
+                  ? userInfo.avatar
+                  : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
+              }}
+              style={styles.avatar}
+            />
             <Text style={styles.name}>{userInfo.full_name}</Text>
           </View>
         </ImageBackground>

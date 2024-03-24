@@ -21,6 +21,7 @@ export const waveChatApi = {
   removeFriend: id => `${waveChatEndpoint}/friend/remove-friend?_id=${id}`,
   findUserByPhoneNumber: phoneNumber =>
     `${waveChatEndpoint}/user/find-phone?phone=${phoneNumber}`,
+  changePassword: () => `${waveChatEndpoint}/auth/change-password`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

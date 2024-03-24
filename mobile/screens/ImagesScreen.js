@@ -7,6 +7,7 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
+import VideoPlayer from 'react-native-video-player';
 
 const ImagesScreen = ({navigate, route}) => {
   const {mediaMessage} = route.params;
@@ -48,17 +49,29 @@ const ImagesScreen = ({navigate, route}) => {
               {groupedMediaMessages[dayKey].map((message, messageIndex) => (
                 <TouchableOpacity
                   key={messageIndex}
-                  onPress={() =>
-                    handleImagePress(
-                      `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${message.conversation_id}/${message.media[0]}`,
-                    )
-                  }>
-                  <Image
-                    source={{
-                      uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${message.conversation_id}/${message.media[0]}`,
-                    }}
-                    style={styles.image}
-                  />
+                  onPress={() => {
+                    if (message.type === 2) {
+                      handleImagePress(
+                        `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${message.conversation_id}/${message.media[0]}`,
+                      );
+                    }
+                  }}>
+                  {message.type === 2 && (
+                    <Image
+                      source={{
+                        uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${message.conversation_id}/${message.media[0]}`,
+                      }}
+                      style={styles.image}
+                    />
+                  )}
+                  {message.type === 3 && (
+                    <VideoPlayer
+                      style={styles.image}
+                      video={{
+                        uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                        // uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
+                      }}></VideoPlayer>
+                  )}
                 </TouchableOpacity>
               ))}
             </View>

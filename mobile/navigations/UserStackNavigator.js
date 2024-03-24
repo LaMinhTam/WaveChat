@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {globalScreenOptions} from '../styles';
 import UserModificationScreen from '../screens/UserModificationScreen';
 import {useUserData} from '../contexts/auth-context';
+import ChangePasswordScreen from '../screens/ChangePasswordScreen';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
@@ -32,6 +33,7 @@ const UserStackNavigator = () => {
         name="Chỉnh sửa thông tin"
         component={UserModificationScreen}
       />
+      <Stack.Screen name="Cập nhật mật khẩu" component={ChangePasswordScreen} />
     </Stack.Navigator>
   );
 };

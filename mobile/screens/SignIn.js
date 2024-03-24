@@ -20,6 +20,7 @@ const SignIn = () => {
       <TextInput onChange={setPhone} value={phone} style={styles.phoneInput} />
 
       <PasswordField
+        style={{width: '90%'}}
         placeholder="Mật khẩu"
         onChangeText={setPassword}
         value={password}
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+    padding: '10%',
   },
   phoneInput: {
     marginBottom: 20,
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
     borderColor: '#1DC071',
     color: '#000',
     padding: 10,
-    width: '90%',
+    width: '100%',
   },
   button: {
     borderRadius: 10,

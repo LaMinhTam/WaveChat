@@ -30,3 +30,20 @@ export async function findUserByPhoneNumber(phoneNumber, accessToken) {
   });
   return res.data;
 }
+
+export async function changePassword(oldPassword, newPassword, accessToken) {
+  const res = await axios.post(
+    waveChatApi.changePassword(),
+    {
+      old_password: oldPassword,
+      new_password: newPassword,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+  return res.data;
+}
