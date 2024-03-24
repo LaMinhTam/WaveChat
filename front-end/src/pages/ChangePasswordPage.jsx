@@ -9,9 +9,11 @@ import Input from "../components/input/Input";
 import useToggleValue from "../hooks/useToggleValue";
 import { IconEyeToggle } from "../components/icons";
 import { Button } from "../components/button";
-import { auth } from "../utils/firebaseConfig";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/auth-context";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "../api/axios";
 
 const schema = yup.object({
     password: yup
@@ -36,24 +38,25 @@ const ChangePasswordPage = () => {
         formState: { isValid, errors, isSubmitting },
     } = useForm({ resolver: yupResolver(schema) });
     const navigate = useNavigate();
+    const isVerify = useSelector((state) => state.common.isVerify);
     const { values: newValues } = useAuth();
     const handleChangePassword = async (values) => {
         if (!isValid) return;
         try {
-            const user = auth.currentUser;
-            if (user) {
-                await user.updatePassword(values.password);
-                var newPhone = newValues.phone;
-                if (values.phone.length === 12) {
-                    newPhone = values.phone.slice(2);
-                }
-                if (values.phone.length === 11) {
-                    newPhone = `0${values.phone.slice(2)}`;
-                }
-                toast.success("Password changed successfully");
+            let newPhone = newValues.phone;
+            if (newValues.phone?.length === 12) {
+                newPhone = newValues.phone.slice(2);
+            }
+            if (newValues.phone?.length === 11) {
+                newPhone = `0${newValues.phone.slice(2)}`;
+            }
+            const res = await axios.post("/auth/reset-password", {
+                phone: newPhone,
+                password: values.password,
+            });
+            if (res.data.status === 200) {
+                toast.success("Change password successfully!");
                 navigate("/login");
-            } else {
-                throw new Error("User not found");
             }
         } catch (error) {
             toast.error(error.message);
@@ -65,6 +68,12 @@ const ChangePasswordPage = () => {
         value: showConfirmPassword,
         handleToggleValue: handleShowConfirmPassword,
     } = useToggleValue();
+
+    useEffect(() => {
+        if (!isVerify) {
+            navigate("/recover");
+        }
+    }, [isVerify, navigate]);
     return (
         <LayoutAuthentication heading="Change your password">
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">

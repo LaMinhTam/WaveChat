@@ -6,7 +6,7 @@ import { withErrorBoundary } from "react-error-boundary";
 import ErrorComponent from "../components/common/ErrorComponent";
 import ReactModal from "react-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenModal, setOtpCode } from "../store/commonSlice";
+import { setIsVerify, setOpenModal, setOtpCode } from "../store/commonSlice";
 import { Button } from "../components/button";
 import Overlay from "../components/common/Overlay";
 import handleVerifyOTP from "../utils/handleVerifyOTP";
@@ -22,6 +22,7 @@ import { saveToken, saveUserId } from "../utils/auth";
 import handleSendOTP from "../utils/handleSendOTP";
 
 const LayoutAuthentication = ({ children, heading = "" }) => {
+    const isRegister = useSelector((state) => state.common.isRegister);
     const [countdown, setCountdown] = useState(60);
     const openModal = useSelector((state) => state.common.openModal);
     const otpCode = useSelector((state) => state.common.otpCode);
@@ -53,55 +54,62 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
             setIsLoading(true);
             const isValid = await handleVerifyOTP(confirmationResult, otpCode);
             if (isValid) {
-                try {
-                    let newPhone = values.phone;
-                    if (values.phone.length === 12) {
-                        newPhone = values.phone.slice(2);
-                    }
-                    if (values.phone.length === 11) {
-                        newPhone = `0${values.phone.slice(2)}`;
-                    }
-                    const hashedPassword = await bcrypt.hash(
-                        values.password,
-                        10
-                    );
-                    await setDoc(doc(db, "users", auth.currentUser.uid), {
-                        id: auth.currentUser.uid,
-                        name: values.name,
-                        phone: newPhone,
-                        password: hashedPassword,
-                        avatar: "https://source.unsplash.com/random",
-                        createdAt: serverTimestamp(),
-                    });
-                    const res = await axios.post("/auth/sign-up", {
-                        full_name: values.name,
-                        nick_name: values.name,
-                        phone: newPhone,
-                        password: values.password,
-                    });
-                    if (res.data.status === 200) {
-                        const resLogin = await axios.post("/auth/sign-in", {
+                if (isRegister) {
+                    try {
+                        let newPhone = values.phone;
+                        if (values.phone.length === 12) {
+                            newPhone = values.phone.slice(2);
+                        }
+                        if (values.phone.length === 11) {
+                            newPhone = `0${values.phone.slice(2)}`;
+                        }
+                        const hashedPassword = await bcrypt.hash(
+                            values.password,
+                            10
+                        );
+                        await setDoc(doc(db, "users", auth.currentUser.uid), {
+                            id: auth.currentUser.uid,
+                            name: values.name,
+                            phone: newPhone,
+                            password: hashedPassword,
+                            avatar: "https://source.unsplash.com/random",
+                            createdAt: serverTimestamp(),
+                        });
+                        const res = await axios.post("/auth/sign-up", {
+                            full_name: values.name,
+                            nick_name: values.name,
                             phone: newPhone,
                             password: values.password,
                         });
                         if (res.data.status === 200) {
-                            saveUserId(resLogin.data.data._id);
-                            saveToken(resLogin.data.data.access_token);
-                            toast.success("Đăng ký thành công");
-                            setIsLoading(false);
-                            navigate("/");
+                            const resLogin = await axios.post("/auth/sign-in", {
+                                phone: newPhone,
+                                password: values.password,
+                            });
+                            if (res.data.status === 200) {
+                                saveUserId(resLogin.data.data._id);
+                                saveToken(resLogin.data.data.access_token);
+                                toast.success("Đăng ký thành công");
+                                setIsLoading(false);
+                                navigate("/");
+                            } else {
+                                toast.error(resLogin.data.data.message);
+                            }
                         } else {
-                            toast.error(resLogin.data.data.message);
+                            setIsLoading(false);
+                            dispatch(setOpenModal(false));
+                            toast.error(res.data.data.response.message);
                         }
-                    } else {
+                    } catch (error) {
                         setIsLoading(false);
                         dispatch(setOpenModal(false));
-                        toast.error(res.data.data.response.message);
+                        toast.error("Đăng ký thất bại! Vui lòng thử lại sau.");
                     }
-                } catch (error) {
-                    setIsLoading(false);
+                } else {
+                    dispatch(setIsVerify(true));
+                    navigate(`/recover/change-password`);
+                    toast.success("Xác thực thành công!");
                     dispatch(setOpenModal(false));
-                    toast.error("Đăng ký thất bại! Vui lòng thử lại sau.");
                 }
             } else {
                 setIsLoading(false);

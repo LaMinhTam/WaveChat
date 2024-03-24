@@ -15,12 +15,13 @@ import PhoneInput from "react-phone-input-2";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import handleSendOTP from "../utils/handleSendOTP";
-import { setOpenModal } from "../store/commonSlice";
+import { setIsRegister, setOpenModal } from "../store/commonSlice";
 import { useAuth } from "../contexts/auth-context";
 import { getToken } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
 
 const schema = yup.object({
+    phone: yup.string().required("Please enter your phone number"),
     name: yup.string().required("This field is required"),
     password: yup
         .string()
@@ -49,6 +50,7 @@ const RegisterPage = () => {
         console.log("handleSignUp ~ values:", values);
         if (!isValid) return;
         try {
+            dispatch(setIsRegister(true));
             const confirmationResult = await handleSendOTP(values.phone);
             setConfirmationResult(confirmationResult);
             setValues(values);

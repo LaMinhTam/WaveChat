@@ -121,12 +121,14 @@ const LoginPage = () => {
                 </FormGroup>
                 <FormGroup>
                     <div className="text-right">
-                        <span className="inline-block text-sm font-medium cursor-pointer text-primary">
+                        <Link
+                            className="inline-block text-sm font-medium cursor-pointer text-primary"
+                            to={"/recover"}
+                        >
                             Forgot password
-                        </span>
+                        </Link>
                     </div>
                 </FormGroup>
-                <div id="recaptcha-container" className="my-2"></div>
                 <Button
                     kind="primary"
                     className="w-full"

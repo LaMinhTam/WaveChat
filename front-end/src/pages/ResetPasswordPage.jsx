@@ -4,31 +4,40 @@ import FormGroup from "../components/common/FormGroup";
 import Label from "../components/label";
 import { Controller, useForm } from "react-hook-form";
 import PhoneInput from "react-phone-input-2";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "../components/button";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/auth-context";
 import { useDispatch } from "react-redux";
-import { setIsResetPassword, setOpenModal } from "../store/commonSlice";
+import { setOpenModal } from "../store/commonSlice";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import handleSendOTP from "../utils/handleSendOTP";
+
+const schema = yup.object({
+    phone: yup.string().required("Please enter your phone number"),
+});
 
 const ResetPasswordPage = () => {
     const {
         handleSubmit,
         control,
         formState: { isSubmitting },
-    } = useForm({ resolver: yupResolver() });
+    } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
     const { setConfirmationResult, setValues } = useAuth();
-    const handleSendOTP = async (values) => {
+    const handleResetPassword = async (values) => {
         if (!values.phone) return;
         try {
-            dispatch(setIsResetPassword(true));
             const confirmationResult = await handleSendOTP(values.phone);
+            console.log(
+                "handleSendOTP ~ confirmationResult:",
+                confirmationResult
+            );
             setConfirmationResult(confirmationResult);
             setValues(values);
             dispatch(setOpenModal(true));
         } catch (error) {
-            toast.error(error.message);
+            toast.error("Lỗi! Vui lòng thử lại sau.");
         }
     };
     return (
@@ -42,7 +51,7 @@ const ResetPasswordPage = () => {
                     Login
                 </Link>
             </p>
-            <form onSubmit={handleSubmit(handleSendOTP)}>
+            <form onSubmit={handleSubmit(handleResetPassword)}>
                 <FormGroup>
                     <Label htmlFor="phone">Phone *</Label>
                     <Controller

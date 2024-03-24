@@ -13,6 +13,9 @@ const commonSlice = createSlice({
         storageOption: "image",
         progress: 0,
         currentFileName: "",
+        isRegister: false,
+        isVerify: false,
+        setIsVerify: false,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -59,6 +62,14 @@ const commonSlice = createSlice({
             ...state,
             currentFileName: action.payload,
         }),
+        setIsRegister: (state, action) => ({
+            ...state,
+            isRegister: action.payload,
+        }),
+        setIsVerify: (state, action) => ({
+            ...state,
+            isVerify: action.payload,
+        }),
     },
 });
 export const {
@@ -73,5 +84,7 @@ export const {
     setStorageOption,
     setProgress,
     setCurrentFileName,
+    setIsRegister,
+    setIsVerify,
 } = commonSlice.actions;
 export default commonSlice.reducer;
