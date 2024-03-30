@@ -6,6 +6,7 @@ const commonSlice = createSlice({
         otpCode: "",
         showUpdateProfile: false,
         showUpdateAvatar: false,
+        showUpdateCover: false,
         showConversation: false,
         activeConversation: "",
         showConversationInfo: false,
@@ -33,6 +34,10 @@ const commonSlice = createSlice({
         setShowUpdateAvatar: (state, action) => ({
             ...state,
             showUpdateAvatar: action.payload,
+        }),
+        setShowUpdateCover: (state, action) => ({
+            ...state,
+            showUpdateCover: action.payload,
         }),
         setShowConversation: (state, action) => ({
             ...state,
@@ -86,5 +91,6 @@ export const {
     setCurrentFileName,
     setIsRegister,
     setIsVerify,
+    setShowUpdateCover,
 } = commonSlice.actions;
 export default commonSlice.reducer;

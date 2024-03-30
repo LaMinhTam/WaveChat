@@ -21,20 +21,20 @@ import { getToken } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
 
 const schema = yup.object({
-    phone: yup.string().required("Please enter your phone number"),
-    name: yup.string().required("This field is required"),
+    phone: yup.string().required("Vui lòng nhập số điện thoại"),
+    name: yup.string().required("Vui lòng nhập họ và tên"),
     password: yup
         .string()
-        .min(8, "Your password must be at least 8 character or greater")
+        .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
         .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             {
                 message:
-                    "Your password must have at least with one lowercase, uppercase, digit and special character",
+                    "Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký đặc biệt",
             }
         )
-        .required("This field is required"),
-    term: yup.bool().oneOf([true], "You must accept the terms and conditions"),
+        .required("Vui lòng nhập mật khẩu"),
+    term: yup.bool().oneOf([true], "Vui lòng đồng ý với điều khoản sử dụng"),
 });
 
 const RegisterPage = () => {
@@ -47,7 +47,6 @@ const RegisterPage = () => {
     const navigate = useNavigate();
     const { setConfirmationResult, setValues, userInfo, loading } = useAuth();
     const handleSignUp = async (values) => {
-        console.log("handleSignUp ~ values:", values);
         if (!isValid) return;
         try {
             dispatch(setIsRegister(true));
@@ -70,22 +69,22 @@ const RegisterPage = () => {
         }
     }, [loading, navigate, token, userInfo]);
     return (
-        <LayoutAuthentication heading="SignUp">
+        <LayoutAuthentication heading="Đăng ký">
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">
-                Already have an account?{" "}
+                Bạn đã có tài khoản?{" "}
                 <Link
                     to={"/login"}
                     className="font-medium underline text-primary"
                 >
-                    Login
+                    Đăng nhập ngay
                 </Link>
             </p>
             <p className="mb-4 text-xs font-normal text-center lg:text-sm lg:mb-8 text-text2 dark:text-white">
-                Or sign up with phone number
+                Hoặc đăng ký bằng số điện thoại
             </p>
             <form autoComplete="off" onSubmit={handleSubmit(handleSignUp)}>
                 <FormGroup>
-                    <Label htmlFor="name">Full Name *</Label>
+                    <Label htmlFor="name">Họ tên *</Label>
                     <Input
                         control={control}
                         type="text"
@@ -95,17 +94,17 @@ const RegisterPage = () => {
                     ></Input>
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="phone">Phone *</Label>
+                    <Label htmlFor="phone">Số điện thoại *</Label>
                     <Controller
                         name="phone"
                         control={control}
-                        rules={{ required: "Please enter your phone number" }}
+                        rules={{ required: "Vui lòng nhập số điện thoại" }}
                         render={({ field }) => (
                             <PhoneInput
                                 country={"vn"}
                                 value={field.value}
                                 onChange={field.onChange}
-                                placeholder="Enter your phone number"
+                                placeholder="Nhập số điện thoại của bạn"
                                 containerClass="relative"
                                 inputClass="w-full min-w-[460px] px-6 py-4 text-sm font-medium border rounded-xl
                                 placeholder:text-text4 dark:placeholder:text-text2 dark:text-text2"
@@ -115,12 +114,12 @@ const RegisterPage = () => {
                     />
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="password">Password *</Label>
+                    <Label htmlFor="password">Mật khẩu *</Label>
                     <Input
                         control={control}
                         type={showPassword ? "text" : "password"}
                         name="password"
-                        placeholder="Create an password"
+                        placeholder="Tạo mật khẩu của bạn"
                         error={errors.password?.message}
                     >
                         <IconEyeToggle
@@ -136,13 +135,13 @@ const RegisterPage = () => {
                         error={errors.term?.message}
                     >
                         <p className="flex-1 text-xs lg:text-sm text-text2 dark:text-text3">
-                            I agree to the{" "}
+                            Tôi đồng ý với{" "}
                             <span className="underline cursor-pointer text-secondary">
-                                Terms of Use
+                                Điều khoản sử dụng
                             </span>{" "}
-                            and have read and understand the{" "}
+                            và đã đọc và hiểu rõ{" "}
                             <span className="underline cursor-pointer text-secondary">
-                                Privacy policy
+                                Chính sách bảo mật
                             </span>
                             .
                         </p>
@@ -155,7 +154,7 @@ const RegisterPage = () => {
                     type="submit"
                     isLoading={isSubmitting}
                 >
-                    Create my account
+                    Tạo tài khoản
                 </Button>
             </form>
         </LayoutAuthentication>

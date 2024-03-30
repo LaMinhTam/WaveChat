@@ -18,18 +18,18 @@ import axios from "../api/axios";
 const schema = yup.object({
     password: yup
         .string()
-        .min(8, "Your password must be at least 8 character or greater")
+        .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
         .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             {
                 message:
-                    "Your password must have at least with one lowercase, uppercase, digit and special character",
+                    "Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt",
             }
         )
-        .required("This field is required"),
+        .required("Vui lòng nhập mật khẩu"),
     confirmPassword: yup
         .string()
-        .oneOf([yup.ref("password"), null], "Passwords must match"),
+        .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
 const ChangePasswordPage = () => {
     const {
@@ -55,7 +55,7 @@ const ChangePasswordPage = () => {
                 password: values.password,
             });
             if (res.data.status === 200) {
-                toast.success("Change password successfully!");
+                toast.success("Đặt lại mật khẩu thành công!");
                 navigate("/login");
             }
         } catch (error) {
@@ -75,19 +75,19 @@ const ChangePasswordPage = () => {
         }
     }, [isVerify, navigate]);
     return (
-        <LayoutAuthentication heading="Change your password">
+        <LayoutAuthentication heading="Đặt lại mật khẩu">
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">
-                {`Go back login?`}{" "}
+                {`Quay lại đăng nhập?`}{" "}
                 <Link
                     to={"/login"}
                     className="font-medium underline text-primary"
                 >
-                    Login
+                    Đăng nhập
                 </Link>
             </p>
             <form onSubmit={handleSubmit(handleChangePassword)}>
                 <FormGroup>
-                    <Label htmlFor="password">New Password *</Label>
+                    <Label htmlFor="password">Mật khẩu mới *</Label>
                     <Input
                         control={control}
                         type={showPassword ? "text" : "password"}
@@ -102,7 +102,7 @@ const ChangePasswordPage = () => {
                     </Input>
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                    <Label htmlFor="confirmPassword">Xác nhận mật khẩu *</Label>
                     <Input
                         control={control}
                         type={showConfirmPassword ? "text" : "password"}
@@ -122,7 +122,7 @@ const ChangePasswordPage = () => {
                     type="submit"
                     isLoading={isSubmitting}
                 >
-                    Change Password
+                    Xác nhận
                 </Button>
             </form>
         </LayoutAuthentication>

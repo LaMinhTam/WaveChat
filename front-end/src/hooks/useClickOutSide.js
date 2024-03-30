@@ -1,6 +1,10 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { setShowUpdateProfile } from "../store/commonSlice";
+import {
+    setShowUpdateAvatar,
+    setShowUpdateCover,
+    setShowUpdateProfile,
+} from "../store/commonSlice";
 
 const useClickOutSide = (dom = "button") => {
     const [show, setShow] = React.useState(false);
@@ -30,6 +34,12 @@ const useClickOutSide = (dom = "button") => {
             if (e.target.closest(".input-checkbox")) {
                 return;
             }
+            if (e.target.closest("#upload-image")) {
+                return;
+            }
+            if (e.target.closest(".btn-deleteImage")) {
+                return;
+            }
             if (
                 nodeRef.current &&
                 !nodeRef.current.contains(e.target) &&
@@ -37,6 +47,8 @@ const useClickOutSide = (dom = "button") => {
             ) {
                 setShow(false);
                 dispatch(setShowUpdateProfile(false));
+                dispatch(setShowUpdateAvatar(false));
+                dispatch(setShowUpdateCover(false));
             }
         }
         document.addEventListener("click", handleClickOutSide);

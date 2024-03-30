@@ -20,15 +20,15 @@ import axios from "../api/axios";
 const schema = yup.object({
     password: yup
         .string()
-        .min(8, "Your password must be at least 8 character or greater")
+        .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
         .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
             {
                 message:
-                    "Your password must have at least with one lowercase, uppercase, digit and special character",
+                    "Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt",
             }
         )
-        .required("This field is required"),
+        .required("Vui lòng nhập mật khẩu"),
 });
 
 const LoginPage = () => {
@@ -61,11 +61,10 @@ const LoginPage = () => {
             phone: newPhone,
             password: values.password,
         });
-        console.log("handleSignIn ~ res:", res);
         if (res.data.status === 200) {
             saveUserId(res.data.data?._id);
             saveToken(res.data.data?.access_token);
-            toast.success("Sign in successfully");
+            toast.success("Đăng nhập thành công");
             navigate("/");
         } else {
             toast.error("Mật khẩu hoặc số điện thoại không chính xác");
@@ -74,29 +73,29 @@ const LoginPage = () => {
     const { value: showPassword, handleToggleValue: handleTogglePassword } =
         useToggleValue();
     return (
-        <LayoutAuthentication heading="Welcome Back!">
+        <LayoutAuthentication heading="Chào mừng trở lại!">
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">
-                {`Don't have an account?`}{" "}
+                {`Bạn chưa có tài khoản?`}{" "}
                 <Link
                     to={"/register"}
                     className="font-medium underline text-primary"
                 >
-                    Sign up
+                    Đăng ký ngay
                 </Link>
             </p>
             <form onSubmit={handleSubmit(handleSignIn)}>
                 <FormGroup>
-                    <Label htmlFor="phone">Phone *</Label>
+                    <Label htmlFor="phone">Số điện thoại *</Label>
                     <Controller
                         name="phone"
                         control={control}
-                        rules={{ required: "Please enter your phone number" }}
+                        rules={{ required: "Vui lòng nhập số điện thoại" }}
                         render={({ field }) => (
                             <PhoneInput
                                 country={"vn"}
                                 value={field.value}
                                 onChange={field.onChange}
-                                placeholder="Enter your phone number"
+                                placeholder="Nhập số điện thoại của bạn"
                                 containerClass="relative"
                                 inputClass="w-full min-w-[460px] px-6 py-4 text-sm font-medium border rounded-xl
                                 placeholder:text-text4 dark:placeholder:text-text2 bg-transparent"
@@ -105,7 +104,7 @@ const LoginPage = () => {
                     />
                 </FormGroup>
                 <FormGroup>
-                    <Label htmlFor="password">Password *</Label>
+                    <Label htmlFor="password">Mật khẩu *</Label>
                     <Input
                         control={control}
                         type={showPassword ? "text" : "password"}
@@ -125,7 +124,7 @@ const LoginPage = () => {
                             className="inline-block text-sm font-medium cursor-pointer text-primary"
                             to={"/recover"}
                         >
-                            Forgot password
+                            Quên mật khẩu?
                         </Link>
                     </div>
                 </FormGroup>
@@ -135,7 +134,7 @@ const LoginPage = () => {
                     type="submit"
                     isLoading={isSubmitting}
                 >
-                    Sign In
+                    Đăng nhập
                 </Button>
             </form>
         </LayoutAuthentication>

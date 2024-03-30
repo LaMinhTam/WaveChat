@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+
 const ImageUpload = (props) => {
     const {
         name,
@@ -10,8 +11,7 @@ const ImageUpload = (props) => {
     } = props;
     return (
         <label
-            className={`cursor-pointer flex items-center justify-center bg-gray-100 border 
-            border-dashed w-full min-h-[200px] rounded-lg ${className} relative overflow-hidden group`}
+            className={`cursor-pointer flex items-center justify-center border border-dashed w-full min-h-[200px] rounded-lg ${className} relative overflow-hidden group`}
         >
             <input
                 type="file"
@@ -20,18 +20,18 @@ const ImageUpload = (props) => {
                 onChange={() => {}}
                 {...rest}
             />
+            {progress !== 0 && !image && (
+                <div className="absolute z-10 w-16 h-16 border-8 border-green-500 rounded-full loading border-t-transparent animate-spin"></div>
+            )}
             {!image && progress === 0 && (
                 <div className="flex flex-col items-center text-center pointer-events-none">
                     <img
-                        src={"/img-upload.png"}
+                        src="/img-upload.png"
                         alt="upload-img"
                         className="max-w-[80px] mb-5"
                     />
-                    <p className="font-semibold">Tải lên từ máy tính</p>
+                    <p className="font-semibold">Choose photo</p>
                 </div>
-            )}
-            {progress !== 0 && !image && (
-                <div className="absolute z-10 w-16 h-16 border-8 border-green-500 rounded-full loading border-t-transparent animate-spin"></div>
             )}
             {image && (
                 <>
@@ -41,21 +41,25 @@ const ImageUpload = (props) => {
                         alt=""
                     />
                     <button
-                        className="absolute z-10 flex items-center justify-center invisible w-16 h-16 text-red-500 transition-all bg-white rounded-full opacity-0 cursor-pointer group-hover:opacity-100 group-hover:visible"
-                        onClick={handleDeleteImage}
+                        type="button"
+                        className="absolute z-10 flex items-center justify-center invisible w-16 h-16 text-red-500 transition-all bg-white rounded-full opacity-0 cursor-pointer btn-deleteImage group-hover:opacity-100 group-hover:visible"
+                        onClick={(e) => {
+                            handleDeleteImage();
+                            e.preventDefault();
+                        }}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
+                            className="w-6 h-6"
                             fill="none"
                             viewBox="0 0 24 24"
-                            strokeWidth="1.5"
                             stroke="currentColor"
-                            className="w-6 h-6"
+                            strokeWidth="2"
                         >
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                             />
                         </svg>
                     </button>
@@ -79,5 +83,4 @@ ImageUpload.propTypes = {
     image: PropTypes.string,
     handleDeleteImage: PropTypes.func,
 };
-
 export default ImageUpload;

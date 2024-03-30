@@ -2,9 +2,8 @@ import { useState } from "react";
 import AWS from "aws-sdk";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserProfile } from "../store/userSlice";
-import { toast } from "react-toastify";
 
-const useS3Image = (setValue = () => {}, getValues = () => {}, cb = null) => {
+const useS3Image = () => {
     const [progress, setProgress] = useState(0);
     const [image, setImage] = useState("");
     const userProfile = useSelector((state) => state.user.userProfile);
@@ -18,10 +17,10 @@ const useS3Image = (setValue = () => {}, getValues = () => {}, cb = null) => {
 
     const s3 = new AWS.S3();
 
-    const handleUploadImage = (file) => {
+    const handleUploadImage = (file, timestamp) => {
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `images/${userProfile._id}/` + file.name,
+            Key: `profile/${userProfile._id}/${timestamp}-${file.name}`,
             Body: file,
             ACL: "public-read",
             ContentType: "image/jpeg",
@@ -44,35 +43,14 @@ const useS3Image = (setValue = () => {}, getValues = () => {}, cb = null) => {
     const handleSelectImage = (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        setValue("image_name", file.name);
-        handleUploadImage(file);
-    };
-
-    const handleDeleteImage = () => {
-        const imageName = getValues("image_name") || userProfile.avatar;
-        const params = {
-            Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `images/${userProfile._id}/` + imageName,
-        };
-
-        s3.deleteObject(params, (err) => {
-            if (err) {
-                console.log("handleDeleteImage ~ error:", err);
-                console.log("Can not delete image");
-                setImage("");
-            } else {
-                toast.success("Xóa ảnh thành công");
-                setImage("");
-                setProgress(0);
-                cb && cb();
-                dispatch(setUserProfile({ ...userProfile, avatar: "" }));
-            }
-        });
+        const timestamp = new Date().getTime();
+        handleUploadImage(file, timestamp);
     };
 
     const handleResetUpload = () => {
         setImage("");
         setProgress(0);
+        dispatch(setUserProfile({ ...userProfile, avatar: "" }));
     };
 
     return {
@@ -81,7 +59,6 @@ const useS3Image = (setValue = () => {}, getValues = () => {}, cb = null) => {
         setProgress,
         setImage,
         handleSelectImage,
-        handleDeleteImage,
         handleResetUpload,
     };
 };

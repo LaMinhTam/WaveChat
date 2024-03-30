@@ -6,14 +6,22 @@ import { useDispatch, useSelector } from "react-redux";
 import UpdateProfileModal from "./UpdateProfileModal";
 import {
     setShowUpdateAvatar,
+    setShowUpdateCover,
     setShowUpdateProfile,
 } from "../../store/commonSlice";
 import formatPhone from "../../utils/formatPhone";
-import ChangeAvatarModal from "./ChangeAvatarModal";
+import ChangeImageModal from "./ChangeImageModal";
 import s3ImageUrl from "../../utils/s3ImageUrl";
+import useClickOutSide from "../../hooks/useClickOutSide";
 
 const ProfileDetailsModal = () => {
     const { setShowProfileDetails, profileDetailsRef } = useChat();
+    const {
+        show: showOption,
+        setShow: setShowOption,
+        nodeRef: showOptionRef,
+    } = useClickOutSide("button");
+    console.log("ProfileDetailsModal ~ showOption:", showOption);
     const [isOpenAvatar, setIsOpenAvatar] = React.useState(false);
     const [isOpenBG, setIsOpenBG] = React.useState(false);
     const showUpdateProfile = useSelector(
@@ -22,12 +30,16 @@ const ProfileDetailsModal = () => {
     const showUpdateAvatar = useSelector(
         (state) => state.common.showUpdateAvatar
     );
+    const showUpdateCover = useSelector(
+        (state) => state.common.showUpdateCover
+    );
     const userProfile = useSelector((state) => state.user.userProfile);
     const dispatch = useDispatch();
     const avatar = s3ImageUrl(userProfile.avatar, userProfile._id);
+    const cover = s3ImageUrl(userProfile.cover, userProfile._id);
     return (
         <div ref={profileDetailsRef}>
-            {!showUpdateProfile && !showUpdateAvatar && (
+            {!showUpdateProfile && !showUpdateAvatar && !showUpdateCover && (
                 <div className="w-[400px] h-full p-2 flex flex-col">
                     <div className="flex items-center w-full h-[48px]">
                         <span className="text-[16px] font-semibold mr-auto">
@@ -47,7 +59,7 @@ const ProfileDetailsModal = () => {
                         }}
                     >
                         <img
-                            src={avatar}
+                            src={cover}
                             alt=""
                             className="object-cover w-full h-full"
                         />
@@ -65,13 +77,38 @@ const ProfileDetailsModal = () => {
 
                             <button
                                 className="absolute bottom-0 right-0 flex items-center justify-center w-8 h-8 rounded-full bg-text6 btn_showUpdateAvatar hover:bg-opacity-90"
-                                onClick={() =>
-                                    dispatch(setShowUpdateAvatar(true))
-                                }
+                                onClick={() => setShowOption(true)}
                             >
                                 <IconCamera />
                             </button>
                         </button>
+                        <div className="absolute z-[9999] left-[105px] bottom-0">
+                            {showOption && (
+                                <div
+                                    className="flex flex-col items-center text-sm bg-lite"
+                                    ref={showOptionRef}
+                                >
+                                    <button
+                                        className="px-4 py-2 hover:bg-primary hover:text-lite"
+                                        onClick={() => {
+                                            setShowOption(false);
+                                            dispatch(setShowUpdateAvatar(true));
+                                        }}
+                                    >
+                                        Change avatar
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 hover:bg-primary hover:text-lite"
+                                        onClick={() => {
+                                            setShowOption(false);
+                                            dispatch(setShowUpdateCover(true));
+                                        }}
+                                    >
+                                        Change cover
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                         <div className="flex items-start justify-center gap-x-2">
                             <h3 className="text-lg font-medium">
                                 {userProfile.nick_name}
@@ -143,12 +180,13 @@ const ProfileDetailsModal = () => {
                         onClose={() => {
                             setIsOpenBG(false);
                         }}
-                        images={[{ src: avatar, alt: "" }]}
+                        images={[{ src: cover, alt: "" }]}
                     />
                 </div>
             )}
             {showUpdateProfile && <UpdateProfileModal />}
-            {showUpdateAvatar && <ChangeAvatarModal />}
+            {showUpdateAvatar && <ChangeImageModal type="avatar" />}
+            {showUpdateCover && <ChangeImageModal type="cover" />}
         </div>
     );
 };

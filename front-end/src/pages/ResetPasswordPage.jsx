@@ -14,7 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import handleSendOTP from "../utils/handleSendOTP";
 
 const schema = yup.object({
-    phone: yup.string().required("Please enter your phone number"),
+    phone: yup.string().required("Vui lòng nhập số điện thoại"),
 });
 
 const ResetPasswordPage = () => {
@@ -29,10 +29,6 @@ const ResetPasswordPage = () => {
         if (!values.phone) return;
         try {
             const confirmationResult = await handleSendOTP(values.phone);
-            console.log(
-                "handleSendOTP ~ confirmationResult:",
-                confirmationResult
-            );
             setConfirmationResult(confirmationResult);
             setValues(values);
             dispatch(setOpenModal(true));
@@ -41,23 +37,23 @@ const ResetPasswordPage = () => {
         }
     };
     return (
-        <LayoutAuthentication heading="Reset your password">
+        <LayoutAuthentication heading="Đặt lại mật khẩu">
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">
-                {`Go back login?`}{" "}
+                {`Quay lại đăng nhập?`}{" "}
                 <Link
                     to={"/login"}
                     className="font-medium underline text-primary"
                 >
-                    Login
+                    Đăng nhập
                 </Link>
             </p>
             <form onSubmit={handleSubmit(handleResetPassword)}>
                 <FormGroup>
-                    <Label htmlFor="phone">Phone *</Label>
+                    <Label htmlFor="phone">Số điện thoại *</Label>
                     <Controller
                         name="phone"
                         control={control}
-                        rules={{ required: "Please enter your phone number" }}
+                        rules={{ required: "Vui lòng nhập số điện thoại" }}
                         render={({ field }) => (
                             <PhoneInput
                                 country={"vn"}
@@ -78,7 +74,7 @@ const ResetPasswordPage = () => {
                     type="submit"
                     isLoading={isSubmitting}
                 >
-                    Send OTP
+                    Gửi mã xác nhận
                 </Button>
             </form>
         </LayoutAuthentication>
