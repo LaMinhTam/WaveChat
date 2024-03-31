@@ -112,6 +112,9 @@ const RegisterPage = () => {
                             />
                         )}
                     />
+                    <span className="text-sm font-medium pointer-events-none text-error error-input">
+                        {errors?.phone?.message}
+                    </span>
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="password">Mật khẩu *</Label>

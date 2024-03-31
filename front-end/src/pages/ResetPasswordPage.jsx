@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LayoutAuthentication from "../layout/LayoutAuthentication";
 import FormGroup from "../components/common/FormGroup";
 import Label from "../components/label";
@@ -12,6 +12,8 @@ import { setOpenModal } from "../store/commonSlice";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import handleSendOTP from "../utils/handleSendOTP";
+import { useEffect } from "react";
+import { getToken } from "../utils/auth";
 
 const schema = yup.object({
     phone: yup.string().required("Vui lòng nhập số điện thoại"),
@@ -36,6 +38,15 @@ const ResetPasswordPage = () => {
             toast.error("Lỗi! Vui lòng thử lại sau.");
         }
     };
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = getToken();
+        if (token) {
+            navigate("/");
+        }
+    }, [navigate]);
+
     return (
         <LayoutAuthentication heading="Đặt lại mật khẩu">
             <p className="mb-6 text-xs font-normal text-center lg:mb-8 lg:text-sm text-text3">

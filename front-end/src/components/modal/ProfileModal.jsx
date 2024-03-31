@@ -14,6 +14,7 @@ const ProfileModal = () => {
         setUserInfo(null);
         saveToken();
         setShow(false);
+
         toast.success("Đăng xuất thành công");
         navigate("/login");
     };
@@ -30,7 +31,7 @@ const ProfileModal = () => {
                     }}
                     className="flex items-center justify-start w-full py-1 hover:bg-text3 hover:bg-opacity-10"
                 >
-                    <span> Hồ sơ của bạn</span>
+                    <span>Hồ sơ của bạn</span>
                 </button>
                 <button className="flex items-center justify-start w-full py-1 hover:bg-text3 hover:bg-opacity-10">
                     <span>Cài đặt</span>

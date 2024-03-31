@@ -91,6 +91,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                                 saveToken(resLogin.data.data.access_token);
                                 toast.success("Đăng ký thành công");
                                 setIsLoading(false);
+                                dispatch(setOpenModal(false));
                                 navigate("/");
                             } else {
                                 toast.error(resLogin.data.data.message);

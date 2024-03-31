@@ -13,7 +13,6 @@ import { setUserProfile } from "../../store/userSlice";
 
 const UpdateProfileModal = () => {
     const userProfile = useSelector((state) => state.user.userProfile);
-    console.log("UpdateProfileModal ~ userProfile:", userProfile);
     const [startDate, setStartDate] = useState(() => {
         if (userProfile.birthday) {
             const [day, month, year] = userProfile.birthday.split("/");

@@ -18,6 +18,7 @@ import { isTokenExpire } from "../utils/isTokenExpire";
 import axios from "../api/axios";
 
 const schema = yup.object({
+    phone: yup.string().required("Vui lòng nhập số điện thoại"),
     password: yup
         .string()
         .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
@@ -102,6 +103,9 @@ const LoginPage = () => {
                             />
                         )}
                     />
+                    <span className="text-sm font-medium pointer-events-none text-error error-input">
+                        {errors?.phone?.message}
+                    </span>
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="password">Mật khẩu *</Label>

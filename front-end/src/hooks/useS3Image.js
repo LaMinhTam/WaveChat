@@ -47,10 +47,20 @@ const useS3Image = () => {
         handleUploadImage(file, timestamp);
     };
 
-    const handleResetUpload = () => {
+    const handleResetUpload = (type) => {
+        let avatar = "";
+        let cover = "";
+        if (type === "avatar") {
+            avatar = "";
+            cover = userProfile.cover;
+        }
+        if (type === "cover") {
+            avatar = userProfile.avatar;
+            cover = "";
+        }
         setImage("");
         setProgress(0);
-        dispatch(setUserProfile({ ...userProfile, avatar: "" }));
+        dispatch(setUserProfile({ ...userProfile, avatar, cover }));
     };
 
     return {

@@ -21,7 +21,6 @@ const ProfileDetailsModal = () => {
         setShow: setShowOption,
         nodeRef: showOptionRef,
     } = useClickOutSide("button");
-    console.log("ProfileDetailsModal ~ showOption:", showOption);
     const [isOpenAvatar, setIsOpenAvatar] = React.useState(false);
     const [isOpenBG, setIsOpenBG] = React.useState(false);
     const showUpdateProfile = useSelector(
@@ -35,7 +34,7 @@ const ProfileDetailsModal = () => {
     );
     const userProfile = useSelector((state) => state.user.userProfile);
     const dispatch = useDispatch();
-    const avatar = s3ImageUrl(userProfile.avatar, userProfile._id);
+    const avatar = s3ImageUrl(userProfile?.avatar, userProfile._id);
     const cover = s3ImageUrl(userProfile.cover, userProfile._id);
     return (
         <div ref={profileDetailsRef}>

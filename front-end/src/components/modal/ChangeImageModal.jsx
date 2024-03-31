@@ -1,4 +1,3 @@
-import { useForm } from "react-hook-form";
 import useS3Image from "../../hooks/useS3Image";
 import { IconBack, IconClose } from "../icons";
 import ImageUpload from "../image/ImageUpload";
@@ -17,9 +16,8 @@ import s3ImageUrl from "../../utils/s3ImageUrl";
 import PropTypes from "prop-types";
 
 const ChangeImageModal = ({ type }) => {
-    const { setValue, getValues } = useForm();
     const { progress, image, handleSelectImage, setImage, handleResetUpload } =
-        useS3Image(setValue, getValues);
+        useS3Image();
 
     const dispatch = useDispatch();
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -86,6 +84,7 @@ const ChangeImageModal = ({ type }) => {
                 dispatch(setUserProfile(res.data.data));
                 dispatch(setShowUpdateProfile(false));
                 dispatch(setShowUpdateAvatar(false));
+                dispatch(setShowUpdateCover(false));
                 setShowProfileDetails(false);
             } else {
                 toast.error(res.data.message);
@@ -142,7 +141,7 @@ const ChangeImageModal = ({ type }) => {
                             progress={progress}
                             image={image}
                             className="h-[250px]"
-                            handleDeleteImage={handleResetUpload}
+                            handleDeleteImage={() => handleResetUpload(type)}
                             required
                         ></ImageUpload>
                     </button>
