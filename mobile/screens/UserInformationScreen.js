@@ -39,7 +39,7 @@ const UserInformationScreen = ({navigation, route}) => {
             ? userData.cover
             : userInfo.cover
             ? userInfo.cover
-            : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
+            : `https://source.unsplash.com/random`,
         }}
         style={styles.coverPage}>
         <View style={styles.header}>

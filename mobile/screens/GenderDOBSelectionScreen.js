@@ -86,7 +86,7 @@ const GenderDOBSelectionScreen = ({navigation, route}) => {
             maximumDate={new Date()}
           />
           <Text style={styles.selectedDOBText}>
-            Ngày sinh: {selectedDOB.toLocaleDateString('en-US')}
+            Ngày sinh: {selectedDOB.toLocaleDateString('vi-VN')}
           </Text>
 
           <TouchableOpacity

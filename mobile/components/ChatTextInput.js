@@ -96,7 +96,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
 
     socket.emit('message', message);
 
-    notifyMessageToOtherMembers(message, currentConversation, userInfo);
+    // notifyMessageToOtherMembers(message, currentConversation, userInfo);
   };
   return (
     <View

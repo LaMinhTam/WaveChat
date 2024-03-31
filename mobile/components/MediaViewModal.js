@@ -12,7 +12,7 @@ const MediaViewModal = ({visible, item, onClose}) => {
       <View style={styles.modalContainer}>
         <Image
           source={{
-            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
+            uri: item.media[0],
           }}
           style={styles.modalImage}
           resizeMode="contain"

@@ -11,6 +11,8 @@ export const waveChatApi = {
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
   getMessages: id => `${waveChatEndpoint}/message/${id}?limit=100000`,
+  getMembers: id =>
+    `${waveChatEndpoint}/conversation-group/member?conversation_id=${id}`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
   createGroupConversation: () =>
     `${waveChatEndpoint}/conversation-group/create`,
@@ -22,6 +24,14 @@ export const waveChatApi = {
   findUserByPhoneNumber: phoneNumber =>
     `${waveChatEndpoint}/user/find-phone?phone=${phoneNumber}`,
   changePassword: () => `${waveChatEndpoint}/auth/change-password`,
+  addMember: id =>
+    `${waveChatEndpoint}/conversation-group/add-member?conversation_id=${id}`,
+  removeMember: id =>
+    `${waveChatEndpoint}/conversation-group/remove-member?conversation_id=${id}`,
+  leaveGroup: id =>
+    `${waveChatEndpoint}/conversation-group/leave?conversation_id=${id}`,
+  deleteConversation: id =>
+    `${waveChatEndpoint}/conversation/delete?conversation_id=${id}`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

@@ -50,15 +50,17 @@ const ChangePasswordScreen = ({navigation}) => {
 
   return (
     <View style={{margin: 20}}>
-      <Text style={{marginBottom: 10}}>Mật khẩu hiện tại</Text>
+      <Text style={{marginBottom: 10, color: '#000'}}>Mật khẩu hiện tại</Text>
       <PasswordField
         secureTextEntry={true}
         value={currentPassword}
         onChangeText={setCurrentPassword}
       />
-      <Text style={{marginBottom: 10}}>Mật khẩu mới</Text>
+      <Text style={{marginBottom: 10, color: '#000'}}>Mật khẩu mới</Text>
       <PasswordField value={newPassword} onChangeText={setNewPassword} />
-      <Text style={{marginBottom: 10}}>Xác nhận mật khẩu mới</Text>
+      <Text style={{marginBottom: 10, color: '#000'}}>
+        Xác nhận mật khẩu mới
+      </Text>
       <PasswordField
         value={confirmPassword}
         onChangeText={setConfirmPassword}

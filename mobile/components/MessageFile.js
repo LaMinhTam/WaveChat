@@ -31,7 +31,8 @@ const formatFileSize = size => {
   }
 };
 
-const truncateFileName = (fileName, maxLength) => {
+const truncateFileName = (fileLink, maxLength) => {
+  const fileName = fileLink.split('/').pop();
   if (fileName.length <= maxLength) {
     return fileName;
   }
@@ -71,7 +72,7 @@ const MessageFile = ({item}) => {
     } else {
       await RNFS.mkdir(destinationPath);
       const res = await RNFS.downloadFile({
-        fromUrl: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
+        fromUrl: item.media[0],
         toFile: filePath,
       }).promise;
       setFileInfo({...fileInfo, size: res.bytesWritten});

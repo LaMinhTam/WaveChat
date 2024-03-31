@@ -7,43 +7,21 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {useUserData} from '../contexts/auth-context';
-import {
-  BACKGROUND_COLOR,
-  MAIN_COLOR,
-  PRIMARY_TEXT_COLOR,
-  SECOND_COLOR,
-} from '../styles/styles';
+import {MAIN_COLOR, PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 import {
   createGroupConversation,
   getConversationDetail,
+  getConversations,
 } from '../apis/conversation';
 import {useSocket} from '../contexts/SocketProvider';
+import FriendListChosen from '../components/FriendListChosen';
 
 const CreateGroupScreen = ({navigation}) => {
   const {accessTokens, friends} = useUserData();
   const {setCurrentConversation, setConversations} = useSocket();
   const [groupName, setGroupName] = useState('');
-  const [searchText, setSearchText] = useState('');
   const [selectedFriends, setSelectedFriends] = useState([]);
-
-  const handleFriendSelection = friend => {
-    const index = selectedFriends.findIndex(
-      selectedFriend => selectedFriend.user_id === friend.user_id,
-    );
-    if (index !== -1) {
-      const updatedSelectedFriends = [...selectedFriends];
-      updatedSelectedFriends.splice(index, 1);
-      setSelectedFriends(updatedSelectedFriends);
-    } else {
-      setSelectedFriends([...selectedFriends, friend]);
-    }
-  };
-
-  const filteredFriends = friends.filter(friend =>
-    friend.full_name.toLowerCase().includes(searchText.toLowerCase()),
-  );
 
   const handleCreateGroup = async () => {
     const data = await createGroupConversation(
@@ -57,9 +35,8 @@ const CreateGroupScreen = ({navigation}) => {
       _id: data.data.conversation_id,
     };
     setCurrentConversation(currentConversation);
-    setConversations(prevConversations => {
-      return [currentConversation, ...prevConversations];
-    });
+    const conversation = await getConversations(accessTokens);
+    setConversations(conversation.data);
     navigation.pop();
     navigation.navigate('ChatScreen');
   };
@@ -77,52 +54,10 @@ const CreateGroupScreen = ({navigation}) => {
         value={groupName}
         onChangeText={setGroupName}
       />
-      <TextInput
-        style={{
-          padding: 10,
-          marginBottom: 10,
-          backgroundColor: BACKGROUND_COLOR,
-        }}
-        placeholder="Tìm tên"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
-      <FlatList
-        data={filteredFriends}
-        keyExtractor={item => item.user_id}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 10,
-            }}
-            onPress={() => handleFriendSelection(item)}>
-            <Image
-              source={{uri: item.avatar}}
-              style={{width: 50, height: 50, borderRadius: 25, marginRight: 10}}
-            />
-            <Text>{item.full_name}</Text>
-            {selectedFriends.some(
-              selectedFriend => selectedFriend.user_id === item.user_id,
-            ) ? (
-              <Icon
-                name="check-circle"
-                size={20}
-                color="green"
-                style={{marginLeft: 'auto'}}
-              />
-            ) : (
-              <Icon
-                name="circle-o"
-                size={20}
-                color="gray"
-                style={{marginLeft: 'auto'}}
-              />
-            )}
-          </TouchableOpacity>
-        )}
-      />
+      <FriendListChosen
+        friends={friends}
+        selectedFriends={selectedFriends}
+        setSelectedFriends={setSelectedFriends}></FriendListChosen>
       <TouchableOpacity
         style={{
           backgroundColor: MAIN_COLOR,
@@ -136,7 +71,9 @@ const CreateGroupScreen = ({navigation}) => {
           handleCreateGroup();
         }}
         disabled={!groupName.length > 0 || selectedFriends.length < 2}>
-        <Text style={{color: PRIMARY_TEXT_COLOR}}>Tạo nhóm mới</Text>
+        <Text style={{color: '#fff', fontWeight: 700, fontSize: 18}}>
+          Tạo nhóm mới
+        </Text>
       </TouchableOpacity>
     </View>
   );

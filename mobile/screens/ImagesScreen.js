@@ -51,15 +51,13 @@ const ImagesScreen = ({navigate, route}) => {
                   key={messageIndex}
                   onPress={() => {
                     if (message.type === 2) {
-                      handleImagePress(
-                        `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${message.conversation_id}/${message.media[0]}`,
-                      );
+                      handleImagePress(message.media[0]);
                     }
                   }}>
                   {message.type === 2 && (
                     <Image
                       source={{
-                        uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${message.conversation_id}/${message.media[0]}`,
+                        uri: message.media[0],
                       }}
                       style={styles.image}
                     />

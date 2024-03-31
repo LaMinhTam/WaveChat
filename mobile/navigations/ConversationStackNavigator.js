@@ -11,6 +11,7 @@ import {MAIN_COLOR} from '../styles/styles';
 import ChatControlPanel from '../screens/ChatControlPanel';
 import UserInformationScreen from '../screens/UserInformationScreen';
 import ImagesScreen from '../screens/ImagesScreen';
+import AddMember from '../screens/AddMember';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,7 @@ const ConversationStackNavigator = () => {
         component={ImagesScreen}
         options={{headerTitle: 'Ảnh'}}
       />
+      <Stack.Screen name="AddMember" component={AddMember}></Stack.Screen>
     </Stack.Navigator>
   );
 };

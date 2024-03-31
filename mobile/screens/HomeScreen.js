@@ -11,7 +11,6 @@ import {FILE_TYPE} from '../constants';
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
   const {accessTokens, userInfo} = useUserData();
-
   const constructMessage = (lastMessage, userInfo) => {
     const type = lastMessage.type;
     if (type != 1) {

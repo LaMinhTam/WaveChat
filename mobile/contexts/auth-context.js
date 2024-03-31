@@ -6,6 +6,7 @@ import {getFriends} from '../apis/friend';
 import {getProfile} from '../apis/user';
 import {Login} from '../apis/authenApi';
 import {addNewFCMToken} from '../utils/firestoreManage';
+import {Alert} from 'react-native';
 
 const AuthContext = React.createContext();
 
@@ -67,8 +68,6 @@ export function UserDataProvider(props) {
     user = {
       ...user,
       ...profile.data,
-      avatar: `https://wavechat.s3.ap-southeast-1.amazonaws.com/profile/${user._id}/${profile.data.avatar}`,
-      cover: `https://wavechat.s3.ap-southeast-1.amazonaws.com/profile/${user._id}/${profile.data.cover}`,
     };
 
     setUserInfo(user);
@@ -84,8 +83,8 @@ export function UserDataProvider(props) {
       await handleLoginSuccess(data.data);
       await AsyncStorage.setItem('phone', phone);
       await AsyncStorage.setItem('password', password);
-    } else if (data.status === 401) {
-      setErrorMessage('Sai tài khoản hoặc mật khẩu');
+    } else {
+      Alert.alert('Lỗi', 'Sai tài khoản hoặc mật khẩu');
     }
   };
 

@@ -11,13 +11,17 @@ import {TextInput} from 'react-native-gesture-handler';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('0886700046');
-  const [password, setPassword] = useState('123456789');
+  const [password, setPassword] = useState('Tam123456789@');
   const [errorMessage, setErrorMessage] = useState('');
   const {handleSignIn, setFriends} = useUserData();
-
+  console.log(phone);
   return (
     <View style={styles.container}>
-      <TextInput onChange={setPhone} value={phone} style={styles.phoneInput} />
+      <TextInput
+        onChangeText={setPhone}
+        value={phone}
+        style={styles.phoneInput}
+      />
 
       <PasswordField
         style={{width: '90%'}}

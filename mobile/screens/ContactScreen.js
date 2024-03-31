@@ -16,6 +16,7 @@ import {useSocket} from '../contexts/SocketProvider';
 const Separator = () => <View style={styles.separator} />;
 
 const FriendScreen = ({navigation}) => {
+  const {setMessages} = useSocket();
   const {userInfo, friends} = useUserData();
   const {setCurrentConversation, conversations} = useSocket();
 
@@ -43,6 +44,7 @@ const FriendScreen = ({navigation}) => {
       ],
       type: 2,
     };
+    setMessages([]);
     setCurrentConversation(existingConversation || newConversation);
     navigation.navigate('ChatScreen');
   };

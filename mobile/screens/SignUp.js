@@ -12,18 +12,28 @@ import PasswordField from '../components/PasswordField';
 import {useUserData} from '../contexts/auth-context';
 import {Login, authSignUp} from '../apis/authenApi';
 import {addUserToFireStore} from '../utils/firestoreManage';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
+import OTPModal from '../components/OTPModal';
 
 const SignUp = ({navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0886700046');
   const [username, setUsername] = useState('La Minh Tâm');
   const [password, setPassword] = useState('123456789');
-  const {setConfirmationResult, setValues, setUserInfo} = useUserData();
+  const [confirm, setConfirm] = useState(null);
+  const {setValues, setUserInfo} = useUserData();
+  const [otpModalVisible, setOtpModalVisible] = useState(false);
+  // const handleInputOTP = async code => {
+  //   const credential = await auth.PhoneAuthProvider.credential(
+  //     confirm.verificationId,
+  //     code,
+  //   );
+
+  //   const result = await auth().signInWithCredential(credential);
+  //   console.log(result);
+  // };
 
   const handleSignUp = async () => {
     try {
-      // confirm = await auth().signInWithPhoneNumber(phoneNumber);
-      // setConfirmationResult(confirm);
       values = {name: username, phone: phoneNumber, password: password};
       setValues(values);
       createUser(values);
@@ -57,6 +67,29 @@ const SignUp = ({navigation}) => {
     }
   };
 
+  const sendOtp = async () => {
+    const formatPhone = '+84' + phoneNumber.slice(1);
+    const signInConfirm = await auth().verifyPhoneNumber(formatPhone);
+    setConfirm(signInConfirm);
+    console.log(signInConfirm);
+  };
+
+  const handleOpenOTPModal = async () => {
+    setOtpModalVisible(true);
+    await sendOtp();
+  };
+
+  const handleConfirmOTP = async otp => {
+    if (confirm.code === otp) {
+      handleSignUp();
+    } else {
+      Alert.alert('Lỗi', 'Mã OTP không đúng');
+    }
+  };
+
+  const handleResendOTP = async () => {
+    await sendOtp();
+  };
   return (
     <View style={styles.container}>
       <View id="recaptcha-container"></View>
@@ -87,9 +120,18 @@ const SignUp = ({navigation}) => {
         value={password}
       />
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleSignUp}>
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={handleOpenOTPModal}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
+
+      <OTPModal
+        visible={otpModalVisible}
+        onClose={() => setOtpModalVisible(false)}
+        onResend={handleResendOTP}
+        onConfirm={handleConfirmOTP}
+      />
     </View>
   );
 };

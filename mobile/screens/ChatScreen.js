@@ -55,7 +55,9 @@ const ChatScreen = ({navigation, route}) => {
 
   const loadMessages = async () => {
     let newMessages = await getMessage(currentConversation._id, accessTokens);
-    setMessages(newMessages);
+    if (newMessages.data !== undefined) {
+      setMessages(newMessages.data);
+    }
   };
 
   const scrollToMessage = keyword => {
