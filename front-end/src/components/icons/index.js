@@ -27,6 +27,7 @@ import IconPin from "./IconPin";
 import IconSearch from "./IconSearch";
 import IconSend from "./IconSend";
 import IconSetting from "./IconSetting";
+import IconSort from "./IconSort";
 import IconSplit from "./IconSplit";
 import IconTrash from "./IconTrash";
 import IconTxt from "./IconTxt";
@@ -65,4 +66,5 @@ export {
     IconTrash,
     IconChevronDown,
     IconLetter,
+    IconSort,
 };
