@@ -20,6 +20,12 @@ export function ChatProvider(props) {
         setShow: setShowCreateGroupChat,
         nodeRef: groupChatRef,
     } = useClickOutSide();
+
+    const {
+        show: showSettingModal,
+        setShow: setShowSettingModal,
+        nodeRef: settingModalRef,
+    } = useClickOutSide();
     const contextValues = {
         show,
         setShow,
@@ -36,6 +42,9 @@ export function ChatProvider(props) {
         groupChatRef,
         selectedList,
         setSelectedList,
+        showSettingModal,
+        setShowSettingModal,
+        settingModalRef,
     };
     return (
         <ChatContext.Provider

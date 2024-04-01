@@ -45,7 +45,7 @@ const sidebarLinks = [
 const DashboardSideBar = () => {
     const dispatch = useDispatch();
     const { setUserInfo } = useAuth();
-    const { setShow } = useChat();
+    const { setShow, setShowSettingModal } = useChat();
     const currentTab = useSelector((state) => state.chat.currentTab);
     const userProfile = useSelector((state) => state.user.userProfile);
     const navigate = useNavigate();
@@ -60,6 +60,7 @@ const DashboardSideBar = () => {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setShow(true);
+                                    setShowSettingModal(false);
                                 }}
                             >
                                 <img
@@ -77,6 +78,11 @@ const DashboardSideBar = () => {
                     return (
                         <button
                             key={item.title}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowSettingModal(true);
+                                setShow(false);
+                            }}
                             className="w-[64px] h-[64px] flex items-center justify-center mt-auto hover:bg-secondary hover:bg-opacity-50"
                         >
                             <span>{item.icon}</span>

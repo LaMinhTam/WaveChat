@@ -18,12 +18,15 @@ import PropTypes from "prop-types";
 const ChangeImageModal = ({ type }) => {
     const { progress, image, handleSelectImage, setImage, handleResetUpload } =
         useS3Image();
+    console.log("ChangeImageModal ~ image:", image);
 
     const dispatch = useDispatch();
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const userProfile = useSelector((state) => state.user.userProfile);
+    console.log("ChangeImageModal ~ userProfile:", userProfile);
     const parts = image.split("/");
     const imageName = parts[parts.length - 1];
+    console.log("ChangeImageModal ~ imageName:", imageName);
 
     useEffect(() => {
         if (type === "avatar") {
@@ -75,6 +78,7 @@ const ChangeImageModal = ({ type }) => {
                 avatar,
                 cover,
             });
+            console.log("handleUpdateAvatar ~ res:", res);
             if (res.data.status === 200) {
                 toast.success(
                     `Cập nhật ${

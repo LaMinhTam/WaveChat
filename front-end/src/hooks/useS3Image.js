@@ -42,6 +42,7 @@ const useS3Image = () => {
 
     const handleSelectImage = (e) => {
         const file = e.target.files[0];
+        console.log("handleSelectImage ~ file:", file);
         if (!file) return;
         const timestamp = new Date().getTime();
         handleUploadImage(file, timestamp);

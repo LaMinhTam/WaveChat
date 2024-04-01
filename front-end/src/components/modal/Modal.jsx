@@ -3,9 +3,11 @@ import ProfileModal from "./ProfileModal";
 import { useChat } from "../../contexts/chat-context";
 import ProfileDetailsModal from "./ProfileDetailsModal";
 import CreateGroupChatModal from "./CreateGroupChatModal";
+import SettingModal from "./SettingModal";
 
 const Modal = () => {
-    const { show, showProfileDetails, showCreateGroupChat } = useChat();
+    const { show, showProfileDetails, showCreateGroupChat, showSettingModal } =
+        useChat();
     return (
         <>
             <ReactModal
@@ -15,6 +17,14 @@ const Modal = () => {
                 className="modal-content w-full max-w-[280px] bg-white rounded outline-none p-2 relative max-h-[157px]"
             >
                 <ProfileModal />
+            </ReactModal>
+            <ReactModal
+                isOpen={showSettingModal}
+                overlayClassName="modal-overlay fixed inset-0 z-50 ml-16 mt-[520px] bg-lite shadow-lg p-2
+                flex justify-center items-center w-full max-w-[280px] h-full max-h-[157px]"
+                className="modal-content w-full max-w-[280px] bg-white rounded outline-none p-2 relative max-h-[157px]"
+            >
+                <SettingModal />
             </ReactModal>
             <ReactModal
                 isOpen={showProfileDetails}
