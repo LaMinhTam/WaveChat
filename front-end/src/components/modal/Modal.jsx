@@ -4,10 +4,16 @@ import { useChat } from "../../contexts/chat-context";
 import ProfileDetailsModal from "./ProfileDetailsModal";
 import CreateGroupChatModal from "./CreateGroupChatModal";
 import SettingModal from "./SettingModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const Modal = () => {
-    const { show, showProfileDetails, showCreateGroupChat, showSettingModal } =
-        useChat();
+    const {
+        show,
+        showProfileDetails,
+        showCreateGroupChat,
+        showSettingModal,
+        showChangePasswordModal,
+    } = useChat();
     return (
         <>
             <ReactModal
@@ -33,6 +39,14 @@ const Modal = () => {
                 className="modal-content w-full max-w-[400px] bg-white rounded outline-none relative"
             >
                 <ProfileDetailsModal />
+            </ReactModal>
+            <ReactModal
+                isOpen={showChangePasswordModal}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[400px] bg-white rounded outline-none relative"
+            >
+                <ChangePasswordModal />
             </ReactModal>
             <ReactModal
                 isOpen={showCreateGroupChat}

@@ -7,8 +7,12 @@ import Swal from "sweetalert2";
 import { axiosPrivate } from "../../api/axios";
 
 const SettingModal = () => {
-    const { setShowSettingModal, settingModalRef, setShowProfileDetails } =
-        useChat();
+    const {
+        setShowSettingModal,
+        settingModalRef,
+        setShowProfileDetails,
+        setShowChangePasswordModal,
+    } = useChat();
     const { setUserInfo } = useAuth();
     const navigate = useNavigate();
     const handleLogout = () => {
@@ -47,6 +51,10 @@ const SettingModal = () => {
             }
         });
     };
+    const handleChangePassword = () => {
+        setShowSettingModal(false);
+        setShowChangePasswordModal(true);
+    };
     return (
         <div ref={settingModalRef}>
             <h2 className="text-xl font-semibold">Cài đặt</h2>
@@ -67,6 +75,12 @@ const SettingModal = () => {
                 </button>
             </div>
             <hr />
+            <button
+                className="flex items-center justify-start w-full py-1 text-sm font-normal hover:bg-text3 hover:bg-opacity-10 text-error"
+                onClick={handleChangePassword}
+            >
+                Thay đổi mật khẩu
+            </button>
             <button
                 className="flex items-center justify-start w-full py-1 text-sm font-normal hover:bg-text3 hover:bg-opacity-10 text-error"
                 onClick={handleDeleteAccount}

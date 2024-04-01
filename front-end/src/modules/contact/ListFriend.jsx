@@ -1,5 +1,5 @@
-import { IconSearch, IconSort } from "../../components/icons";
 import IconUser from "../../components/icons/IconUser";
+import HeaderSearch from "./HeaderSearch";
 
 const ListFriend = () => {
     return (
@@ -14,29 +14,7 @@ const ListFriend = () => {
                 </div>
                 <div className="w-full h-full px-4 bg-lite">
                     <div className="w-full h-[64px] flex items-center justify-center gap-x-2">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                className="w-[350px] h-[32px] rounded-md border pl-10"
-                                placeholder="Tìm bạn"
-                            />
-                            <span className="absolute left-[6px] top-[6px]">
-                                <IconSearch />
-                            </span>
-                        </div>
-                        <div className="relative">
-                            <select
-                                name="selectSort"
-                                id="selectSort"
-                                className="w-[350px] h-[32px] rounded-md border pl-10"
-                            >
-                                <option value="">Tên (A-Z)</option>
-                                <option value="">Tên (Z-A)</option>
-                            </select>
-                            <span className="absolute left-[6px] top-[6px]">
-                                <IconSort />
-                            </span>
-                        </div>
+                        <HeaderSearch text={"Tìm bạn"} />
                     </div>
                     <div>
                         <div className="w-full h-[32px] flex items-center">
