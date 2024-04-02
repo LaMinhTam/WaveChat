@@ -4,17 +4,18 @@ import PhoneInput from 'react-native-phone-input';
 import PasswordField from '../components/PasswordField';
 import {Login} from '../apis/authenApi';
 import {useUserData} from '../contexts/auth-context';
-import {getProfile} from '../apis/user';
+import {getProfile, resetPassword} from '../apis/user';
 import {getFriends} from '../apis/friend';
 import {addNewFCMToken} from '../utils/firestoreManage';
 import {TextInput} from 'react-native-gesture-handler';
+import auth from '@react-native-firebase/auth';
 
 const SignIn = () => {
   const [phone, setPhone] = useState('0886700046');
   const [password, setPassword] = useState('Tam123456789@');
   const [errorMessage, setErrorMessage] = useState('');
   const {handleSignIn, setFriends} = useUserData();
-  console.log(phone);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -22,20 +23,17 @@ const SignIn = () => {
         value={phone}
         style={styles.phoneInput}
       />
-
       <PasswordField
         style={{width: '90%'}}
         placeholder="Mật khẩu"
         onChangeText={setPassword}
         value={password}
       />
-
       <TouchableOpacity
         style={styles.button}
         onPress={() => handleSignIn(phone, password)}>
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
-
       {errorMessage !== '' && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       )}

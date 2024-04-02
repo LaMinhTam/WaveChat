@@ -6,6 +6,7 @@ export const waveChatApi = {
   login: () => `${waveChatEndpoint}/auth/sign-in`,
   getProfile: id => `${waveChatEndpoint}/user/profile?_id=${id}`,
   updateProfile: () => `${waveChatEndpoint}/user/update`,
+  removeAccount: () => `${waveChatEndpoint}/user/remove-account`,
   getFriends: type => `${waveChatEndpoint}/friend?type=${type}`,
   getConversations: () => `${waveChatEndpoint}/conversation`,
   getConversationDetail: id =>
@@ -32,6 +33,7 @@ export const waveChatApi = {
     `${waveChatEndpoint}/conversation-group/leave?conversation_id=${id}`,
   deleteConversation: id =>
     `${waveChatEndpoint}/conversation/delete?conversation_id=${id}`,
+  resetPassowrd: () => `${waveChatEndpoint}/auth/reset-password`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

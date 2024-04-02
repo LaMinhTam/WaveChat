@@ -10,7 +10,7 @@ import {PRIMARY_TEXT_COLOR, SECOND_COLOR} from '../styles/styles';
 import {useUserData} from '../contexts/auth-context';
 import ImagePicker from 'react-native-image-crop-picker';
 import {uploadImageToS3} from '../utils/S3Bucket';
-import {updateProfile} from '../apis/user';
+import {removeAccount, updateProfile} from '../apis/user';
 
 const UserSettingListScreen = ({navigation}) => {
   const {userInfo, setUserInfo, accessTokens, removeAccessToken} =
@@ -21,6 +21,7 @@ const UserSettingListScreen = ({navigation}) => {
     {id: 3, title: 'Đổi ảnh bìa'},
     {id: 5, title: 'Cập nhật mật khẩu'},
     {id: 4, title: 'Đăng xuất'},
+    {id: 6, title: 'Xóa tài khoản'},
   ];
 
   const itemRender = ({item}) => (
@@ -82,6 +83,13 @@ const UserSettingListScreen = ({navigation}) => {
       case 5:
         navigation.navigate('Cập nhật mật khẩu');
         break;
+      case 6:
+        const removeMyAccount = async () => {
+          const data = await removeAccount(accessTokens);
+          console.log(data);
+          removeAccessToken();
+        };
+        removeMyAccount();
       default:
     }
   };

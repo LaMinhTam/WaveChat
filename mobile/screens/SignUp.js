@@ -75,8 +75,17 @@ const SignUp = ({navigation}) => {
   };
 
   const handleOpenOTPModal = async () => {
-    setOtpModalVisible(true);
-    await sendOtp();
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        'Lỗi',
+        'Mật khẩu mới không đáp ứng yêu cầu. Mật khẩu phải chứa ít nhất 8 ký tự, bao gồm ít nhất một chữ cái viết thường, một chữ cái viết hoa, một số và một ký tự đặc biệt.',
+      );
+    } else {
+      setOtpModalVisible(true);
+      await sendOtp();
+    }
   };
 
   const handleConfirmOTP = async otp => {

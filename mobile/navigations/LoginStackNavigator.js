@@ -6,6 +6,7 @@ import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 // import OTPScreen from '../screens/OTPScreen';
 import GenderDOBSelectionScreen from '../screens/GenderDOBSelectionScreen';
+import ResetPasswordScreen from '../screens/ResetPassowrdScreen';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,10 @@ const LoginStackNavigator = () => {
         component={GenderDOBSelectionScreen}
         options={{title: 'Ngày sinh và giới tính'}}
       />
+      {/* <Stack.Screen
+        name="ResetPassowrd"
+        component={ResetPasswordScreen}
+        options={{title: 'quên mật khẩu'}}></Stack.Screen> */}
     </Stack.Navigator>
   );
 };

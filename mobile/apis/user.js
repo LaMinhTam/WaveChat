@@ -47,3 +47,25 @@ export async function changePassword(oldPassword, newPassword, accessToken) {
   );
   return res.data;
 }
+
+export async function removeAccount(accessToken) {
+  const res = await axios.post(
+    waveChatApi.removeAccount(),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function resetPassword(phoneNumber, password) {
+  const res = await axios.post(waveChatApi.resetPassowrd(), {
+    phone: phoneNumber,
+    password: password,
+  });
+  return res.data;
+}
