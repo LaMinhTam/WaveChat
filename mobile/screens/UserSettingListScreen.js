@@ -34,7 +34,8 @@ const UserSettingListScreen = ({navigation}) => {
       case 1:
         navigation.navigate('Chi tiết người dùng');
         break;
-      case 'value2':
+      case 5:
+        navigation.navigate('Mã QR của tôi');
         break;
       default:
     }
@@ -42,7 +43,7 @@ const UserSettingListScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList data={listData} renderItem={itemRender} />
+      <FlatList data={listData} renderItem={itemRender} style={{flex:1}}/>
       <Text
         style={{
           color: MAIN_COLOR,
@@ -52,7 +53,7 @@ const UserSettingListScreen = ({navigation}) => {
         }}>
         Cài đặt
       </Text>
-      <FlatList data={listDataSetting} renderItem={itemRender} />
+      <FlatList data={listDataSetting} renderItem={itemRender} style={{}} />
     </SafeAreaView>
   );
 };
@@ -60,10 +61,9 @@ const UserSettingListScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: 'flex',
+    justifyContent: 'space-around',
     flexDirection: 'column',
     backgroundColor: SECOND_COLOR,
-    height: '100%',
   },
   item: {
     padding: 10,

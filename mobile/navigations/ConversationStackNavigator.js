@@ -8,6 +8,8 @@ import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import {globalScreenOptions} from '../styles';
 import {MAIN_COLOR} from '../styles/styles';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import QRScanner from '../screens/QRScanner';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,7 @@ const ConversationStackNavigator = () => {
         component={SearchScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen name="QRScreen" component={QRScanner}/>
       <Stack.Screen name="CallPhoneScreen" component={CallPhoneScreen} />
       <Stack.Screen name="GroupCreate" component={CreateGroupScreen} />
     </Stack.Navigator>

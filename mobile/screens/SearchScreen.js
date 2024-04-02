@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {findUserByPhoneNumber} from '../apis/user';
 import {BACKGROUND_COLOR, MAIN_COLOR} from '../styles/styles';
 import {RenderView} from '../components/RenderView';
+import {QRCodeScanner} from '../components/QRCodeScanner';
 
 const SearchScreen = ({navigation}) => {
   const {accessTokens} = useUserData();
@@ -64,7 +65,7 @@ const SearchScreen = ({navigation}) => {
             />
           </View>
         </View>
-        <TouchableOpacity style={styles.touchAble}>
+        <TouchableOpacity style={styles.touchAble} onPress={()=>{navigation.navigate('QRScreen')}}>
           <Icon name="qrcode-scan" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
