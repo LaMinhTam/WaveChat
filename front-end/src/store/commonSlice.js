@@ -17,6 +17,9 @@ const commonSlice = createSlice({
         isRegister: false,
         isVerify: false,
         setIsVerify: false,
+        searchUserValue: "",
+        profileType: "currentUser",
+        incomingMessageOfConversation: "",
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -75,6 +78,18 @@ const commonSlice = createSlice({
             ...state,
             isVerify: action.payload,
         }),
+        setSearchUserValue: (state, action) => ({
+            ...state,
+            searchUserValue: action.payload,
+        }),
+        setProfileType: (state, action) => ({
+            ...state,
+            profileType: action.payload,
+        }),
+        setIncomingMessageOfConversation: (state, action) => ({
+            ...state,
+            incomingMessageOfConversation: action.payload,
+        }),
     },
 });
 export const {
@@ -92,5 +107,8 @@ export const {
     setIsRegister,
     setIsVerify,
     setShowUpdateCover,
+    setSearchUserValue,
+    setProfileType,
+    setIncomingMessageOfConversation,
 } = commonSlice.actions;
 export default commonSlice.reducer;

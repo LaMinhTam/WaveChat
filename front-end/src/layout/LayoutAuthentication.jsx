@@ -90,6 +90,8 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                                 saveUserId(resLogin.data.data._id);
                                 saveToken(resLogin.data.data.access_token);
                                 toast.success("Đăng ký thành công");
+                                setOtpCode("");
+                                setCountdown(60);
                                 setIsLoading(false);
                                 dispatch(setOpenModal(false));
                                 navigate("/");
@@ -110,6 +112,8 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                     dispatch(setIsVerify(true));
                     navigate(`/recover/change-password`);
                     toast.success("Xác thực thành công!");
+                    setOtpCode("");
+                    setCountdown(60);
                     dispatch(setOpenModal(false));
                 }
             } else {

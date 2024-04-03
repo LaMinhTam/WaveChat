@@ -8,7 +8,7 @@ import { Button } from "../components/button";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/auth-context";
 import { useDispatch } from "react-redux";
-import { setOpenModal } from "../store/commonSlice";
+import { setOpenModal, setOtpCode } from "../store/commonSlice";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import handleSendOTP from "../utils/handleSendOTP";
@@ -30,6 +30,7 @@ const ResetPasswordPage = () => {
     const handleResetPassword = async (values) => {
         if (!values.phone) return;
         try {
+            dispatch(setOtpCode(""));
             const confirmationResult = await handleSendOTP(values.phone);
             setConfirmationResult(confirmationResult);
             setValues(values);

@@ -40,7 +40,11 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                 <div>
                     <h3 className="text-lg font-semibold">{name}</h3>
                     <span className="text-sm font-normal text-text3">
-                        Truy cập vào {profile?.last_connect}
+                        Truy cập vào{" "}
+                        {profile?.last_connect &&
+                        profile.last_connect !== "Invalid date"
+                            ? profile.last_connect
+                            : ""}
                     </span>
                 </div>
             </div>

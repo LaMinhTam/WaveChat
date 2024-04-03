@@ -6,16 +6,21 @@ import Modal from "../components/modal/Modal";
 import { useEffect } from "react";
 import fetchUserProfile from "../api/fetchUserProfile";
 import { getUserId } from "../utils/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserProfile } from "../store/userSlice";
+import { axiosPrivate } from "../api/axios";
+import {
+    setListFriendRequest,
+    setListFriendSendRequest,
+} from "../store/friendSlice";
 const LayoutDashboard = () => {
     const currentUserId = getUserId();
     const dispatch = useDispatch();
+    const render = useSelector((state) => state.friend.render);
     useEffect(() => {
         async function fetchProfileData() {
             try {
                 const user = await fetchUserProfile(currentUserId);
-                console.log("fetchProfileData ~ user:", user);
                 dispatch(setUserProfile(user));
             } catch (error) {
                 console.log("error", error);
@@ -23,6 +28,32 @@ const LayoutDashboard = () => {
         }
         fetchProfileData();
     }, [currentUserId, dispatch]);
+    useEffect(() => {
+        async function fetchFriendRequest() {
+            try {
+                const res = await axiosPrivate.get("/friend?type=2");
+                if (res.data.status === 200) {
+                    dispatch(setListFriendRequest(res.data.data));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchFriendRequest();
+    }, [dispatch, render]);
+    useEffect(() => {
+        async function fetchFriendSendRequest() {
+            try {
+                const res = await axiosPrivate.get("/friend?type=3");
+                if (res.data.status === 200) {
+                    dispatch(setListFriendSendRequest(res.data.data));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchFriendSendRequest();
+    }, [dispatch, render]);
     return (
         <>
             <Modal />

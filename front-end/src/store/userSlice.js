@@ -3,6 +3,7 @@ const userSlice = createSlice({
     name: "user",
     initialState: {
         userProfile: {},
+        guestProfile: {},
         listFriend: [],
         friendInfo: {},
     },
@@ -19,8 +20,12 @@ const userSlice = createSlice({
             ...state,
             friendInfo: action.payload,
         }),
+        setGuestProfile: (state, action) => ({
+            ...state,
+            guestProfile: action.payload,
+        }),
     },
 });
-export const { setUserProfile, setListFriend, setFriendInfo } =
+export const { setUserProfile, setListFriend, setFriendInfo, setGuestProfile } =
     userSlice.actions;
 export default userSlice.reducer;

@@ -33,6 +33,18 @@ export function ChatProvider(props) {
         nodeRef: changePasswordModalRef,
     } = useClickOutSide();
 
+    const {
+        show: showAddFriendModal,
+        setShow: setShowAddFriendModal,
+        nodeRef: addFriendModalRef,
+    } = useClickOutSide();
+
+    const {
+        show: showSearchModal,
+        setShow: setShowSearchModal,
+        nodeRef: searchModalRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -55,6 +67,12 @@ export function ChatProvider(props) {
         showChangePasswordModal,
         setShowChangePasswordModal,
         changePasswordModalRef,
+        showAddFriendModal,
+        setShowAddFriendModal,
+        addFriendModalRef,
+        showSearchModal,
+        setShowSearchModal,
+        searchModalRef,
     };
     return (
         <ChatContext.Provider

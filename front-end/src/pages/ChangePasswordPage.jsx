@@ -57,6 +57,8 @@ const ChangePasswordPage = () => {
             if (res.data.status === 200) {
                 toast.success("Đặt lại mật khẩu thành công!");
                 navigate("/login");
+            } else {
+                toast.error("Mật khẩu mới không được trùng với Mật khẩu cũ");
             }
         } catch (error) {
             toast.error(error.message);

@@ -1,13 +1,15 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "../../contexts/auth-context";
 import { useChat } from "../../contexts/chat-context";
 import { saveToken } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { setProfileType } from "../../store/commonSlice";
 
 const ProfileModal = () => {
     const { nodeRef, setShowProfileDetails, setShow } = useChat();
     const { setUserInfo } = useAuth();
+    const dispatch = useDispatch();
     const userProfile = useSelector((state) => state.user.userProfile);
     const navigate = useNavigate();
     const handleLogout = () => {
@@ -26,6 +28,7 @@ const ProfileModal = () => {
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
+                        dispatch(setProfileType("currentUser"));
                         setShowProfileDetails(true);
                         setShow(false);
                     }}

@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ConversationChatInput from "./ConversationChatInput";
 import ConversationContent from "./ConversationContent";
 import ConversationHeader from "./ConversationHeader";
@@ -9,6 +9,8 @@ import { useChat } from "../../../contexts/chat-context";
 import io from "socket.io-client";
 import ConversationInfo from "./ConversationInfo";
 import { motion } from "framer-motion";
+import { setIncomingMessageOfConversation } from "../../../store/commonSlice";
+import { setId } from "../../../store/conversationSlice";
 
 const Conversation = () => {
     const friendInfo = useSelector((state) => state.user.friendInfo);
@@ -22,6 +24,19 @@ const Conversation = () => {
 
     const [imageMessage, setImageMessage] = useState([]);
     const [fileMessage, setFileMessage] = useState([]);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const resetTitle = () => {
+            document.title = "Wave chat";
+        };
+
+        window.addEventListener("focus", resetTitle);
+
+        return () => {
+            window.removeEventListener("focus", resetTitle);
+        };
+    }, []);
 
     useEffect(() => {
         setImageMessage([]);
@@ -87,12 +102,40 @@ const Conversation = () => {
         });
 
         newSocket.on("message", (incomingMessage) => {
+            const updatedMessage = {
+                ...incomingMessage.message,
+                user: {
+                    ...incomingMessage.message.user,
+                    avatar: friendInfo.avatar,
+                },
+            };
+
             setMessage((prev) =>
                 Array.isArray(prev)
-                    ? [...prev, incomingMessage.message]
-                    : [incomingMessage.message]
+                    ? [...prev, updatedMessage]
+                    : [updatedMessage]
             );
+            dispatch(
+                setIncomingMessageOfConversation(
+                    `${incomingMessage.message.conversation_id}_${incomingMessage.message.message}`
+                )
+            );
+            dispatch(
+                setId(
+                    setIncomingMessageOfConversation(
+                        `${incomingMessage.message.conversation_id}_${incomingMessage.message.message}`
+                    )
+                )
+            );
+            if (document.hidden) {
+                document.title = "Bạn có tin nhắn mới!";
+            }
         });
+
+        // newSocket.on("typing-on", (data) => {
+        //     alert("Typing...");
+        //     alert(`${data.user_id} is typing...`);
+        // });
 
         setSocket(newSocket);
 
@@ -101,7 +144,7 @@ const Conversation = () => {
                 newSocket.disconnect();
             }
         };
-    }, [accessToken, currentUserId, setMessage]);
+    }, [accessToken, currentUserId, dispatch, friendInfo.avatar, setMessage]);
 
     return (
         <div className="flex items-center justify-center">

@@ -11,7 +11,6 @@ const CreateGroupChatModal = () => {
     const { setShowCreateGroupChat, groupChatRef } = useChat();
     const [groupChatName, setGroupChatName] = useState("");
     const { selectedList, setSelectedList } = useChat();
-    console.log("CreateGroupChatModal ~ selectedList:", selectedList);
     const dispatch = useDispatch();
     const handleCreateGroupChat = async () => {
         if (selectedList.length < 2) {

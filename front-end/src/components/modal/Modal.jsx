@@ -5,6 +5,8 @@ import ProfileDetailsModal from "./ProfileDetailsModal";
 import CreateGroupChatModal from "./CreateGroupChatModal";
 import SettingModal from "./SettingModal";
 import ChangePasswordModal from "./ChangePasswordModal";
+import AddFriendModal from "./AddFriendModal";
+import SearchModal from "./SearchModal";
 
 const Modal = () => {
     const {
@@ -13,6 +15,8 @@ const Modal = () => {
         showCreateGroupChat,
         showSettingModal,
         showChangePasswordModal,
+        showAddFriendModal,
+        showSearchModal,
     } = useChat();
     return (
         <>
@@ -23,6 +27,22 @@ const Modal = () => {
                 className="modal-content w-full max-w-[280px] bg-white rounded outline-none p-2 relative max-h-[157px]"
             >
                 <ProfileModal />
+            </ReactModal>
+            <ReactModal
+                isOpen={showSearchModal}
+                overlayClassName="modal-overlay fixed inset-0 z-50 ml-16 mt-16 bg-lite shadow-lg
+                flex justify-center items-center w-full max-w-[350px] h-full max-h-[80px]"
+                className="modal-content w-full max-w-[280px] bg-white rounded outline-none relative"
+            >
+                <SearchModal />
+            </ReactModal>
+            <ReactModal
+                isOpen={showAddFriendModal}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[400px] bg-white rounded outline-none relative"
+            >
+                <AddFriendModal />
             </ReactModal>
             <ReactModal
                 isOpen={showSettingModal}

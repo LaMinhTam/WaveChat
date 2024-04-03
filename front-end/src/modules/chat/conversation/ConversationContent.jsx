@@ -7,6 +7,7 @@ import { useEffect } from "react";
 // import { IconChevronDown } from "../../../components/icons";
 
 const ConversationContent = ({ message }) => {
+    const conversation_id = message[0]?.conversation_id;
     const currentUserId = getUserId();
 
     // scroll to bottom
@@ -31,13 +32,21 @@ const ConversationContent = ({ message }) => {
                     <span className="mb-2 text-sm text-text3">
                         {group.formattedTime}
                     </span>
-                    {group.data.map((msg) =>
-                        msg?.user?._id === currentUserId ? (
-                            <Message key={uuidv4()} msg={msg} type="send" />
-                        ) : (
-                            <Message key={uuidv4()} msg={msg} type="receive" />
-                        )
-                    )}
+                    {group.data.map((msg) => {
+                        if (msg?.conversation_id === conversation_id) {
+                            return (
+                                <Message
+                                    key={uuidv4()}
+                                    msg={msg}
+                                    type={
+                                        msg?.user?._id === currentUserId
+                                            ? "send"
+                                            : "receive"
+                                    }
+                                />
+                            );
+                        }
+                    })}
                 </div>
             ))}
             {/* <button

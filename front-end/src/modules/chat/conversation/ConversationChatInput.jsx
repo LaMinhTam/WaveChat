@@ -15,6 +15,11 @@ const ConversationChatInput = ({ user_id, socket }) => {
         }
     };
 
+    // const handleTyping = () => {
+    //     if (!socket) return;
+    //     socket.emit("typing-on", { user_id });
+    // };
+
     const handleSendMessage = async () => {
         if (!socket) return;
         if (!conversationId) {
@@ -47,7 +52,10 @@ const ConversationChatInput = ({ user_id, socket }) => {
                 type="text"
                 placeholder="Nhập tin nhắn..."
                 className="flex-1 h-12 p-[12px_10px_18px_16px] rounded-full bg-lite"
-                onChange={(e) => setMessageSend(e.target.value)}
+                onChange={(e) => {
+                    setMessageSend(e.target.value);
+                    // handleTyping();
+                }}
                 value={messageSend}
                 onKeyDown={onEnterPress}
             />
