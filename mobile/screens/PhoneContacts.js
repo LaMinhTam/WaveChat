@@ -1,13 +1,24 @@
-import {View, Text, StyleSheet, PermissionsAndroid, Button} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {BACKGROUND_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
+import {
+  View,
+  Text,
+  StyleSheet,
+  PermissionsAndroid,
+  FlatList,
+  Image,
+} from 'react-native';
 import Contacts from 'react-native-contacts';
-import {getProfile} from '../apis/user';
+import {findUserByPhoneNumber, getProfile} from '../apis/user';
 import {useUserData} from '../contexts/auth-context';
+import {BACKGROUND_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import FriendBox from '../components/FriendBox';
 
 const PhoneContacts = () => {
   const [contacts, setContacts] = useState([]);
   const {accessTokens} = useUserData();
+  const [contactFriends, setContactFriends] = useState([]);
+  const {userInfo, friends, setFriends} = useUserData();
 
   const requestContactsPermission = async () => {
     try {
@@ -32,16 +43,17 @@ const PhoneContacts = () => {
       );
       if (isGranted) {
         const contacts = await Contacts.getAll();
-        var array = [];
-        contacts.forEach(contact => {
-          var contact = {
-            name: contact.displayName,
-            isStarred: contact.isStarred,
-            phone: [contact.phoneNumbers[0]],
-          };
-          array.push(contact);
+        const formattedContacts = contacts.flatMap(contact => {
+          if (contact.phoneNumbers && contact.phoneNumbers.length > 0) {
+            return contact.phoneNumbers.map(phoneNumber => ({
+              name: contact.displayName,
+              phone: phoneNumber.number.replace(/ /g, ''),
+            }));
+          } else {
+            return [];
+          }
         });
-        setContacts(array);
+        setContacts(formattedContacts);
       } else {
         requestContactsPermission();
       }
@@ -62,38 +74,52 @@ const PhoneContacts = () => {
       .catch(error => {
         console.error(error);
       });
-
-    contacts.forEach(contact => {
-      console.log(contact);
-      contact.phone.forEach(async phone => {
-        // console.log(phone);
-        //lack of api so this is waiting to implement
-        // get user profile by the phone number, then if exist user with that phone number, add to an array
-        // with the structure
-        // { nameInContact: String
-        //   nameInDB: String
-        //   phone: phone
-        //   avtar: String
-        //   isFriend: Boolean
-        // }
-        // and store friend in a userInfo, then compare here if is friend already, then isFriend is true else false
-      });
-    });
   }, []);
+
+  useEffect(() => {
+    contacts.forEach(async contact => {
+      if (userInfo.phone != contact.phone) {
+        const data = await findUserByPhoneNumber(contact.phone, accessTokens);
+        if (data.status === 200) {
+          setContactFriends(prevFriends => [
+            ...prevFriends,
+            {...data.data.user, contact_name: contact.name},
+          ]);
+        }
+      }
+    });
+  }, [contacts]);
 
   return (
     <View style={styles.container}>
-      <Text style={{color: PRIMARY_TEXT_COLOR}}>PhoneContacts</Text>
+      <Text style={styles.title}>Bạn bè từ danh bạ</Text>
+      <FlatList
+        data={contactFriends}
+        keyExtractor={friend => friend._id}
+        renderItem={({item}) =>
+          FriendBox(item, friends, setFriends, accessTokens)
+        }
+        contentContainerStyle={styles.friendsList}
+      />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'stretch',
     padding: 20,
     backgroundColor: BACKGROUND_COLOR,
   },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: PRIMARY_TEXT_COLOR,
+    marginBottom: 10,
+  },
+  friendsList: {
+    flexGrow: 1,
+  },
 });
+
 export default PhoneContacts;

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {waveChatApi} from './constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function getConversations(token) {
   const res = await axios.get(waveChatApi.getConversations(), {
@@ -124,6 +125,40 @@ export async function deleteConversation(conversation_id, token) {
   const res = await axios.post(
     waveChatApi.deleteConversation(conversation_id),
     {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function deleteMessage(message_id) {
+  const token = await AsyncStorage.getItem('accessToken');
+  const res = await axios.post(
+    waveChatApi.deleteMessage(message_id),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function forwardMessage(message_id, conversation_ids, token) {
+  console.log('Forward message: ', token);
+  const res = await axios.post(
+    waveChatApi.forwardMessage(),
+    {
+      message_id: message_id,
+      conversation_ids: conversation_ids,
+      content: '',
+    },
     {
       headers: {
         'Content-Type': 'application/json',

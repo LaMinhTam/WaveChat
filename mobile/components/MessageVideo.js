@@ -18,8 +18,8 @@ const MessageVideo = ({item}) => {
         fullScreenOnLongPress
         disableFullscreen={false}
         video={{
-          uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          // uri: item.media[0],
+          // uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+          uri: item.media[0],
         }}></VideoPlayer>
       <MediaViewModal
         visible={modalVisible}

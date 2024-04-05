@@ -35,11 +35,7 @@ const UserInformationScreen = ({navigation, route}) => {
     <View style={styles.container}>
       <ImageBackground
         source={{
-          uri: userData
-            ? userData.cover
-            : userInfo.cover
-            ? userInfo.cover
-            : `https://source.unsplash.com/random`,
+          uri: userData ? userData.cover : userInfo.cover,
         }}
         style={styles.coverPage}>
         <View style={styles.header}>
@@ -55,11 +51,7 @@ const UserInformationScreen = ({navigation, route}) => {
       <View style={styles.profileContainer}>
         <Image
           source={{
-            uri: userData
-              ? userData.avatar
-              : userInfo.avatar
-              ? userInfo.avatar
-              : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
+            uri: userData ? userData.avatar : userInfo.avatar,
           }}
           style={styles.avatar}
         />

@@ -21,7 +21,7 @@ export const notifyMessageToOtherMembers = async (
   message = {
     registration_ids: tokens,
     notification: {
-      title: conversation.name,
+      title: conversation.type === 2 ? userInfo.full_name : conversation.name,
       body: `${userInfo.full_name}: ${message.message}`,
       vibrate: 1,
       sound: 1,

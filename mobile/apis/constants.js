@@ -12,6 +12,7 @@ export const waveChatApi = {
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
   getMessages: id => `${waveChatEndpoint}/message/${id}?limit=100000`,
+  deleteMessage: id => `${waveChatEndpoint}/message/delete/${id}`,
   getMembers: id =>
     `${waveChatEndpoint}/conversation-group/member?conversation_id=${id}`,
   createConversation: () => `${waveChatEndpoint}/conversation/create`,
@@ -34,6 +35,10 @@ export const waveChatApi = {
   deleteConversation: id =>
     `${waveChatEndpoint}/conversation/delete?conversation_id=${id}`,
   resetPassowrd: () => `${waveChatEndpoint}/auth/reset-password`,
+  blockUser: id => `${waveChatEndpoint}/user/block-user/${id}`,
+  removeBlock: id => `${waveChatEndpoint}/user/remove-block-user/${id}`,
+  getBlockList: () => `${waveChatEndpoint}/user/list-block-user`,
+  forwardMessage: () => `${waveChatEndpoint}/message/share-message`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

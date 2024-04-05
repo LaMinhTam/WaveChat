@@ -33,8 +33,7 @@ const ImagesScreen = ({navigate, route}) => {
     const date = new Date(timestamp);
     const day = date.getDate();
     const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${day} tháng ${month}, ${year}`;
+    return `${day} tháng ${month}`;
   };
 
   return (
@@ -116,6 +115,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 5,
+    color: '#000',
   },
   modalContainer: {
     flex: 1,

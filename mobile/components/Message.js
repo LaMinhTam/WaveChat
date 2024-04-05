@@ -15,8 +15,15 @@ import MessageFile from './MessageFile';
 import MessageImage from './MessageImage';
 import MessageVideo from './MessageVideo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-const Message = ({item, userInfo}) => {
-  const [isContextMenuVisible, setContextMenuVisible] = useState(false);
+import RevokedMessage from './RevokedMessage';
+
+const Message = ({
+  item,
+  userInfo,
+  handleContextMenuSelect,
+  isContextMenuVisible,
+  setContextMenuVisible,
+}) => {
   const [contextMenuOptions, setContextMenuOptions] = useState([]);
   const isCurrentUser = item.user._id === userInfo._id;
 
@@ -30,29 +37,22 @@ const Message = ({item, userInfo}) => {
         return <MessageVideo item={item} />;
       case 5:
         return <MessageFile item={item} />;
+      case 14:
+        return <RevokedMessage item={item} />;
       default:
         return null;
     }
   };
 
   const handleContextMenu = () => {
-    setContextMenuOptions([]);
-    if (item.type !== 1) {
-      setContextMenuOptions(prevState => [...prevState, 'Lưu file']);
-    }
-    if (isCurrentUser) {
-      setContextMenuOptions(prevState => [...prevState, 'Thu hồi']);
+    setContextMenuOptions(['Xóa']);
+    if (item.type != 14) {
+      setContextMenuOptions(prevState => [...prevState, 'Chuyển tiếp']);
+      if (isCurrentUser) {
+        setContextMenuOptions(prevState => [...prevState, 'Thu hồi']);
+      }
     }
     setContextMenuVisible(true);
-  };
-
-  const handleOptionSelect = option => {
-    setContextMenuVisible(false);
-    if (option === 'Lưu file') {
-      console.log('Lưu file');
-    } else if (option === 'Thu hồi') {
-      console.log('Thu hồi');
-    }
   };
 
   return (
@@ -91,20 +91,22 @@ const Message = ({item, userInfo}) => {
           {formatTimeLastActivity(item.created_at)}
         </Text>
 
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            [isCurrentUser ? 'left' : 'right']: -40,
-            backgroundColor: '#fff',
-            padding: 10,
-            overflow: 'hidden',
-            borderRadius: 100,
-          }}>
-          <Fontisto
-            name="like"
-            style={{color: true ? 'gray' : 'gray'}}></Fontisto>
-        </TouchableOpacity>
+        {item.type != 14 && (
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              [isCurrentUser ? 'left' : 'right']: -40,
+              backgroundColor: '#fff',
+              padding: 10,
+              overflow: 'hidden',
+              borderRadius: 100,
+            }}>
+            <Fontisto
+              name="like"
+              style={{color: true ? 'gray' : 'gray'}}></Fontisto>
+          </TouchableOpacity>
+        )}
       </TouchableOpacity>
 
       {/* {isCurrentUser && (
@@ -128,7 +130,7 @@ const Message = ({item, userInfo}) => {
                   <TouchableOpacity
                     key={index}
                     style={styles.optionButton}
-                    onPress={() => handleOptionSelect(option)}>
+                    onPress={() => handleContextMenuSelect(option, item)}>
                     <Text style={styles.optionText}>{option}</Text>
                   </TouchableOpacity>
                 ))}

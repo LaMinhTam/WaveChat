@@ -3,7 +3,8 @@ import io from 'socket.io-client';
 import HOST_IP from '../apis/host';
 import {useUserData} from './auth-context';
 import {getConversations} from '../apis/conversation';
-
+import firestore from '@react-native-firebase/firestore';
+import {updateUnreadTrack} from '../utils/firestoreManage';
 const SocketContext = createContext();
 
 export const SocketProvider = ({children}) => {
@@ -22,6 +23,23 @@ export const SocketProvider = ({children}) => {
     });
 
     newSocket.on('connect', () => {
+      firestore()
+        .collection('unreadTrack')
+        .doc(userInfo._id)
+        .onSnapshot(doc => {
+          if (doc.exists) {
+            const unreadMessages = doc.data();
+            setConversations(prevConversations =>
+              prevConversations.map(conversation => {
+                const unreadCount = unreadMessages[conversation._id] || 0;
+                return {
+                  ...conversation,
+                  unread_count: unreadCount,
+                };
+              }),
+            );
+          }
+        });
       console.log('Connected to WebSocket');
     });
 
@@ -35,6 +53,21 @@ export const SocketProvider = ({children}) => {
       handleConversationOnIncomingMessage(message);
     });
 
+    newSocket.on('revoke-message', incomingMessage => {
+      const {message} = incomingMessage;
+
+      console.log(message);
+      setMessages(prevMessages => {
+        const updatedMessages = prevMessages.map(prevMessage => {
+          if (prevMessage._id === message._id) {
+            return message;
+          }
+          return prevMessage;
+        });
+        return updatedMessages;
+      });
+    });
+
     setSocket(newSocket);
 
     return () => {
@@ -45,17 +78,27 @@ export const SocketProvider = ({children}) => {
   const handleConversationOnIncomingMessage = async message => {
     let isNewConversation = true;
     setConversations(prevConversations => {
-      return prevConversations.map(conversation => {
+      const updatedConversations = prevConversations.map(conversation => {
         if (conversation._id === message.conversation_id) {
-          isExist = false;
+          isNewConversation = false;
+          let count = 0;
+          console.log(currentConversation);
+          if (currentConversation._id !== conversation._id) {
+            count = conversation.unread_count
+              ? conversation.unread_count + 1
+              : 1;
+            updateUnreadTrack(userInfo._id, conversation._id, count);
+          }
           return {
             ...conversation,
+            unread_count: count,
             last_message: message,
             last_activity: message.created_at,
           };
         }
         return conversation;
       });
+      return updatedConversations;
     });
     if (isNewConversation) {
       const conversation = await getConversations(accessTokens);

@@ -7,6 +7,7 @@ import {globalScreenOptions} from '../styles';
 import UserModificationScreen from '../screens/UserModificationScreen';
 import {useUserData} from '../contexts/auth-context';
 import ChangePasswordScreen from '../screens/ChangePasswordScreen';
+import BlockScreen from '../screens/BlockScreen';
 const Stack = createStackNavigator();
 
 const UserStackNavigator = () => {
@@ -34,6 +35,7 @@ const UserStackNavigator = () => {
         component={UserModificationScreen}
       />
       <Stack.Screen name="Cập nhật mật khẩu" component={ChangePasswordScreen} />
+      <Stack.Screen name="Danh sách chặn" component={BlockScreen} />
     </Stack.Navigator>
   );
 };

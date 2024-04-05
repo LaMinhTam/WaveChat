@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Alert,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ImageCropPicker from 'react-native-image-crop-picker';
@@ -18,13 +19,14 @@ import {
   leaveGroup,
   removeMember,
 } from '../apis/conversation';
+import {blockUser, getBlockList, removeBlock} from '../apis/user';
 
 const ChatControlPanel = ({navigation}) => {
   const {userInfo, accessTokens} = useUserData();
   const {currentConversation, messages, setConversations} = useSocket();
   const [members, setMembers] = useState([]);
   const [isMemberCollapsed, setIsMemberCollapsed] = useState(true);
-
+  const [isBlockUser, setIsBlockUser] = useState(false);
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -38,6 +40,15 @@ const ChatControlPanel = ({navigation}) => {
       return member;
     });
     setMembers(members);
+
+    const blocks = await getBlockList(accessTokens);
+    const blockList = blocks.data;
+    const otherMember = members.filter(member => member._id !== userInfo._id);
+    console.log(blockList);
+    const isBlock = blockList.some(
+      block => block.user_block_id._id === otherMember[0]._id,
+    );
+    setIsBlockUser(isBlock);
   };
 
   const mediaMessage = messages.filter(
@@ -116,6 +127,19 @@ const ChatControlPanel = ({navigation}) => {
       ),
     );
     navigation.navigate('HomeScreen');
+  };
+
+  const handleBlockUser = async () => {
+    const otherMember = members.filter(member => member._id !== userInfo._id);
+    let data;
+    if (isBlockUser) {
+      data = await removeBlock(otherMember[0]._id, accessTokens);
+      setIsBlockUser(false);
+    } else {
+      data = await blockUser(otherMember[0]._id, accessTokens);
+      setIsBlockUser(true);
+    }
+    Alert.alert('Thông báo', data.data);
   };
 
   return (
@@ -247,6 +271,29 @@ const ChatControlPanel = ({navigation}) => {
               {color: 'red', fontSize: 18, fontWeight: 700},
             ]}>
             Rời nhóm
+          </Text>
+        </TouchableOpacity>
+      )}
+      {currentConversation.type === 2 && (
+        <TouchableOpacity
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#f0f0f0',
+            padding: 10,
+            borderRadius: 8,
+            marginTop: 10,
+          }}
+          onPress={() => {
+            handleBlockUser();
+          }}>
+          <Text
+            style={[
+              styles.buttonText,
+              {color: 'red', fontSize: 18, fontWeight: 700},
+            ]}>
+            {isBlockUser ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
           </Text>
         </TouchableOpacity>
       )}

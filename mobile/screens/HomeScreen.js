@@ -13,14 +13,22 @@ const HomeScreen = ({navigation}) => {
   const {accessTokens, userInfo} = useUserData();
   const constructMessage = (lastMessage, userInfo) => {
     const type = lastMessage.type;
-    if (type != 1) {
-      return `[${FILE_TYPE[type]}] ${lastMessage.media[0]}`;
+    if (type != 1 && type != 14) {
+      return `[${FILE_TYPE[type]}] ${lastMessage.media[0]
+        .split('/')
+        .pop()
+        .split('%2F')
+        .pop()}`;
     } else {
       const senderName =
         lastMessage.user._id === userInfo._id
           ? 'Bạn'
           : lastMessage.user.full_name;
-      return `${senderName}: ${lastMessage.message}`;
+      let message = `${senderName}: ${lastMessage.message}`;
+      if (type === 14) {
+        message = 'Tin nhắn đã được thu hồi';
+      }
+      return message;
     }
   };
 
@@ -67,9 +75,29 @@ const HomeScreen = ({navigation}) => {
                 <Text style={styles.name}>{conversation.name}</Text>
                 <LastMessage item={conversation} />
               </View>
-              <Text style={styles.lastActivity}>
-                {formatTimeLastActivity(conversation.last_activity)}
-              </Text>
+              <View style={styles.lastActivity}>
+                <Text
+                  style={{
+                    color: '#73787C',
+                    fontSize: 12,
+                  }}>
+                  {formatTimeLastActivity(conversation.last_activity)}
+                </Text>
+                {conversation.unread_count ? (
+                  <Text
+                    style={{
+                      color: 'white',
+                      backgroundColor: 'red',
+                      textAlign: 'center',
+                      borderRadius: 100,
+                      marginHorizontal: 5,
+                    }}>
+                    {conversation.unread_count}
+                  </Text>
+                ) : (
+                  ''
+                )}
+              </View>
             </View>
           </TouchableOpacity>
         ))}
@@ -102,8 +130,6 @@ const styles = StyleSheet.create({
     color: PRIMARY_TEXT_COLOR,
   },
   lastActivity: {
-    color: '#73787C',
-    fontSize: 12,
     marginLeft: 'auto',
   },
   lastMessage: {

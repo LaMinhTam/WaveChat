@@ -69,3 +69,41 @@ export async function resetPassword(phoneNumber, password) {
   });
   return res.data;
 }
+
+export async function blockUser(id, accessToken) {
+  const res = await axios.post(
+    waveChatApi.blockUser(id),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function removeBlock(id, accessToken) {
+  const res = await axios.post(
+    waveChatApi.removeBlock(id),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function getBlockList(accessToken) {
+  const res = await axios.get(waveChatApi.getBlockList(), {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return res.data;
+}

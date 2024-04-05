@@ -61,9 +61,7 @@ const UserModificationScreen = ({navigation}) => {
       <View style={styles.profileContainer}>
         <Image
           source={{
-            uri: userInfo.avatar
-              ? userInfo.avatar
-              : `https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg`,
+            uri: userInfo.avatar,
           }}
           style={styles.avatar}
         />

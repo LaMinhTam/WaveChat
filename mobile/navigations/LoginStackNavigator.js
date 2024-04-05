@@ -38,10 +38,10 @@ const LoginStackNavigator = () => {
         component={GenderDOBSelectionScreen}
         options={{title: 'Ngày sinh và giới tính'}}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="ResetPassowrd"
         component={ResetPasswordScreen}
-        options={{title: 'quên mật khẩu'}}></Stack.Screen> */}
+        options={{title: 'quên mật khẩu'}}></Stack.Screen>
     </Stack.Navigator>
   );
 };

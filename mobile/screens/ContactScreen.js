@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {MAIN_COLOR} from '../styles';
@@ -19,6 +20,8 @@ const FriendScreen = ({navigation}) => {
   const {setMessages} = useSocket();
   const {userInfo, friends} = useUserData();
   const {setCurrentConversation, conversations} = useSocket();
+
+  // useEffect on foccus
 
   const handlePressFriend = friend => {
     const existingConversation = conversations.find(conversation => {

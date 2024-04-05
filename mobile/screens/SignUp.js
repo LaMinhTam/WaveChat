@@ -16,8 +16,8 @@ import auth from '@react-native-firebase/auth';
 import OTPModal from '../components/OTPModal';
 
 const SignUp = ({navigation}) => {
-  const [phoneNumber, setPhoneNumber] = useState('0886700046');
-  const [username, setUsername] = useState('La Minh Tâm');
+  const [phoneNumber, setPhoneNumber] = useState('0986148209');
+  const [username, setUsername] = useState('Trần Trung Tiến');
   const [password, setPassword] = useState('123456789');
   const [confirm, setConfirm] = useState(null);
   const {setValues, setUserInfo} = useUserData();
@@ -49,7 +49,14 @@ const SignUp = ({navigation}) => {
 
     if (data.status == 200) {
       try {
-        const user = data.data;
+        let user = data.data;
+        user = {
+          ...user,
+          avatar:
+            'https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg',
+          cover: 'https://source.unsplash.com/random',
+        };
+        console.log(user);
         setUserInfo(user);
 
         addUserToFireStore(user);
@@ -131,7 +138,9 @@ const SignUp = ({navigation}) => {
 
       <TouchableOpacity
         style={styles.confirmButton}
-        onPress={handleOpenOTPModal}>
+        onPress={handleOpenOTPModal}
+        // onPress={handleSignUp}
+      >
         <Text style={styles.buttonText}>Xác nhận</Text>
       </TouchableOpacity>
 

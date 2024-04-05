@@ -94,7 +94,6 @@ const RenderView = ({user, phoneNumber}) => {
             <View style={styles.userInfo}>
               <Text style={styles.userName}>{user.user.full_name}</Text>
               <View style={styles.phoneContainer}>
-                <Text>Số điện thoại: </Text>
                 <Text style={styles.phoneNumber}>{user.user.phone}</Text>
               </View>
             </View>

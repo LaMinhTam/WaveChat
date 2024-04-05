@@ -12,6 +12,7 @@ import ChatControlPanel from '../screens/ChatControlPanel';
 import UserInformationScreen from '../screens/UserInformationScreen';
 import ImagesScreen from '../screens/ImagesScreen';
 import AddMember from '../screens/AddMember';
+import ForwardMessage from '../screens/ForwardMessage';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,10 @@ const ConversationStackNavigator = () => {
         options={{headerTitle: 'Ảnh'}}
       />
       <Stack.Screen name="AddMember" component={AddMember}></Stack.Screen>
+      <Stack.Screen
+        name="ForwardMessage"
+        component={ForwardMessage}
+        options={{headerTitle: 'Chuyển tiếp tin nhắn'}}></Stack.Screen>
     </Stack.Navigator>
   );
 };

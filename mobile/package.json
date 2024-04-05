@@ -31,6 +31,7 @@
     "react-native-contacts": "^7.0.8",
     "react-native-date-picker": "^4.3.5",
     "react-native-document-picker": "^9.1.1",
+    "react-native-file-viewer": "^2.1.5",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.14.1",
     "react-native-image-crop-picker": "^0.40.2",

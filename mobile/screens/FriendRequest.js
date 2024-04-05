@@ -13,34 +13,13 @@ import {
   removeFriend,
   revokeFriendRequest,
 } from '../apis/friend';
-
-const formatDate = timestamp => {
-  const createdAt = new Date(timestamp);
-  const now = new Date();
-
-  const minuteDifference = Math.floor((now - createdAt) / (1000 * 60));
-  const hourDifference = Math.floor((now - createdAt) / (1000 * 60 * 60));
-
-  if (minuteDifference < 3) {
-    return `${minuteDifference} phút trước`;
-  } else if (hourDifference < 24) {
-    return `${hourDifference} giờ trước`;
-  } else {
-    const day =
-      createdAt.getDate() < 10
-        ? `0${createdAt.getDate()}`
-        : createdAt.getDate();
-    const month =
-      createdAt.getMonth() + 1 < 10
-        ? `0${createdAt.getMonth() + 1}`
-        : createdAt.getMonth() + 1;
-    return `${day}/${month}`;
-  }
-};
+import {createConversation} from '../apis/conversation';
+import {useSocket} from '../contexts/SocketProvider';
 
 const ReceiveFriendRequest = ({navigation}) => {
-  const {accessTokens, setFriends} = useUserData();
+  const {accessTokens, friends, setFriends} = useUserData();
   const [friendsData, setFriendsData] = useState([]);
+  const {setConversations} = useSocket();
 
   useEffect(() => {
     fetchFriends();
@@ -62,7 +41,6 @@ const ReceiveFriendRequest = ({navigation}) => {
   };
 
   const renderFriendRequest = friend => {
-    const dayMonth = formatDate(friend.created_at);
     return (
       <View style={styles.friendRow} key={friend.user_id}>
         <View style={styles.avatarColumn}>
@@ -70,7 +48,6 @@ const ReceiveFriendRequest = ({navigation}) => {
         </View>
         <View style={styles.infoColumn}>
           <Text style={styles.fullName}>{friend.full_name}</Text>
-          <Text style={styles.secondaryText}>{dayMonth}</Text>
         </View>
         <View style={styles.buttonsColumn}>
           <TouchableOpacity
@@ -101,18 +78,20 @@ const ReceiveFriendRequest = ({navigation}) => {
   };
 
   const handleAccept = async friend => {
-    // Implement accept api
     const data = await acceptFriendRequest(friend.user_id, accessTokens);
     if (data.status === 200) {
-      setFriendsData(
-        friendsData.filter(
-          currentFriend => currentFriend.user_id !== friend.user_id,
-        ),
+      const updatedFriendsData = friendsData.filter(
+        currentFriend => currentFriend.user_id !== friend.user_id,
       );
-      setFriends(prevFriend => [...prevFriend, friend]);
+
+      await createConversation(friend.user_id, accessTokens);
+
+      const updatedFriend = {...friend, type: 4};
+      setFriendsData(updatedFriendsData);
+      setFriends(prevFriends => [...prevFriends, updatedFriend]);
     }
   };
-
+  console.log(friends);
   return (
     <View style={styles.container}>
       {friendsData.length > 0 ? (
@@ -148,7 +127,6 @@ const SendFriendRequest = ({navigation}) => {
   };
 
   const renderFriendRequest = friend => {
-    const dayMonth = formatDate(friend.created_at);
     return (
       <View style={styles.friendRow} key={friend.user_id}>
         <View style={styles.avatarColumn}>
@@ -157,7 +135,6 @@ const SendFriendRequest = ({navigation}) => {
         <View style={styles.infoColumn}>
           <Text style={styles.fullName}>{friend.full_name}</Text>
           <Text style={styles.secondaryText}>Muốn kết bạn</Text>
-          <Text style={styles.secondaryText}>{dayMonth}</Text>
         </View>
         <View style={styles.buttonsColumn}>
           <TouchableOpacity
@@ -171,7 +148,6 @@ const SendFriendRequest = ({navigation}) => {
   };
 
   const handleRevoke = async friend => {
-    // Implement reject logic
     const data = await revokeFriendRequest(friend.user_id, accessTokens);
     if (data.status === 200) {
       setFriendsData(

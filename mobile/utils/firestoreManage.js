@@ -7,8 +7,17 @@ const getToken = async () => {
   return token;
 };
 
-export const addUserToFireStore = user => {
-  const token = getToken();
+export const updateUnreadTrack = (userId, conversationId, count) => {
+  firestore()
+    .collection('unreadTrack')
+    .doc(userId)
+    .update({
+      [conversationId]: count,
+    });
+};
+
+export const addUserToFireStore = async user => {
+  const token = await getToken();
 
   firestore()
     .collection('users')
@@ -26,9 +35,31 @@ export const addUserToFireStore = user => {
     });
 };
 
+export const removeFCMToken = async user => {
+  try {
+    const token = await getToken();
+    const userRef = firestore().collection('users').doc(user._id);
+    userRef.get().then(docSnapshot => {
+      if (docSnapshot.exists) {
+        const userData = docSnapshot.data();
+        if (userData.fcmToken.includes(token)) {
+          userRef.update({
+            fcmToken: firestore.FieldValue.arrayRemove(token),
+          });
+        }
+      } else {
+        console.log('No such document!');
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const addNewFCMToken = async user => {
   try {
     const token = await getToken();
+
     const userRef = firestore().collection('users').doc(user._id);
     userRef.get().then(docSnapshot => {
       if (docSnapshot.exists) {

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Text, View, TouchableOpacity, Image, Linking} from 'react-native';
 import RNFS from 'react-native-fs';
 import {PRIMARY_TEXT_COLOR, SECONDARY_TEXT_COLOR} from '../styles/styles';
-
+import FileViewer from 'react-native-file-viewer';
 const getFileIcon = extension => {
   switch (extension) {
     case 'pdf':
@@ -51,7 +51,11 @@ const MessageFile = ({item}) => {
 
   useEffect(() => {
     const checkFileExists = async () => {
-      const filePath = `${RNFS.DownloadDirectoryPath}/wavechat/${item.media[0]}`;
+      const filePath = `${RNFS.DownloadDirectoryPath}/wavechat/${item.media[0]
+        .split('/')
+        .pop()
+        .split('%2F')
+        .pop()}`;
       const fileExists = await RNFS.exists(filePath);
 
       if (fileExists) {
@@ -66,8 +70,9 @@ const MessageFile = ({item}) => {
 
   const downloadFile = async () => {
     const destinationPath = `${RNFS.DownloadDirectoryPath}/wavechat`;
-    const filePath = `${destinationPath}/${item.media[0]}`;
+    const filePath = `${destinationPath}/${item.media[0].split('%2F').pop()}`;
     if (downloaded) {
+      const data = FileViewer.open(filePath).then(() => {});
       console.log(filePath);
     } else {
       await RNFS.mkdir(destinationPath);
@@ -95,7 +100,7 @@ const MessageFile = ({item}) => {
         <View>
           <View>
             <Text style={{color: PRIMARY_TEXT_COLOR}}>
-              {truncateFileName(item.media[0], 20)}
+              {truncateFileName(item.media[0].split('%2F').pop(), 20)}
             </Text>
             {downloaded && (
               <View>

@@ -21,7 +21,7 @@ export const sendImageMessage = async (image, conversationID) => {
   };
 
   const config = {
-    keyPrefix: `conversation/${conversationID}/`,
+    keyPrefix: `conversation/${conversationID}/images`,
     bucket: bucket,
     region: region,
     accessKey: accessKey,
@@ -45,7 +45,7 @@ export const uploadFileToS3 = async (uploadFile, conversationID) => {
   };
 
   const config = {
-    keyPrefix: `conversation/${conversationID}/`,
+    keyPrefix: `conversation/${conversationID}/files/`,
     bucket: bucket,
     region: region,
     accessKey: accessKey,

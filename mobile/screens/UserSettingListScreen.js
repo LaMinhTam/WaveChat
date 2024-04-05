@@ -11,6 +11,7 @@ import {useUserData} from '../contexts/auth-context';
 import ImagePicker from 'react-native-image-crop-picker';
 import {uploadImageToS3} from '../utils/S3Bucket';
 import {removeAccount, updateProfile} from '../apis/user';
+import {removeFCMToken} from '../utils/firestoreManage';
 
 const UserSettingListScreen = ({navigation}) => {
   const {userInfo, setUserInfo, accessTokens, removeAccessToken} =
@@ -20,6 +21,7 @@ const UserSettingListScreen = ({navigation}) => {
     {id: 2, title: 'Đổi ảnh đại diện'},
     {id: 3, title: 'Đổi ảnh bìa'},
     {id: 5, title: 'Cập nhật mật khẩu'},
+    {id: 7, title: 'Danh sách chặn'},
     {id: 4, title: 'Đăng xuất'},
     {id: 6, title: 'Xóa tài khoản'},
   ];
@@ -52,7 +54,7 @@ const UserSettingListScreen = ({navigation}) => {
             );
             let newUserInfo = {...userInfo, avatar: location};
             setUserInfo(newUserInfo);
-            await updateProfile(newUserInfo, imageName);
+            await updateProfile(newUserInfo, accessTokens);
           })
           .catch(error => {});
         break;
@@ -73,11 +75,12 @@ const UserSettingListScreen = ({navigation}) => {
             );
             let newUserInfo = {...userInfo, cover: location};
             setUserInfo(newUserInfo);
-            await updateProfile(newUserInfo, imageName);
+            await updateProfile(newUserInfo, accessTokens);
           })
           .catch(error => {});
         break;
       case 4:
+        removeFCMToken(userInfo);
         removeAccessToken();
         break;
       case 5:
@@ -90,6 +93,9 @@ const UserSettingListScreen = ({navigation}) => {
           removeAccessToken();
         };
         removeMyAccount();
+      case 7:
+        navigation.navigate('Danh sách chặn');
+        break;
       default:
     }
   };

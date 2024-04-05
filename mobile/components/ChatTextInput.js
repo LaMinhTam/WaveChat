@@ -52,9 +52,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
         images.map(async image => {
           let conversationID = await getConversationId(accessTokens);
 
-          await sendImageMessage(image, conversationID);
-
-          const fileName = image.path.split('/').pop();
+          const fileName = await sendImageMessage(image, conversationID);
           handleMessage(conversationID, '', 2, fileName);
         });
       })
@@ -71,10 +69,10 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
       results.forEach(async file => {
         let type = handleFileType(file.name);
         let conversationID = await getConversationId(accessTokens);
-
-        await uploadFileToS3(file, conversationID);
-
-        handleMessage(conversationID, '', type, file.name);
+        uploadFileToS3(file, conversationID);
+        const fileName = `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${conversationID}/files/${file.name}`;
+        console.log(fileName);
+        handleMessage(conversationID, '', type, fileName);
       });
     } catch (error) {
       if (DocumentPicker.isCancel(error)) {
@@ -96,7 +94,7 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
 
     socket.emit('message', message);
 
-    // notifyMessageToOtherMembers(message, currentConversation, userInfo);
+    notifyMessageToOtherMembers(message, currentConversation, userInfo);
   };
   return (
     <View
