@@ -6,8 +6,27 @@ import {
 } from "../../../../components/icons";
 import PropTypes from "prop-types";
 import s3ImageUrl from "../../../../utils/s3ImageUrl";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useChat } from "../../../../contexts/chat-context";
+import fetchUserProfile from "../../../../api/fetchUserProfile";
 
 const InfoUser = ({ name, avatar, userId }) => {
+    const [profile, setProfile] = useState({});
+    const dispatch = useDispatch();
+    const { setShowCreateGroupChat, showCreateGroupChat, setSelectedList } =
+        useChat();
+    useEffect(() => {
+        async function fetchProfileFriendData() {
+            try {
+                const user = await fetchUserProfile(userId);
+                setProfile(user);
+            } catch (error) {
+                console.log("error", error);
+            }
+        }
+        fetchProfileFriendData();
+    }, [dispatch, userId]);
     return (
         <div className="flex flex-col items-center px-4 py-3 border-b-8">
             <div className="my-3 rounded-full w-14 h-14">
@@ -47,7 +66,14 @@ const InfoUser = ({ name, avatar, userId }) => {
                     </span>
                 </div>
                 <div className="flex flex-col items-center">
-                    <button className="flex items-center justify-center w-8 h-8 rounded-full bg-text6">
+                    <button
+                        className="flex items-center justify-center w-8 h-8 rounded-full bg-text6"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedList([profile]);
+                            setShowCreateGroupChat(!showCreateGroupChat);
+                        }}
+                    >
                         <span className="flex items-center justify-center w-5 h-5">
                             <IconAddGroup />
                         </span>

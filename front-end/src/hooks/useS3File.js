@@ -1,13 +1,12 @@
 import { useState } from "react";
 import AWS from "aws-sdk";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { setCurrentFileName, setProgress } from "../store/commonSlice";
 
-const useS3File = (getValues = () => {}, cb = null) => {
+const useS3File = (getValues = () => {}) => {
     const [file, setFile] = useState("");
     const dispatch = useDispatch();
-    const userProfile = useSelector((state) => state.user.userProfile);
 
     AWS.config.update({
         accessKeyId: import.meta.env.VITE_S3_AccessKeyId,
@@ -18,9 +17,10 @@ const useS3File = (getValues = () => {}, cb = null) => {
     const s3 = new AWS.S3();
 
     const handleUploadFile = (file, timestamp) => {
+        const conversation_id = getValues("conversation_id");
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `conversations/${userProfile._id}/files/${timestamp}-${file.name}`,
+            Key: `conversation/${conversation_id}/files/${timestamp}-${file.name}`,
             Body: file,
             ACL: "public-read",
         };
@@ -43,10 +43,11 @@ const useS3File = (getValues = () => {}, cb = null) => {
     };
 
     const handleDeleteFile = (timestamp) => {
+        const conversation_id = getValues("conversation_id");
         const fileName = getValues("file_name");
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `conversations/${userProfile._id}/files/${timestamp}-${fileName}`,
+            Key: `conversation/${conversation_id}/files/${timestamp}-${fileName}`,
         };
 
         s3.deleteObject(params, (err) => {
@@ -58,7 +59,6 @@ const useS3File = (getValues = () => {}, cb = null) => {
                 toast.success("File deleted successfully");
                 setFile("");
                 dispatch(setProgress(0));
-                cb && cb();
             }
         });
     };

@@ -6,6 +6,7 @@ import { useChat } from "../../../contexts/chat-context";
 import { axiosPrivate } from "../../../api/axios";
 import useS3ImageConversation from "../../../hooks/useS3ImageConversation";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const ConversationToolbar = ({ socket, user_id }) => {
     const { setValue, getValues } = useForm();
@@ -15,42 +16,79 @@ const ConversationToolbar = ({ socket, user_id }) => {
     const { handleUploadImage } = useS3ImageConversation(getValues);
 
     const handleSelectFile = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setValue("file_name", file.name);
-        const timestamp = new Date().getTime();
-        const type = file.type;
-        const fileType = file.type.split("/")[0];
-        const fileName = file.name;
-        const size = file.size;
-        if (fileType === "image") {
-            toast.error("Please select a file");
-            return;
-        } else {
-            handleUploadFile(file, timestamp);
-            await handleSendFile(fileName, type, size, timestamp);
-        }
-        e.target.value = null;
+        // const file = e.target.files[0];
+        // if (!file) return;
+        // setValue("file_name", file.name);
+        // setValue("conversation_id", conversationId);
+        // const timestamp = new Date().getTime();
+        // const type = file.type;
+        // const fileType = file.type.split("/")[0];
+        // const fileName = file.name;
+        // const size = file.size;
+        // if (fileType === "image") {
+        //     toast.error("Please select a file");
+        //     return;
+        // } else {
+        //     handleUploadFile(file, timestamp);
+        //     await handleSendFile(fileName, type, size, timestamp);
+        // }
+        // e.target.value = null;
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+        files.forEach(async (file) => {
+            setValue("file_name", file.name);
+            setValue("conversation_id", conversationId);
+            const timestamp = new Date().getTime();
+            const type = file.type;
+            const fileType = file.type.split("/")[0];
+            const fileName = file.name;
+            const size = file.size;
+            if (fileType === "image") {
+                toast.error("Please select a file");
+                return;
+            } else {
+                handleUploadFile(file, timestamp);
+                await handleSendFile(fileName, type, size, timestamp);
+            }
+            e.target.value = null;
+        });
     };
 
     const handleSelectImage = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setValue("file_name", file.name);
-        const timestamp = new Date().getTime();
-        const type = file.type;
-        const fileType = file.type.split("/")[0];
-        const fileName = file.name;
-        const size = file.size;
-        if (fileType === "image") {
-            handleUploadImage(file, timestamp);
-            await handleSendFile(fileName, type, size, timestamp);
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+        files.forEach(async (file) => {
+            setValue("file_name", file.name);
+            setValue("conversation_id", conversationId);
+            const timestamp = new Date().getTime();
+            const type = file.type;
+            const fileType = file.type.split("/")[0];
+            const fileName = file.name;
+            const size = file.size;
+            if (fileType === "image") {
+                handleUploadImage(file, timestamp);
+                await handleSendFile(fileName, type, size, timestamp);
+            } else {
+                toast.error("Please select an image");
+                return;
+            }
+            e.target.value = null;
+        });
+    };
+
+    useEffect(() => {
+        async function createConversation() {
+            const res = await axiosPrivate.post("/conversation/create", {
+                member_id: user_id,
+            });
+            setConversationId(res.data.data.conversation_id);
+        }
+        if (!conversationId) {
+            createConversation();
         } else {
-            toast.error("Please select a image");
             return;
         }
-        e.target.value = null;
-    };
+    }, [conversationId, setConversationId, user_id]);
 
     const handleSendFile = async (fileName, fileType, size = 0, timestamp) => {
         const type = fileType.split("/")[0];
@@ -94,6 +132,7 @@ const ConversationToolbar = ({ socket, user_id }) => {
                     type="file"
                     className="hidden-input"
                     onChange={handleSelectImage}
+                    multiple
                 />
                 <label
                     htmlFor="fileInput"
@@ -106,6 +145,7 @@ const ConversationToolbar = ({ socket, user_id }) => {
                     type="file"
                     className="hidden-input"
                     onChange={handleSelectFile}
+                    multiple
                 />
                 <button className="flex items-center justify-center w-10 h-10 rounded hover:bg-text3 hover:bg-opacity-10">
                     <IconCard />

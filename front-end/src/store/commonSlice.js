@@ -20,6 +20,7 @@ const commonSlice = createSlice({
         searchUserValue: "",
         profileType: "currentUser",
         incomingMessageOfConversation: "",
+        messageShowOption: "",
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -90,6 +91,10 @@ const commonSlice = createSlice({
             ...state,
             incomingMessageOfConversation: action.payload,
         }),
+        setMessageShowOption: (state, action) => ({
+            ...state,
+            messageShowOption: action.payload,
+        }),
     },
 });
 export const {
@@ -110,5 +115,6 @@ export const {
     setSearchUserValue,
     setProfileType,
     setIncomingMessageOfConversation,
+    setMessageShowOption,
 } = commonSlice.actions;
 export default commonSlice.reducer;

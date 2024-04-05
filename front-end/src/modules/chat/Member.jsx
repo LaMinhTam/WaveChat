@@ -15,7 +15,6 @@ import { axiosPrivate } from "../../api/axios";
 import { useChat } from "../../contexts/chat-context";
 
 const Member = ({ user }) => {
-    // console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
     const { setMessage, setConversationId } = useChat();
@@ -38,7 +37,6 @@ const Member = ({ user }) => {
         full_name: user.conversation_id ? user.name : user.full_name,
     };
 
-    // const isActive = activeConversation === user._id;
     let isActive = false;
     if (activeConversation === user._id) {
         isActive = true;
@@ -81,6 +79,18 @@ const Member = ({ user }) => {
         }
     }, [incomingMessageOfConversation, isActive, user._id]);
     const lastMessage = user.last_message;
+    const handleLastMessage = (msg) => {
+        console.log("handleLastMessage ~ msg:", msg);
+        let message = "";
+        if (msg?.type === 14) {
+            message = "Tin nhắn đã thu hồi";
+        } else if (msg?.type === 1 || msg?.type === 2 || msg?.type === 5) {
+            message = msg.message;
+        } else {
+            message = "";
+        }
+        return message;
+    };
     if (!user) return null;
 
     return (
@@ -108,7 +118,7 @@ const Member = ({ user }) => {
                         {otherUserInfo?.full_name}
                     </span>
                     <span className="text-sm text-text3 line-clamp-1">
-                        {lastMessage?.message}
+                        {handleLastMessage(lastMessage)}
                     </span>
                 </div>
             </div>

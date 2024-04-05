@@ -45,6 +45,12 @@ export function ChatProvider(props) {
         nodeRef: searchModalRef,
     } = useClickOutSide();
 
+    const {
+        show: showChatOptionModal,
+        setShow: setShowChatOptionModal,
+        nodeRef: chatOptionModalRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -73,6 +79,9 @@ export function ChatProvider(props) {
         showSearchModal,
         setShowSearchModal,
         searchModalRef,
+        showChatOptionModal,
+        setShowChatOptionModal,
+        chatOptionModalRef,
     };
     return (
         <ChatContext.Provider

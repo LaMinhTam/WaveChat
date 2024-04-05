@@ -132,6 +132,21 @@ const Conversation = () => {
             }
         });
 
+        newSocket.on("revoke-message", (data) => {
+            // modify message to tin nhắn đã thu hồi
+            setMessage((prev) =>
+                prev.map((msg) => {
+                    if (msg._id === data.message._id) {
+                        return {
+                            ...msg,
+                            message: "Tin nhắn đã thu hồi",
+                        };
+                    }
+                    return msg;
+                })
+            );
+        });
+
         // newSocket.on("typing-on", (data) => {
         //     alert("Typing...");
         //     alert(`${data.user_id} is typing...`);
@@ -154,7 +169,7 @@ const Conversation = () => {
                     avatar={friendInfo.avatar}
                     userId={friendInfo._id}
                 />
-                <ConversationContent message={message} />
+                <ConversationContent message={message} socket={socket} />
                 <div className="mt-auto shadow-md">
                     <ConversationToolbar
                         user_id={friendInfo._id}

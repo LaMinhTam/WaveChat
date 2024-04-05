@@ -1,12 +1,10 @@
 import { useState } from "react";
 import AWS from "aws-sdk";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-const useS3ImageConversation = (getValues = () => {}, cb = null) => {
+const useS3ImageConversation = (getValues = () => {}) => {
     const [progress, setProgress] = useState(0);
     const [image, setImage] = useState("");
-    const userProfile = useSelector((state) => state.user.userProfile);
 
     AWS.config.update({
         accessKeyId: import.meta.env.VITE_S3_AccessKeyId,
@@ -17,9 +15,10 @@ const useS3ImageConversation = (getValues = () => {}, cb = null) => {
     const s3 = new AWS.S3();
 
     const handleUploadImage = (image, timestamp) => {
+        const conversation_id = getValues("conversation_id");
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `conversations/${userProfile._id}/images/${timestamp}-${image.name}`,
+            Key: `conversation/${conversation_id}/images/${timestamp}-${image.name}`,
             Body: image,
             ACL: "public-read",
             ContentType: "image/jpeg",
@@ -40,10 +39,11 @@ const useS3ImageConversation = (getValues = () => {}, cb = null) => {
     };
 
     const handleDeleteImage = (timestamp) => {
+        const conversation_id = getValues("conversation_id");
         const imageName = getValues("image_name");
         const params = {
             Bucket: import.meta.env.VITE_S3_Bucket,
-            Key: `conversations/${userProfile._id}/images/${timestamp}-${imageName}`,
+            Key: `conversations/${conversation_id}/images/${timestamp}-${imageName}`,
         };
 
         s3.deleteObject(params, (err) => {
@@ -55,7 +55,6 @@ const useS3ImageConversation = (getValues = () => {}, cb = null) => {
                 toast.success("Image deleted successfully");
                 setImage("");
                 setProgress(0);
-                cb && cb();
             }
         });
     };

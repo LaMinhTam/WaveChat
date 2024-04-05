@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import {
+    setMessageShowOption,
     setShowUpdateAvatar,
     setShowUpdateCover,
     setShowUpdateProfile,
@@ -49,6 +50,7 @@ const useClickOutSide = (dom = "button") => {
                 dispatch(setShowUpdateProfile(false));
                 dispatch(setShowUpdateAvatar(false));
                 dispatch(setShowUpdateCover(false));
+                dispatch(setMessageShowOption(""));
             }
         }
         document.addEventListener("click", handleClickOutSide);

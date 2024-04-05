@@ -10,12 +10,15 @@ import IconChevronDown from "./IconChevronDown";
 import IconClock from "./IconClock";
 import IconClose from "./IconClose";
 import IconContact from "./IconContact";
+import IconCopy from "./IconCopy";
 import IconDocs from "./IconDocs";
 import IconDownload from "./IconDownload";
 import IconEdit from "./IconEdit";
 import IconEmoji from "./IconEmoji";
 import IconEyeToggle from "./IconEyeToggle";
 import IconFile from "./IconFile";
+import IconFileDefault from "./IconFileDefault";
+import IconForward from "./IconForward";
 import IconHorizontalMore from "./IconHorizontalMore";
 import IconImage from "./IconImage";
 import IconLetter from "./IconLetter";
@@ -24,6 +27,8 @@ import IconLogout from "./IconLogout";
 import IconMore from "./IconMore";
 import IconPdf from "./IconPdf";
 import IconPin from "./IconPin";
+import IconRecall from "./IconRecall";
+import IconReply from "./IconReply";
 import IconSearch from "./IconSearch";
 import IconSend from "./IconSend";
 import IconSetting from "./IconSetting";
@@ -67,4 +72,9 @@ export {
     IconChevronDown,
     IconLetter,
     IconSort,
+    IconReply,
+    IconForward,
+    IconRecall,
+    IconCopy,
+    IconFileDefault,
 };

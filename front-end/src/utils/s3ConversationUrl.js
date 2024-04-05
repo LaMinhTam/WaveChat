@@ -1,7 +1,11 @@
-export default function s3ConversationUrl(fileName, userId, type = "image") {
+export default function s3ConversationUrl(
+    fileName,
+    conversation_id,
+    type = "image"
+) {
     if (!fileName)
-        return "https://wavechatdemo.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg";
+        return "https://wavechat.s3.ap-southeast-1.amazonaws.com/defaut_avatar.jpg";
     return type === "image"
-        ? `https://wavechatdemo.s3-ap-southeast-1.amazonaws.com/conversations/${userId}/images/${fileName}`
-        : `https://wavechatdemo.s3-ap-southeast-1.amazonaws.com/conversations/${userId}/files/${fileName}`;
+        ? `https://wavechat.s3-ap-southeast-1.amazonaws.com/conversation/${conversation_id}/images/${fileName}`
+        : `https://wavechat.s3-ap-southeast-1.amazonaws.com/conversation/${conversation_id}/files/${fileName}`;
 }

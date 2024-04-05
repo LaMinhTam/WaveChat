@@ -8,13 +8,15 @@ import InfoUser from "./Info/InfoUser";
 import PropTypes from "prop-types";
 import { groupMessagesByDate } from "../../../utils/groupMessage";
 import { setStorageOption } from "../../../store/commonSlice";
+import { useChat } from "../../../contexts/chat-context";
 
-const ConversationInfo = ({ name, images, files }) => {
+const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const showStorage = useSelector((state) => state.common.showStorage);
     const dispatch = useDispatch();
     const storageOption = useSelector((state) => state.common.storageOption);
     const groupImage = groupMessagesByDate(images);
     const groupFile = groupMessagesByDate(files);
+    const { conversationId } = useChat();
     return (
         <div className="min-w-[344px] h-screen flex flex-col justify-start bg-lite shadow-md overflow-x-hidden overflow-y-scroll custom-scrollbar">
             <InfoHeader type={showStorage ? "storage" : ""} />
@@ -44,18 +46,29 @@ const ConversationInfo = ({ name, images, files }) => {
                     </div>
                     <div>
                         {storageOption === "image" ? (
-                            <InfoImage images={groupImage} type="storage" />
+                            <InfoImage
+                                images={groupImage}
+                                type="storage"
+                                conversation_id={conversationId}
+                            />
                         ) : (
-                            <InfoFile files={groupFile} type="storage" />
+                            <InfoFile
+                                files={groupFile}
+                                type="storage"
+                                conversation_id={conversationId}
+                            />
                         )}
                     </div>
                 </div>
             ) : (
                 <div className="flex-1">
-                    <InfoUser name={name} />
+                    <InfoUser name={name} avatar={avatar} userId={userId} />
                     <InfoOption number={4} />
-                    <InfoImage images={images} />
-                    <InfoFile files={files} />
+                    <InfoImage
+                        images={images}
+                        conversation_id={conversationId}
+                    />
+                    <InfoFile files={files} conversation_id={conversationId} />
                     <button className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error">
                         <IconTrash />
                         <span>Xóa lịch sử trò chuyện</span>
@@ -70,6 +83,9 @@ ConversationInfo.propTypes = {
     name: PropTypes.string,
     images: PropTypes.array,
     files: PropTypes.array,
+    avatar: PropTypes.string,
+    userId: PropTypes.string,
+    conversation_id: PropTypes.string,
 };
 
 export default ConversationInfo;

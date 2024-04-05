@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
     IconCSV,
     IconDocs,
+    IconFileDefault,
     IconMore,
     IconPdf,
     IconTxt,
@@ -15,8 +16,10 @@ import {
     setStorageOption,
 } from "../../../../store/commonSlice";
 import { v4 as uuidv4 } from "uuid";
+import handleDownloadFile from "../../../../utils/handleDownLoadFile";
+import IconVideo from "../../../../components/icons/IconVideo";
 
-const InfoFile = ({ files, type = "" }) => {
+const InfoFile = ({ files, type = "", conversation_id }) => {
     const [show, setShow] = useState(true);
     const dispatch = useDispatch();
     let fileList = [];
@@ -40,7 +43,7 @@ const InfoFile = ({ files, type = "" }) => {
                             <div className="grid grid-cols-1 gap-2">
                                 {fileList?.map((file) => {
                                     let fileName = file.media.split(";")[1];
-                                    fileName = fileName.split("-")[1];
+                                    let file_name = fileName.split("-")[1];
                                     let fileExtension = fileName.split(".")[1];
                                     let size = file.media.split(";")[2];
                                     return (
@@ -60,9 +63,33 @@ const InfoFile = ({ files, type = "" }) => {
                                                         "docx" && <IconDocs />}
                                                     {fileExtension ===
                                                         "txt" && <IconTxt />}
-                                                    <div className="flex flex-col">
+                                                    {type !== "video" &&
+                                                        fileExtension !==
+                                                            "pdf" &&
+                                                        fileExtension !==
+                                                            "csv" &&
+                                                        fileExtension !==
+                                                            "xlsx" &&
+                                                        fileExtension !==
+                                                            "docx" &&
+                                                        fileExtension !==
+                                                            "txt" && (
+                                                            <IconFileDefault />
+                                                        )}
+                                                    {type === "video" && (
+                                                        <IconVideo />
+                                                    )}
+                                                    <div
+                                                        className="flex flex-col cursor-pointer"
+                                                        onClick={() =>
+                                                            handleDownloadFile(
+                                                                fileName,
+                                                                conversation_id
+                                                            )
+                                                        }
+                                                    >
                                                         <span className="text-sm text-wrap line-clamp-1">
-                                                            {fileName}
+                                                            {file_name}
                                                         </span>
                                                         <span className="text-xs text-text3">
                                                             {formatSize(size)}
@@ -96,7 +123,7 @@ const InfoFile = ({ files, type = "" }) => {
                         <div className="grid grid-cols-1 gap-2 px-4">
                             {group.data.map((file) => {
                                 let fileName = file.media.split(";")[1];
-                                fileName = fileName.split("-")[1];
+                                let file_name = fileName.split("-")[1];
                                 let fileExtension = fileName.split(".")[1];
                                 let size = file.media.split(";")[2];
                                 return (
@@ -121,9 +148,28 @@ const InfoFile = ({ files, type = "" }) => {
                                                 {fileExtension === "txt" && (
                                                     <IconTxt />
                                                 )}
-                                                <div className="flex flex-col">
+                                                {type !== "video" &&
+                                                    fileExtension !== "pdf" &&
+                                                    fileExtension !== "csv" &&
+                                                    fileExtension !== "xlsx" &&
+                                                    fileExtension !== "docx" &&
+                                                    fileExtension !== "txt" && (
+                                                        <IconFileDefault />
+                                                    )}
+                                                {type === "video" && (
+                                                    <IconVideo />
+                                                )}
+                                                <div
+                                                    className="flex flex-col cursor-pointer"
+                                                    onClick={() =>
+                                                        handleDownloadFile(
+                                                            fileName,
+                                                            conversation_id
+                                                        )
+                                                    }
+                                                >
                                                     <span className="text-sm text-wrap line-clamp-1">
-                                                        {fileName}
+                                                        {file_name}
                                                     </span>
                                                     <span className="text-xs text-text3">
                                                         {formatSize(size)}
@@ -144,6 +190,7 @@ const InfoFile = ({ files, type = "" }) => {
 InfoFile.propTypes = {
     files: PropTypes.array,
     type: PropTypes.string,
+    conversation_id: PropTypes.string,
 };
 
 export default InfoFile;

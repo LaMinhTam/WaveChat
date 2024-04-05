@@ -22,20 +22,18 @@ const ChangeImageModal = ({ type }) => {
     const dispatch = useDispatch();
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const userProfile = useSelector((state) => state.user.userProfile);
-    const parts = image.split("/");
-    const imageName = parts[parts.length - 1];
 
     useEffect(() => {
         if (type === "avatar") {
-            setIsButtonDisabled(!imageName || imageName === userProfile.avatar);
+            setIsButtonDisabled(!image || image === userProfile.avatar);
         } else if (type === "cover") {
-            setIsButtonDisabled(!imageName || imageName === userProfile.cover);
-        } else if (!imageName) {
+            setIsButtonDisabled(!image || image === userProfile.cover);
+        } else if (!image) {
             setIsButtonDisabled(true);
         } else {
             setIsButtonDisabled(false);
         }
-    }, [imageName, type, userProfile.avatar, userProfile.cover]);
+    }, [image, type, userProfile.avatar, userProfile.cover]);
 
     useEffect(() => {
         if (type === "avatar" && userProfile.avatar) {
@@ -53,7 +51,7 @@ const ChangeImageModal = ({ type }) => {
 
     const { setShowProfileDetails } = useChat();
     const handleUpdateAvatar = async () => {
-        if (!imageName) {
+        if (!image) {
             setIsButtonDisabled(true);
             return;
         }
@@ -62,12 +60,12 @@ const ChangeImageModal = ({ type }) => {
             let cover = "";
 
             if (type === "avatar") {
-                avatar = imageName;
+                avatar = image;
                 cover = userProfile.cover;
             }
             if (type === "cover") {
                 avatar = userProfile.avatar;
-                cover = imageName;
+                cover = image;
             }
 
             const res = await axiosPrivate.post("/user/update", {

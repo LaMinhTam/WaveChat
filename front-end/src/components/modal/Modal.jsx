@@ -36,6 +36,14 @@ const Modal = () => {
             >
                 <SearchModal />
             </ReactModal>
+            {/* <ReactModal
+                isOpen={showChatOptionModal}
+                overlayClassName="modal-overlay fixed inset-0 z-50 m-auto bg-lite shadow-lg p-2
+                flex justify-center items-center w-full max-w-[200px] h-full max-h-[200px]"
+                className="modal-content w-full max-w-[200px] bg-white rounded outline-none relative"
+            >
+                <ModalChatOption />
+            </ReactModal> */}
             <ReactModal
                 isOpen={showAddFriendModal}
                 overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50

@@ -41,7 +41,7 @@ const DashboardListOptions = () => {
             // Add friends that are not in conversations to the temp array
             if (listFriend) {
                 listFriend.forEach((friend) => {
-                    const isFriendInConversation = conversations.some(
+                    const isFriendInConversation = conversations?.some(
                         (conversation) =>
                             conversation.members.includes(friend.user_id)
                     );

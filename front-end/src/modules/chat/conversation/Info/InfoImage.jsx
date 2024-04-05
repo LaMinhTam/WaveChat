@@ -6,7 +6,7 @@ import Viewer from "react-viewer";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { setShowStorage } from "../../../../store/commonSlice";
-const InfoImage = ({ images, type = "" }) => {
+const InfoImage = ({ images, type = "", conversation_id }) => {
     const [show, setShow] = useState(true);
     const [visible, setVisible] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -16,18 +16,18 @@ const InfoImage = ({ images, type = "" }) => {
     if (images.length > 8 && type !== "storage") {
         imageList = images.slice(0, 8).map((item) => {
             let fileName = item.media.split(";")[1];
-            return s3ConversationUrl(fileName, item.id);
+            return s3ConversationUrl(fileName, conversation_id);
         });
     } else if (images.length <= 8 && type !== "storage") {
         imageList = images.map((item) => {
             let fileName = item.media.split(";")[1];
-            return s3ConversationUrl(fileName, item.id);
+            return s3ConversationUrl(fileName, conversation_id);
         });
     } else {
         const list = images.map((group) => {
             return group.data.map((item) => {
                 let fileName = item.media.split(";")[1];
-                return s3ConversationUrl(fileName, item.id);
+                return s3ConversationUrl(fileName, conversation_id);
             });
         });
         imageList = list.flat();
@@ -117,7 +117,7 @@ const InfoImage = ({ images, type = "" }) => {
                                                 <img
                                                     src={s3ConversationUrl(
                                                         fileName,
-                                                        item.id
+                                                        conversation_id
                                                     )}
                                                     alt=""
                                                     className="object-cover w-full h-full rounded"
@@ -146,6 +146,7 @@ const InfoImage = ({ images, type = "" }) => {
 InfoImage.propTypes = {
     images: PropTypes.array,
     type: PropTypes.string,
+    conversation_id: PropTypes.string,
 };
 
 export default InfoImage;
