@@ -2,10 +2,15 @@ import { IconAddGroup, IconSplit } from "../../../components/icons";
 import PropTypes from "prop-types";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { useDispatch, useSelector } from "react-redux";
-import { setShowConversationInfo } from "../../../store/commonSlice";
+import {
+    setProfileType,
+    setShowConversationInfo,
+} from "../../../store/commonSlice";
 import { useChat } from "../../../contexts/chat-context";
 import { useEffect, useState } from "react";
 import fetchUserProfile from "../../../api/fetchUserProfile";
+import { getUserId } from "../../../utils/auth";
+import { setGuestProfile } from "../../../store/userSlice";
 
 const ConversationHeader = ({ name, avatar, userId }) => {
     const [profile, setProfile] = useState({});
@@ -13,8 +18,14 @@ const ConversationHeader = ({ name, avatar, userId }) => {
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
-    const { setShowCreateGroupChat, showCreateGroupChat, setSelectedList } =
-        useChat();
+    const currentUserId = getUserId();
+    const {
+        setShowCreateGroupChat,
+        showCreateGroupChat,
+        setSelectedList,
+        setShowProfileDetails,
+        setShowSearchModal,
+    } = useChat();
     useEffect(() => {
         async function fetchProfileFriendData() {
             try {
@@ -30,7 +41,18 @@ const ConversationHeader = ({ name, avatar, userId }) => {
     return (
         <div className="flex items-center justify-center px-4 min-h-[68px] bg-lite shadow-md">
             <div className="flex items-center justify-center mr-auto gap-x-2">
-                <div className="w-[48px] h-[48px] rounded-full">
+                <div
+                    className="w-[48px] h-[48px] rounded-full cursor-pointer"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (profile._id !== currentUserId) {
+                            dispatch(setProfileType("guest"));
+                        }
+                        dispatch(setGuestProfile(profile));
+                        setShowProfileDetails(true);
+                        setShowSearchModal(false);
+                    }}
+                >
                     <img
                         src={s3ImageUrl(avatar, userId)}
                         alt=""

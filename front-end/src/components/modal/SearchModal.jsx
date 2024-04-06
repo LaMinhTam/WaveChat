@@ -6,6 +6,7 @@ import { setProfileType } from "../../store/commonSlice";
 import { setGuestProfile } from "../../store/userSlice";
 import debounce from "lodash/debounce";
 import fetchUserByPhone from "../../api/fetchUserByPhone";
+import { getUserId } from "../../utils/auth";
 
 const SearchModal = () => {
     const { searchModalRef, setShowProfileDetails, setShowSearchModal } =
@@ -15,6 +16,7 @@ const SearchModal = () => {
     );
     const guestProfile = useSelector((state) => state.user.guestProfile);
     const dispatch = useDispatch();
+    const currentUserId = getUserId();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedFetchUserByPhone = useCallback(
@@ -36,7 +38,9 @@ const SearchModal = () => {
                     className="cursor-pointer w-full h-[60px] flex items-center gap-x-2 hover:bg-text6"
                     onClick={(e) => {
                         e.stopPropagation();
-                        dispatch(setProfileType("guest"));
+                        if (guestProfile._id !== currentUserId) {
+                            dispatch(setProfileType("guest"));
+                        }
                         setShowProfileDetails(true);
                         setShowSearchModal(false);
                     }}

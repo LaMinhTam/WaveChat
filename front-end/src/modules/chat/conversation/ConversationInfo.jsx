@@ -7,8 +7,16 @@ import InfoOption from "./Info/InfoOption";
 import InfoUser from "./Info/InfoUser";
 import PropTypes from "prop-types";
 import { groupMessagesByDate } from "../../../utils/groupMessage";
-import { setStorageOption } from "../../../store/commonSlice";
+import {
+    setActiveConversation,
+    setShowConversation,
+    setShowConversationInfo,
+    setStorageOption,
+} from "../../../store/commonSlice";
 import { useChat } from "../../../contexts/chat-context";
+import { axiosPrivate } from "../../../api/axios";
+import { toast } from "react-toastify";
+import { setId } from "../../../store/conversationSlice";
 
 const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const showStorage = useSelector((state) => state.common.showStorage);
@@ -17,6 +25,22 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const groupImage = groupMessagesByDate(images);
     const groupFile = groupMessagesByDate(files);
     const { conversationId } = useChat();
+    const handleDeleteConversation = async () => {
+        try {
+            const res = await axiosPrivate.post(
+                `/conversation/delete?conversation_id=${conversationId}`
+            );
+            if (res.data.status === 200) {
+                dispatch(setShowConversation(false));
+                dispatch(setActiveConversation(""));
+                dispatch(setShowConversationInfo(false));
+                toast.success("Xóa cuộc trò chuyện thành công");
+                dispatch(setId(""));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <div className="min-w-[344px] h-screen flex flex-col justify-start bg-lite shadow-md overflow-x-hidden overflow-y-scroll custom-scrollbar">
             <InfoHeader type={showStorage ? "storage" : ""} />
@@ -69,7 +93,10 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
                         conversation_id={conversationId}
                     />
                     <InfoFile files={files} conversation_id={conversationId} />
-                    <button className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error">
+                    <button
+                        onClick={handleDeleteConversation}
+                        className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"
+                    >
                         <IconTrash />
                         <span>Xóa lịch sử trò chuyện</span>
                     </button>

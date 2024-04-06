@@ -12,6 +12,7 @@ import sortedPersonToAlphabet from "../../../../utils/sortedPersonToAlphabet";
 const SearchPerson = () => {
     const [removedInputId, setRemovedInputId] = useState("");
     const { selectedList, setSelectedList } = useChat();
+    console.log("SearchPerson ~ selectedList:", selectedList);
     const [searchValue, setSearchValue] = useState("");
     const listFriend = useSelector((state) => state.user.listFriend);
     const [searchResult, setSearchResult] = useState([]);
@@ -26,15 +27,11 @@ const SearchPerson = () => {
     useEffect(() => {
         let recentChatList = conversations?.map((item) => {
             if (item.type === 2) {
-                const otherId = conversations.map((item) => {
-                    if (item.members[0] === currentUserId) {
-                        return item.members[1];
-                    } else {
-                        return item.members[0];
-                    }
-                });
+                const otherId = item.members.find(
+                    (member) => member !== currentUserId
+                );
                 return {
-                    user_id: otherId[0],
+                    user_id: otherId,
                     full_name: item.name,
                     avatar: item.avatar,
                 };
@@ -192,10 +189,12 @@ const SearchPerson = () => {
                                 </h3>
                                 <ul>
                                     {item.type === "chat_recent" &&
-                                        item?.data?.map((user) => (
+                                        item?.data?.map((user, index) => (
                                             <li key={uuidv4()}>
                                                 <Person
-                                                    inputName={user.user_id}
+                                                    inputName={
+                                                        user.user_id + index
+                                                    } // append index to user_id
                                                     fullName={user.full_name}
                                                     onClick={() =>
                                                         handleSelectPerson(user)

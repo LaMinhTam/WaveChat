@@ -7,6 +7,7 @@ import SettingModal from "./SettingModal";
 import ChangePasswordModal from "./ChangePasswordModal";
 import AddFriendModal from "./AddFriendModal";
 import SearchModal from "./SearchModal";
+import ForwardModal from "./ForwardModal";
 
 const Modal = () => {
     const {
@@ -17,6 +18,7 @@ const Modal = () => {
         showChangePasswordModal,
         showAddFriendModal,
         showSearchModal,
+        showForwardModal,
     } = useChat();
     return (
         <>
@@ -36,14 +38,6 @@ const Modal = () => {
             >
                 <SearchModal />
             </ReactModal>
-            {/* <ReactModal
-                isOpen={showChatOptionModal}
-                overlayClassName="modal-overlay fixed inset-0 z-50 m-auto bg-lite shadow-lg p-2
-                flex justify-center items-center w-full max-w-[200px] h-full max-h-[200px]"
-                className="modal-content w-full max-w-[200px] bg-white rounded outline-none relative"
-            >
-                <ModalChatOption />
-            </ReactModal> */}
             <ReactModal
                 isOpen={showAddFriendModal}
                 overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
@@ -83,6 +77,14 @@ const Modal = () => {
                 className="modal-content w-full max-w-[520px] bg-white rounded outline-none relative"
             >
                 <CreateGroupChatModal />
+            </ReactModal>
+            <ReactModal
+                isOpen={showForwardModal}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[520px] bg-white rounded outline-none relative"
+            >
+                <ForwardModal />
             </ReactModal>
         </>
     );

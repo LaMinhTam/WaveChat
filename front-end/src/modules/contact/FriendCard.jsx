@@ -4,15 +4,16 @@ import { axiosPrivate } from "../../api/axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setRender } from "../../store/friendSlice";
+import { setId } from "../../store/conversationSlice";
 
 const FriendCard = ({ data, type }) => {
+    console.log("FriendCard ~ data:", data);
     const dispatch = useDispatch();
     const handleAccept = async () => {
         try {
             const res = await axiosPrivate.post(
                 `/friend/accept?_id=${data?.user_id}`
             );
-            console.log("handleAccept ~ res:", res);
             if (res.data.status === 200) {
                 const response = await axiosPrivate.post(
                     "/conversation/create",
@@ -20,9 +21,9 @@ const FriendCard = ({ data, type }) => {
                         member_id: data?.user_id,
                     }
                 );
-                console.log("handleAccept ~ response:", response);
                 if (response.data.message === "OK") {
                     dispatch(setRender(Math.random() * 1000));
+                    dispatch(setId(res.data.data.conversation_id));
                     toast.success("Hai bạn đã trở thành bạn bè");
                 }
             }
@@ -47,20 +48,19 @@ const FriendCard = ({ data, type }) => {
     };
 
     const handleReject = async () => {
-        // try {
-        //     const res = await axiosPrivate.post(
-        //         `/friend/send?_id=${data?.user_id}`
-        //     );
-        //     if (res.data.status === 200) {
-        //         dispatch(setRender(Math.random() * 1000));
-        //         toast.success(
-        //             `Đã từ chối lời mời kết bạn từ ${data?.full_name}`
-        //         );
-        //     }
-        // } catch (error) {
-        //     toast.error("Đã xảy ra lỗi");
-        // }
-        toast.success("Đã từ chối lời mời kết bạn từ " + data?.full_name);
+        try {
+            const res = await axiosPrivate.post(
+                `/friend/remove-friend?_id=${data?.user_id}`
+            );
+            if (res.data.status === 200) {
+                dispatch(setRender(Math.random() * 1000));
+                toast.success(
+                    `Đã từ chối lời mời kết bạn từ ${data?.full_name}`
+                );
+            }
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi");
+        }
     };
 
     return (

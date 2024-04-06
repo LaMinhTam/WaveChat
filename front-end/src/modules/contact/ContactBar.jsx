@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { IconAddGroup, IconLetter } from "../../components/icons";
 import IconUser from "../../components/icons/IconUser";
-import { setContactOption } from "../../store/friendSlice";
+import { setContactOption, setRender } from "../../store/friendSlice";
 
 const ContactBar = () => {
     const dispatch = useDispatch();
@@ -36,7 +36,10 @@ const ContactBar = () => {
                         ? "bg-tertiary bg-opacity-40"
                         : "hover:bg-text6"
                 }`}
-                onClick={() => dispatch(setContactOption(2))}
+                onClick={() => {
+                    dispatch(setContactOption(2));
+                    dispatch(setRender(Math.random() * 1000));
+                }}
             >
                 <IconLetter />
                 <span className="px-[14px]">Danh sách kết bạn</span>

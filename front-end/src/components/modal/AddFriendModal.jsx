@@ -6,12 +6,14 @@ import fetchUserByPhone from "../../api/fetchUserByPhone";
 import { useDispatch } from "react-redux";
 import { setGuestProfile } from "../../store/userSlice";
 import { setProfileType } from "../../store/commonSlice";
+import { getUserId } from "../../utils/auth";
 
 const AddFriendModal = () => {
     const { setShowAddFriendModal, addFriendModalRef, setShowProfileDetails } =
         useChat();
     const [phone, setPhone] = useState("");
     const dispatch = useDispatch();
+    const currentUserId = getUserId();
     const handleSearchUser = async () => {
         if (!phone) return;
         else {
@@ -19,7 +21,9 @@ const AddFriendModal = () => {
             const data = await fetchUserByPhone(newPhone);
             if (data) {
                 dispatch(setGuestProfile(data));
-                dispatch(setProfileType("guest"));
+                if (data._id !== currentUserId) {
+                    dispatch(setProfileType("guest"));
+                }
                 setShowProfileDetails(true);
                 setShowAddFriendModal(false);
             }

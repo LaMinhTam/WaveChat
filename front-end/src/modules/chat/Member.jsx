@@ -11,13 +11,15 @@ import {
 } from "../../store/commonSlice";
 import { setFriendInfo } from "../../store/userSlice";
 import formatTime from "../../utils/formatTime";
-import { axiosPrivate } from "../../api/axios";
 import { useChat } from "../../contexts/chat-context";
+import { useSocket } from "../../contexts/socket-context";
+import { axiosPrivate } from "../../api/axios";
 
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
-    const { setMessage, setConversationId } = useChat();
+    const { setConversationId } = useChat();
+    const { unreadCount, setUnreadCount, setMessage } = useSocket();
     const current_userId = getUserId();
     const dispatch = useDispatch();
     const activeConversation = useSelector(
@@ -48,7 +50,9 @@ const Member = ({ user }) => {
 
     const handleClickedMember = async () => {
         try {
-            const res = await axiosPrivate.get(`/message/${user._id}`);
+            const res = await axiosPrivate.get(
+                `/message/${user._id}?limit=100000`
+            );
             const data = res.data.data;
             if (data) {
                 data.reverse();
@@ -58,6 +62,7 @@ const Member = ({ user }) => {
             }
             setIncomingClassName("");
             dispatch(setIncomingMessageOfConversation(""));
+            setUnreadCount(0);
             if (user._id) {
                 dispatch(setActiveConversation(user._id));
             } else {
@@ -65,7 +70,7 @@ const Member = ({ user }) => {
             }
             dispatch(setFriendInfo(otherUserInfo));
             dispatch(setShowConversation(true));
-            setConversationId(user.conversation_id);
+            setConversationId(user._id);
         } catch (error) {
             console.log(error);
         }
@@ -78,9 +83,9 @@ const Member = ({ user }) => {
             setIncomingClassName("");
         }
     }, [incomingMessageOfConversation, isActive, user._id]);
+
     const lastMessage = user.last_message;
     const handleLastMessage = (msg) => {
-        console.log("handleLastMessage ~ msg:", msg);
         let message = "";
         if (msg?.type === 14) {
             message = "Tin nhắn đã thu hồi";
@@ -133,8 +138,13 @@ const Member = ({ user }) => {
                             )}
                     </span>
                 )}
-                {incomingClassName && <span className="ml-2">🔴</span>}
             </div>
+
+            {incomingClassName && (
+                <div className="flex items-center justify-center w-6 h-6 ml-2 mr-2 bg-red-600 rounded-full text-lite">
+                    <span>{unreadCount}</span>
+                </div>
+            )}
         </div>
     );
 };

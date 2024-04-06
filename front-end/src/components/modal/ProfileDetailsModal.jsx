@@ -5,6 +5,7 @@ import Viewer from "react-viewer";
 import { useDispatch, useSelector } from "react-redux";
 import UpdateProfileModal from "./UpdateProfileModal";
 import {
+    setShowConversation,
     setShowUpdateAvatar,
     setShowUpdateCover,
     setShowUpdateProfile,
@@ -16,6 +17,7 @@ import useClickOutSide from "../../hooks/useClickOutSide";
 import { axiosPrivate } from "../../api/axios";
 import { toast } from "react-toastify";
 import { setRender } from "../../store/friendSlice";
+import { setId } from "../../store/conversationSlice";
 
 const ProfileDetailsModal = () => {
     // 0 - Nhắn tin | 1 - Kết bạn | 2 - Thu hồi | 3 - Chấp nhận
@@ -80,7 +82,6 @@ const ProfileDetailsModal = () => {
             const friendRequest = listFriendRequest?.find(
                 (item) => item.user_id === data?._id
             );
-            console.log("useEffect ~ friendRequest:", friendRequest);
             if (friendRequest) {
                 setStatus(3);
             } else {
@@ -96,6 +97,22 @@ const ProfileDetailsModal = () => {
         }
     }, [data, listFriend, listFriendRequest, listFriendSendRequest]);
 
+    const handleRemoveFriend = async () => {
+        try {
+            const res = await axiosPrivate.post(
+                `/friend/remove-friend?_id=${data?._id}`
+            );
+            if (res.data.status === 200) {
+                dispatch(setRender(Math.random() * 1000));
+                dispatch(setId(Math.random() * 1000));
+                dispatch(setShowConversation(false));
+                toast.success(`Đã hủy kết bạn với ${data?.full_name}`);
+            }
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi");
+        }
+    };
+
     const handFriendRequest = async () => {
         if (status === 0) {
             console.log("Chat with friend");
@@ -105,7 +122,7 @@ const ProfileDetailsModal = () => {
             );
             if (res.data.status === 200) {
                 toast.success("Đã gửi lời mời kết bạn");
-                dispatch(setRender(Math.random()));
+                dispatch(setRender(Math.random() * 1000));
                 setStatus(2);
             } else {
                 toast.error("Đã xảy ra lỗi, vui lòng thử lại sau");
@@ -118,9 +135,9 @@ const ProfileDetailsModal = () => {
                 );
                 console.log("handFriendRequest ~ res:", res);
                 if (res.data.status === 200) {
-                    dispatch(setRender(Math.random()));
-                    setStatus(1);
                     toast.success("Đã thu hồi lời mời kết bạn");
+                    dispatch(setRender(Math.random() * 1000));
+                    setStatus(1);
                 }
             } catch (error) {
                 toast.error("Đã xảy ra lỗi");
@@ -139,8 +156,8 @@ const ProfileDetailsModal = () => {
                         }
                     );
                     if (response.data.status === 200) {
-                        dispatch(setRender(Math.random()));
                         toast.success("Hai bạn đã trở thành bạn bè");
+                        dispatch(setRender(Math.random() * 1000));
                         setStatus(0);
                     }
                 }
@@ -247,15 +264,25 @@ const ProfileDetailsModal = () => {
                         </div>
                     </div>
                     {profileType === "guest" && (
-                        <button
-                            className="px-4 py-2 bg-secondary text-lite"
-                            onClick={handFriendRequest}
-                        >
-                            {status === 0 && "Nhắn tin"}
-                            {status === 1 && "Kết bạn"}
-                            {status === 2 && "Thu hồi"}
-                            {status === 3 && "Chấp nhận"}
-                        </button>
+                        <div className="flex items-center justify-center gap-x-2">
+                            {status === 0 && (
+                                <button
+                                    className="px-4 py-2 bg-error text-lite"
+                                    onClick={handleRemoveFriend}
+                                >
+                                    Hủy kết bạn
+                                </button>
+                            )}
+                            <button
+                                className="px-4 py-2 bg-secondary text-lite"
+                                onClick={handFriendRequest}
+                            >
+                                {status === 0 && "Nhắn tin"}
+                                {status === 1 && "Kết bạn"}
+                                {status === 2 && "Thu hồi"}
+                                {status === 3 && "Chấp nhận"}
+                            </button>
+                        </div>
                     )}
                     <hr className="w-full h-1 bg-text6" />
                     <div className="py-3">

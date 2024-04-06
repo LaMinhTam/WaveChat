@@ -6,7 +6,8 @@ const ChatContext = React.createContext();
 export function ChatProvider(props) {
     const { show, setShow, nodeRef } = useClickOutSide();
     const [conversationId, setConversationId] = React.useState("");
-    const [message, setMessage] = React.useState([]);
+    const [renderMessageDelete, setRenderMessageDelete] = React.useState(0);
+    const [forwardMessage, setForwardMessage] = React.useState({});
     // This code to save the selected person when create group chat
     const [selectedList, setSelectedList] = React.useState([]);
     const {
@@ -51,6 +52,12 @@ export function ChatProvider(props) {
         nodeRef: chatOptionModalRef,
     } = useClickOutSide();
 
+    const {
+        show: showForwardModal,
+        setShow: setShowForwardModal,
+        nodeRef: forwardModalRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -60,8 +67,6 @@ export function ChatProvider(props) {
         profileDetailsRef,
         conversationId,
         setConversationId,
-        message,
-        setMessage,
         showCreateGroupChat,
         setShowCreateGroupChat,
         groupChatRef,
@@ -82,6 +87,13 @@ export function ChatProvider(props) {
         showChatOptionModal,
         setShowChatOptionModal,
         chatOptionModalRef,
+        showForwardModal,
+        setShowForwardModal,
+        forwardModalRef,
+        renderMessageDelete,
+        setRenderMessageDelete,
+        forwardMessage,
+        setForwardMessage,
     };
     return (
         <ChatContext.Provider
@@ -95,6 +107,6 @@ export function ChatProvider(props) {
 export function useChat() {
     const context = React.useContext(ChatContext);
     if (typeof context === "undefined")
-        throw new Error("useAuth must be used within AuthProvider");
+        throw new Error("useChat must be used within ChatProvider");
     return context;
 }
