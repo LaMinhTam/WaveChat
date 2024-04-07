@@ -9,7 +9,7 @@ import {useUserData} from '../contexts/auth-context';
 
 const ChatScreen = ({navigation}) => {
   const {userInfo, accessTokens} = useUserData();
-  const {currentConversation, messages, setMessages} = useSocket();
+  const {socket, currentConversation, messages, setMessages} = useSocket();
 
   useEffect(() => {
     navigation.setOptions({
@@ -50,7 +50,21 @@ const ChatScreen = ({navigation}) => {
   }, []);
 
   const handleCall = () => {
-    navigation.navigate('CallPhoneScreen');
+    if (currentConversation.type == 2) {
+      const data = {
+        target_user_id: currentConversation.members.find(
+          member => member !== userInfo._id,
+        ),
+        signal_data: {},
+        message: 'call to user_id' + currentConversation.members[1]._id,
+        name: currentConversation.name,
+      };
+
+      socket.emit('send-call-request', data);
+
+      navigation.navigate('CallPhoneScreen', {data: data, type: 'call-to'});
+      console.log('handleCall ~ data:', data);
+    }
   };
 
   function isCloseToBottom({layoutMeasurement, contentOffset, contentSize}) {
