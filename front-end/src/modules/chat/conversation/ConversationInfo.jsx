@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { IconTrash } from "../../../components/icons";
+import { IconBlock, IconTrash } from "../../../components/icons";
 import InfoFile from "./Info/InfoFile";
 import InfoHeader from "./Info/InfoHeader";
 import InfoImage from "./Info/InfoImage";
@@ -40,6 +40,9 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
         } catch (error) {
             console.log(error);
         }
+    };
+    const handleBlockUser = async () => {
+        console.log("block user");
     };
     return (
         <div className="min-w-[344px] h-screen flex flex-col justify-start bg-lite shadow-md overflow-x-hidden overflow-y-scroll custom-scrollbar">
@@ -93,6 +96,13 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
                         conversation_id={conversationId}
                     />
                     <InfoFile files={files} conversation_id={conversationId} />
+                    <button
+                        onClick={handleBlockUser}
+                        className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"
+                    >
+                        <IconBlock />
+                        <span>Chặn người dùng này</span>
+                    </button>
                     <button
                         onClick={handleDeleteConversation}
                         className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"

@@ -7,14 +7,8 @@ const ListFriendRequest = () => {
     const listFriendRequest = useSelector(
         (state) => state.friend.listFriendRequest
     );
-    console.log("ListFriendRequest ~ listFriendRequest:", listFriendRequest);
     const listFriendSendRequest = useSelector(
         (state) => state.friend.listFriendSendRequest
-    );
-
-    console.log(
-        "ListFriendRequest ~ listFriendSendRequest:",
-        listFriendSendRequest
     );
     return (
         <div className="h-screen font-medium border">

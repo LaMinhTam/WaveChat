@@ -8,6 +8,7 @@ export function ChatProvider(props) {
     const [conversationId, setConversationId] = React.useState("");
     const [renderMessageDelete, setRenderMessageDelete] = React.useState(0);
     const [forwardMessage, setForwardMessage] = React.useState({});
+    const [messageRefs, setMessageRefs] = React.useState({});
     // This code to save the selected person when create group chat
     const [selectedList, setSelectedList] = React.useState([]);
     const {
@@ -58,6 +59,12 @@ export function ChatProvider(props) {
         nodeRef: forwardModalRef,
     } = useClickOutSide();
 
+    const {
+        show: showSearchMessageModal,
+        setShow: setShowSearchMessageModal,
+        nodeRef: searchMessageModalRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -94,6 +101,11 @@ export function ChatProvider(props) {
         setRenderMessageDelete,
         forwardMessage,
         setForwardMessage,
+        showSearchMessageModal,
+        setShowSearchMessageModal,
+        searchMessageModalRef,
+        messageRefs,
+        setMessageRefs,
     };
     return (
         <ChatContext.Provider

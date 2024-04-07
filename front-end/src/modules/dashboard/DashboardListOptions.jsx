@@ -13,6 +13,7 @@ const DashboardListOptions = () => {
     );
     const listFriend = useSelector((state) => state.user.listFriend);
     const [data, setData] = useState([]);
+    console.log("DashboardListOptions ~ data:", data);
     const currentUserId = getUserId();
     const id = useSelector((state) => state.conversation.id);
     useEffect(() => {
@@ -33,6 +34,8 @@ const DashboardListOptions = () => {
                                 ...conversation,
                                 ...friend,
                             });
+                        } else {
+                            temp.push(conversation);
                         }
                     }
                 });
@@ -50,7 +53,6 @@ const DashboardListOptions = () => {
                     }
                 });
             }
-
             setData(temp);
         }
     }, [conversations, currentTab, currentUserId, listFriend, id]);

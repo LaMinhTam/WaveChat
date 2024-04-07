@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/auth-context";
 import { saveToken } from "../../utils/auth";
+import { setId } from "../../store/conversationSlice";
+import { setContactOption, setRender } from "../../store/friendSlice";
 
 const sidebarLinks = [
     {
@@ -120,7 +122,12 @@ const DashboardSideBar = () => {
                                     ? "bg-secondary"
                                     : "hover:bg-secondary hover:bg-opacity-50"
                             }`}
-                            onClick={() => dispatch(setCurrentTab(item.title))}
+                            onClick={() => {
+                                dispatch(setCurrentTab(item.title));
+                                dispatch(setId(Math.random() * 1000));
+                                dispatch(setRender(Math.random() * 1000));
+                                dispatch(setContactOption(0));
+                            }}
                         >
                             <span>{item.icon}</span>
                         </button>

@@ -1,6 +1,7 @@
 import {
     IconAddGroup,
     IconBell,
+    IconCheck,
     IconEdit,
     IconPin,
 } from "../../../../components/icons";
@@ -10,12 +11,21 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useChat } from "../../../../contexts/chat-context";
 import fetchUserProfile from "../../../../api/fetchUserProfile";
+import { toast } from "react-toastify";
+import { axiosPrivate } from "../../../../api/axios";
+import { setId } from "../../../../store/conversationSlice";
 
 const InfoUser = ({ name, avatar, userId }) => {
     const [profile, setProfile] = useState({});
     const dispatch = useDispatch();
-    const { setShowCreateGroupChat, showCreateGroupChat, setSelectedList } =
-        useChat();
+    const {
+        setShowCreateGroupChat,
+        showCreateGroupChat,
+        setSelectedList,
+        conversationId,
+    } = useChat();
+    const [isEdited, setIsEdited] = useState(false);
+    const [newName, setNewName] = useState(name);
     useEffect(() => {
         async function fetchProfileFriendData() {
             try {
@@ -27,6 +37,24 @@ const InfoUser = ({ name, avatar, userId }) => {
         }
         fetchProfileFriendData();
     }, [dispatch, userId]);
+    const handleChangeConversationName = async () => {
+        try {
+            const res = await axiosPrivate.post(
+                `/conversation/update-name?conversation_id=${conversationId}`,
+                {
+                    name: newName,
+                }
+            );
+            if (res.data.status === 200) {
+                dispatch(setId(Math.random() * 1000));
+                setIsEdited(false);
+                toast.success("Đổi tên thành công");
+            }
+        } catch (error) {
+            console.log("error", error);
+            toast.error("Đã xảy ra lỗi, vui lòng thử lại sau");
+        }
+    };
     return (
         <div className="flex flex-col items-center px-4 py-3 border-b-8">
             <div className="my-3 rounded-full w-14 h-14">
@@ -37,12 +65,34 @@ const InfoUser = ({ name, avatar, userId }) => {
                 />
             </div>
             <div className="flex items-center justify-center">
-                <span className="text-lg font-medium">{name}</span>
-                <button className="flex items-center justify-center w-6 h-6 ml-4 rounded-full bg-text6">
-                    <span className="flex items-center justify-center w-4 h-4">
-                        <IconEdit />
-                    </span>
-                </button>
+                <input
+                    type="text"
+                    className="h-8 text-lg font-medium bg-transparent border-none text-text1 w-[150px]"
+                    onChange={(e) => setNewName(e.target.value)}
+                    value={newName}
+                    disabled={!isEdited}
+                />
+                <div className="flex items-center justify-center gap-x-2">
+                    <button
+                        className="flex items-center justify-center w-6 h-6 rounded-full bg-text6"
+                        onClick={() => setIsEdited(!isEdited)}
+                    >
+                        <span className="flex items-center justify-center w-4 h-4">
+                            <IconEdit />
+                        </span>
+                    </button>
+                    {isEdited && (
+                        <button
+                            className="flex items-center justify-center w-6 h-6 rounded-full bg-text6"
+                            onClick={handleChangeConversationName}
+                            disabled={name === newName}
+                        >
+                            <span className="flex items-center justify-center w-4 h-4">
+                                <IconCheck />
+                            </span>
+                        </button>
+                    )}
+                </div>
             </div>
             <div className="flex items-center justify-center w-[310px] h-[90px] pt-3">
                 <div className="flex flex-col items-center">

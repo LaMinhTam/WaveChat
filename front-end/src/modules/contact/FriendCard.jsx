@@ -7,13 +7,13 @@ import { setRender } from "../../store/friendSlice";
 import { setId } from "../../store/conversationSlice";
 
 const FriendCard = ({ data, type }) => {
-    console.log("FriendCard ~ data:", data);
     const dispatch = useDispatch();
     const handleAccept = async () => {
         try {
             const res = await axiosPrivate.post(
                 `/friend/accept?_id=${data?.user_id}`
             );
+            console.log("handleAccept ~ res:", res);
             if (res.data.status === 200) {
                 const response = await axiosPrivate.post(
                     "/conversation/create",
@@ -23,7 +23,7 @@ const FriendCard = ({ data, type }) => {
                 );
                 if (response.data.message === "OK") {
                     dispatch(setRender(Math.random() * 1000));
-                    dispatch(setId(res.data.data.conversation_id));
+                    dispatch(setId(response.data.data.conversation_id));
                     toast.success("Hai bạn đã trở thành bạn bè");
                 }
             }

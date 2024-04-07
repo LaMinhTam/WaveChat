@@ -10,12 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@hookform/resolvers": "^3.3.4",
     "@reduxjs/toolkit": "^2.0.1",
     "aws-sdk": "^2.1550.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "date-fns": "^3.3.1",
+    "emoji-mart": "^5.5.2",
     "emoji-picker-react": "^4.9.2",
     "firebase": "^9.14.0",
     "framer-motion": "^11.0.3",
@@ -37,6 +40,7 @@
     "react-toastify": "^10.0.4",
     "react-viewer": "^3.2.2",
     "sass": "^1.70.0",
+    "simple-peer": "^9.11.1",
     "socket.io-client": "^4.7.4",
     "sweetalert2": "^11.10.7",
     "uuid": "^9.0.1",

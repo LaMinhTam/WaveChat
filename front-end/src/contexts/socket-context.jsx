@@ -44,25 +44,28 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("message", (incomingMessage) => {
+            console.log("newSocket.on ~ incomingMessage:", incomingMessage);
+            const updatedMessage = incomingMessage.message;
+            console.log("newSocket.on ~ updatedMessage:", updatedMessage);
             setMessage((prev) =>
                 Array.isArray(prev)
-                    ? [...prev, incomingMessage.message]
-                    : [incomingMessage.message]
+                    ? [...prev, updatedMessage]
+                    : [updatedMessage]
             );
             dispatch(
                 setIncomingMessageOfConversation(
-                    `${incomingMessage.message.conversation_id}_${incomingMessage.message.message}`
+                    `${updatedMessage.conversation_id}_${updatedMessage.message}`
                 )
             );
             dispatch(
                 setId(
                     setIncomingMessageOfConversation(
-                        `${incomingMessage.message.conversation_id}_${incomingMessage.message.message}`
+                        `${updatedMessage.conversation_id}_${updatedMessage.message}`
                     )
                 )
             );
             if (document.hidden) {
-                document.title = `Bạn có tin nhắn mới từ ${incomingMessage.message.user.full_name}!`;
+                document.title = `Bạn có tin nhắn mới từ ${updatedMessage.user.full_name}!`;
                 setUnreadCount((prevCount) => prevCount + 1); // Increment unread messages count
             }
         });

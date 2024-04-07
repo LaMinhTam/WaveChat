@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import fetchUserProfile from "../api/fetchUserProfile";
 import { getUserId } from "../utils/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserProfile } from "../store/userSlice";
+import { setListBlockUser, setUserProfile } from "../store/userSlice";
 import { axiosPrivate } from "../api/axios";
 import {
     setListFriendRequest,
@@ -17,6 +17,9 @@ const LayoutDashboard = () => {
     const currentUserId = getUserId();
     const dispatch = useDispatch();
     const render = useSelector((state) => state.friend.render);
+    const renderListBlockUser = useSelector(
+        (state) => state.common.renderListBlockUser
+    );
     useEffect(() => {
         async function fetchProfileData() {
             try {
@@ -54,6 +57,19 @@ const LayoutDashboard = () => {
         }
         fetchFriendSendRequest();
     }, [dispatch, render]);
+    useEffect(() => {
+        async function fetchListBlockUser() {
+            try {
+                const res = await axiosPrivate.get("/user/list-block-user");
+                if (res.data.status === 200) {
+                    dispatch(setListBlockUser(res.data.data));
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchListBlockUser();
+    }, [dispatch, renderListBlockUser]);
     return (
         <>
             <Modal />

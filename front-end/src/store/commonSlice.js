@@ -21,6 +21,7 @@ const commonSlice = createSlice({
         profileType: "currentUser",
         incomingMessageOfConversation: "",
         messageShowOption: "",
+        renderListBlockUser: 0,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -95,6 +96,10 @@ const commonSlice = createSlice({
             ...state,
             messageShowOption: action.payload,
         }),
+        setRenderListBlockUser: (state, action) => ({
+            ...state,
+            renderListBlockUser: action.payload,
+        }),
     },
 });
 export const {
@@ -116,5 +121,6 @@ export const {
     setProfileType,
     setIncomingMessageOfConversation,
     setMessageShowOption,
+    setRenderListBlockUser,
 } = commonSlice.actions;
 export default commonSlice.reducer;

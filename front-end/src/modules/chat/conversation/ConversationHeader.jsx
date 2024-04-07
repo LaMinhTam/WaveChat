@@ -1,4 +1,10 @@
-import { IconAddGroup, IconSplit } from "../../../components/icons";
+import {
+    IconAddGroup,
+    IconPhone,
+    IconSearch,
+    IconSplit,
+    IconVideoCall,
+} from "../../../components/icons";
 import PropTypes from "prop-types";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +31,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
         setSelectedList,
         setShowProfileDetails,
         setShowSearchModal,
+        setShowSearchMessageModal,
     } = useChat();
     useEffect(() => {
         async function fetchProfileFriendData() {
@@ -80,6 +87,21 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                     }}
                 >
                     <IconAddGroup />
+                </button>
+                <button className="w-[32px] h-[32px] flex items-center justify-center">
+                    <IconPhone />
+                </button>
+                <button className="w-[32px] h-[32px] flex items-center justify-center">
+                    <IconVideoCall />
+                </button>
+                <button
+                    className="w-[32px] h-[32px] flex items-center justify-center"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSearchMessageModal(true);
+                    }}
+                >
+                    <IconSearch />
                 </button>
                 <button
                     className={showConversationInfo ? "text-secondary" : ""}

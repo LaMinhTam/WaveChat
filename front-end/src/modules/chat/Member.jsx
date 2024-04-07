@@ -18,7 +18,7 @@ import { axiosPrivate } from "../../api/axios";
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
-    const { setConversationId } = useChat();
+    const { setConversationId, conversationId } = useChat();
     const { unreadCount, setUnreadCount, setMessage } = useSocket();
     const current_userId = getUserId();
     const dispatch = useDispatch();
@@ -34,9 +34,9 @@ const Member = ({ user }) => {
     }
 
     const otherUserInfo = {
-        _id: user.conversation_id ? otherUserId : user.user_id,
+        _id: user._id ? otherUserId : user.user_id,
         avatar: user.avatar,
-        full_name: user.conversation_id ? user.name : user.full_name,
+        full_name: user._id ? user.name : user.full_name,
     };
 
     let isActive = false;
@@ -50,15 +50,18 @@ const Member = ({ user }) => {
 
     const handleClickedMember = async () => {
         try {
-            const res = await axiosPrivate.get(
-                `/message/${user._id}?limit=100000`
-            );
-            const data = res.data.data;
-            if (data) {
-                data.reverse();
-                setMessage(data);
-            } else {
-                setMessage([]);
+            if (conversationId === user._id) return;
+            else {
+                const res = await axiosPrivate.get(
+                    `/message/${user._id}?limit=100000`
+                );
+                const data = res.data.data;
+                if (data) {
+                    data.reverse();
+                    setMessage(data);
+                } else {
+                    setMessage([]);
+                }
             }
             setIncomingClassName("");
             dispatch(setIncomingMessageOfConversation(""));

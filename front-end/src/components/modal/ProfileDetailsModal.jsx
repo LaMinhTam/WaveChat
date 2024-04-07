@@ -31,6 +31,7 @@ const ProfileDetailsModal = () => {
     const [isOpenAvatar, setIsOpenAvatar] = React.useState(false);
     const [status, setStatus] = React.useState(0);
     const [isOpenBG, setIsOpenBG] = React.useState(false);
+    const [isBlocked, setIsBlocked] = React.useState(false);
     const listFriend = useSelector((state) => state.user.listFriend);
     const listFriendRequest = useSelector(
         (state) => state.friend.listFriendRequest
@@ -113,9 +114,39 @@ const ProfileDetailsModal = () => {
         }
     };
 
+    const handleBlockUser = async () => {
+        try {
+            const res = await axiosPrivate.post(
+                `/user/block-user/${data?._id}`
+            );
+            if (res.data.status === 200) {
+                setIsBlocked(true);
+                toast.success("Đã chặn người dùng");
+            }
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi");
+            console.log(error);
+        }
+    };
+
+    const handleUnBlockUser = async () => {
+        try {
+            const res = await axiosPrivate.post(
+                `/user/remove-block-user/${data?._id}`
+            );
+            if (res.data.status === 200) {
+                setIsBlocked(false);
+                toast.success("Đã bỏ chặn người dùng");
+            }
+        } catch (error) {
+            toast.error("Đã xảy ra lỗi");
+            console.log(error);
+        }
+    };
+
     const handFriendRequest = async () => {
         if (status === 0) {
-            console.log("Chat with friend");
+            await handleRemoveFriend();
         } else if (status === 1) {
             const res = await axiosPrivate.post(
                 `/friend/send?_id=${data?._id}`
@@ -264,20 +295,27 @@ const ProfileDetailsModal = () => {
                         </div>
                     </div>
                     {profileType === "guest" && (
-                        <div className="flex items-center justify-center gap-x-2">
-                            {status === 0 && (
+                        <div className="flex items-center justify-center w-full h-full mb-2 gap-x-5">
+                            {!isBlocked ? (
                                 <button
-                                    className="px-4 py-2 bg-error text-lite"
-                                    onClick={handleRemoveFriend}
+                                    className="px-4 py-2 bg-error text-lite w-[150px] h-full"
+                                    onClick={handleBlockUser}
                                 >
-                                    Hủy kết bạn
+                                    Chặn
+                                </button>
+                            ) : (
+                                <button
+                                    className="px-4 py-2 bg-error text-lite w-[150px] h-full"
+                                    onClick={handleUnBlockUser}
+                                >
+                                    Bỏ chặn
                                 </button>
                             )}
                             <button
-                                className="px-4 py-2 bg-secondary text-lite"
+                                className="px-4 py-2 bg-secondary text-lite w-[150px] h-full"
                                 onClick={handFriendRequest}
                             >
-                                {status === 0 && "Nhắn tin"}
+                                {status === 0 && "Hủy kết bạn"}
                                 {status === 1 && "Kết bạn"}
                                 {status === 2 && "Thu hồi"}
                                 {status === 3 && "Chấp nhận"}

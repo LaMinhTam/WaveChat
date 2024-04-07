@@ -3,13 +3,20 @@ import groupMessages from "../../../utils/groupMessage";
 import Message from "./Message";
 import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useChat } from "../../../contexts/chat-context";
 import { axiosPrivate } from "../../../api/axios";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setId } from "../../../store/conversationSlice";
 
 const ConversationContent = ({ message, socket }) => {
-    const { conversationId, setShowChatOptionModal } = useChat();
+    const {
+        conversationId,
+        setShowChatOptionModal,
+        messageRefs,
+        setMessageRefs,
+    } = useChat();
     const currentUserId = getUserId();
     const [groupedMessages, setGroupedMessages] = useState([]);
     // scroll to bottom
@@ -27,6 +34,8 @@ const ConversationContent = ({ message, socket }) => {
         }
     }, [message]);
 
+    const dispatch = useDispatch();
+
     const handleDeleteMessage = async (id) => {
         try {
             const res = await axiosPrivate.post(`/message/delete/${id}`);
@@ -41,6 +50,7 @@ const ConversationContent = ({ message, socket }) => {
                     .filter((group) => group.data.length > 0);
                 setGroupedMessages(newGroup);
                 setShowChatOptionModal(false);
+                dispatch(setId(Math.random() * 1000));
                 toast.success("Đã xóa tin nhắn!");
             } else {
                 toast.error(res.data.message || "Có lỗi xảy ra!");
@@ -53,31 +63,43 @@ const ConversationContent = ({ message, socket }) => {
     return (
         <>
             <div
-                className="flex-1 w-full h-full max-h-[570px] overflow-y-auto custom-scrollbar bg-strock p-2 relative"
+                className="flex-1 w-full h-full max-h-[570px] overflow-y-auto overflow-x-hidden custom-scrollbar bg-strock p-2 relative"
                 id="chat-content"
             >
                 {groupedMessages.map((group) => (
                     <div key={uuidv4()} className="flex flex-col items-center">
-                        <span className="mb-2 text-sm text-text3">
-                            {group?.data.length > 0 && group?.formattedTime}
-                        </span>
                         {group?.data.map((msg) => {
-                            if (msg?.conversation_id === conversationId) {
+                            // Create a ref for this message if it doesn't exist
+                            if (!messageRefs[msg._id]) {
+                                setMessageRefs((refs) => ({
+                                    ...refs,
+                                    [msg._id]: React.createRef(),
+                                }));
+                            }
+                            if (msg.conversation_id === conversationId) {
                                 return (
-                                    <Message
+                                    <div
+                                        ref={messageRefs[msg._id]}
                                         key={uuidv4()}
-                                        msg={msg}
-                                        type={
+                                        className={`max-w-[75%] relative w-full h-full m-3 ${
                                             msg?.user?._id === currentUserId
-                                                ? "send"
-                                                : "receive"
-                                        }
-                                        socket={socket}
-                                        currentUserId={currentUserId}
-                                        onDeleteMessage={() =>
-                                            handleDeleteMessage(msg._id)
-                                        }
-                                    />
+                                                ? "ml-auto"
+                                                : "flex items-start gap-x-2 mr-auto"
+                                        }`}
+                                    >
+                                        <Message
+                                            msg={msg}
+                                            type={
+                                                msg?.user?._id === currentUserId
+                                                    ? "send"
+                                                    : "receive"
+                                            }
+                                            socket={socket}
+                                            onDeleteMessage={() =>
+                                                handleDeleteMessage(msg._id)
+                                            }
+                                        />
+                                    </div>
                                 );
                             }
                         })}

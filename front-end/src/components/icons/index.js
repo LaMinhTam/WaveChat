@@ -2,10 +2,12 @@ import IconAddGroup from "./IconAddGroup";
 import IconAddUser from "./IconAddUser";
 import IconBack from "./IconBack";
 import IconBell from "./IconBell";
+import IconBlock from "./IconBlock";
 import IconCSV from "./IconCSV";
 import IconCamera from "./IconCamera";
 import IconCard from "./IconCard";
 import IconChat from "./IconChat";
+import IconCheck from "./IconCheck";
 import IconChevronDown from "./IconChevronDown";
 import IconClock from "./IconClock";
 import IconClose from "./IconClose";
@@ -23,9 +25,11 @@ import IconHorizontalMore from "./IconHorizontalMore";
 import IconImage from "./IconImage";
 import IconLetter from "./IconLetter";
 import IconLight from "./IconLight";
+import IconLike from "./IconLike";
 import IconLogout from "./IconLogout";
 import IconMore from "./IconMore";
 import IconPdf from "./IconPdf";
+import IconPhone from "./IconPhone";
 import IconPin from "./IconPin";
 import IconRecall from "./IconRecall";
 import IconReply from "./IconReply";
@@ -36,6 +40,7 @@ import IconSort from "./IconSort";
 import IconSplit from "./IconSplit";
 import IconTrash from "./IconTrash";
 import IconTxt from "./IconTxt";
+import IconVideoCall from "./IconVideoCall";
 import IconXLSX from "./IconXLSX";
 export {
     IconEyeToggle,
@@ -77,4 +82,9 @@ export {
     IconRecall,
     IconCopy,
     IconFileDefault,
+    IconLike,
+    IconBlock,
+    IconVideoCall,
+    IconPhone,
+    IconCheck,
 };

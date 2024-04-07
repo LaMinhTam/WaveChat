@@ -1,16 +1,16 @@
 import { IconEmoji, IconSend } from "../../../components/icons";
 import PropTypes from "prop-types";
-import Picker from "emoji-picker-react";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import { toast } from "react-toastify";
 
 import { axiosPrivate } from "../../../api/axios";
 import { useChat } from "../../../contexts/chat-context";
 import { useState } from "react";
 
-const ConversationChatInput = ({ user_id, socket }) => {
+const ConversationChatInput = ({ user_id, socket, block }) => {
     const [messageSend, setMessageSend] = useState("");
     const { conversationId, setConversationId } = useChat();
-    const [chosenEmoji, setChosenEmoji] = useState(null);
-    console.log("ConversationChatInput ~ chosenEmoji:", chosenEmoji);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const onEnterPress = async (e) => {
@@ -19,43 +19,44 @@ const ConversationChatInput = ({ user_id, socket }) => {
         }
     };
 
-    const onEmojiClick = (event, emojiObject) => {
-        setChosenEmoji(emojiObject);
-        setMessageSend((prevState) =>
-            prevState ? prevState + emojiObject.emoji : emojiObject.emoji
-        );
-    };
-
-    const handleShowEmoji = () => {
-        setShowEmojiPicker(!showEmojiPicker);
-    };
-
     const handleSendMessage = async () => {
-        if (!socket) return;
-        if (!conversationId) {
-            const res = await axiosPrivate.post("/conversation/create", {
-                member_id: user_id,
-            });
-            setConversationId(res.data.data.conversation_id);
-            const message = {
-                conversation_id: res.data.data.conversation_id,
-                message: messageSend,
-                type: 1,
-                created_at: "",
-            };
-            socket.emit("message", message);
-            setMessageSend("");
+        if (!block) {
+            if (!socket) return;
+            if (!conversationId) {
+                const res = await axiosPrivate.post("/conversation/create", {
+                    member_id: user_id,
+                });
+                setConversationId(res.data.data.conversation_id);
+                const message = {
+                    conversation_id: res.data.data.conversation_id,
+                    message: messageSend,
+                    type: 1,
+                    created_at: "",
+                };
+                console.log("handleSendMessage ~ message:", message);
+                socket.emit("message", message);
+                setMessageSend("");
+            } else {
+                const message = {
+                    conversation_id: conversationId,
+                    message: messageSend,
+                    type: 1,
+                    created_at: "",
+                };
+                console.log("handleSendMessage ~ message:", message);
+                socket.emit("message", message);
+                setMessageSend("");
+            }
         } else {
-            const message = {
-                conversation_id: conversationId,
-                message: messageSend,
-                type: 1,
-                created_at: "",
-            };
-            socket.emit("message", message);
-            setMessageSend("");
+            toast.error("Người dùng đang bị chặn không thể gửi tin nhắn!");
         }
     };
+
+    const handleChooseEmoji = (emoji) => {
+        setMessageSend((prev) => prev + emoji.native);
+        setShowEmojiPicker(false);
+    };
+
     return (
         <>
             <div className="relative flex items-center w-full h-full shadow-md">
@@ -72,7 +73,7 @@ const ConversationChatInput = ({ user_id, socket }) => {
                 />
                 <div className="flex items-center justify-center gap-x-2">
                     <button
-                        onClick={handleShowEmoji}
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                         className="flex items-center justify-center w-10 h-10 rounded hover:bg-text3 hover:bg-opacity-10"
                     >
                         <IconEmoji />
@@ -85,13 +86,11 @@ const ConversationChatInput = ({ user_id, socket }) => {
                     </button>
                 </div>
             </div>
-
-            {showEmojiPicker && (
-                <Picker
-                    onEmojiClick={onEmojiClick}
-                    className="absolute bottom-[550px] left-[500px]"
-                />
-            )}
+            {showEmojiPicker ? (
+                <span className="absolute bottom-20">
+                    <Picker data={data} onEmojiSelect={handleChooseEmoji} />
+                </span>
+            ) : null}
         </>
     );
 };
@@ -99,6 +98,7 @@ const ConversationChatInput = ({ user_id, socket }) => {
 ConversationChatInput.propTypes = {
     user_id: PropTypes.string,
     socket: PropTypes.object,
+    block: PropTypes.bool,
 };
 
 export default ConversationChatInput;
