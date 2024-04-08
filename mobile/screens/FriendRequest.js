@@ -84,8 +84,6 @@ const ReceiveFriendRequest = ({navigation}) => {
         currentFriend => currentFriend.user_id !== friend.user_id,
       );
 
-      await createConversation(friend.user_id, accessTokens);
-
       const updatedFriend = {...friend, type: 4};
       setFriendsData(updatedFriendsData);
       setFriends(prevFriends => [...prevFriends, updatedFriend]);

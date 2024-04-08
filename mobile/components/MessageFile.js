@@ -70,14 +70,21 @@ const MessageFile = ({item}) => {
 
   const downloadFile = async () => {
     const destinationPath = `${RNFS.DownloadDirectoryPath}/wavechat`;
-    const filePath = `${destinationPath}/${item.media[0].split('%2F').pop()}`;
+    const filePath = `${destinationPath}/${item.media[0].split(';')[1]}`;
+    console.log(
+      `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+        item.conversation_id
+      }/files/${item.media[0].split(';')[1]}`,
+    );
     if (downloaded) {
       const data = FileViewer.open(filePath).then(() => {});
       console.log(filePath);
     } else {
       await RNFS.mkdir(destinationPath);
       const res = await RNFS.downloadFile({
-        fromUrl: item.media[0],
+        fromUrl: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+          item.conversation_id
+        }/files/${item.media[0].split(';')[1]}`,
         toFile: filePath,
       }).promise;
       setFileInfo({...fileInfo, size: res.bytesWritten});
@@ -94,13 +101,13 @@ const MessageFile = ({item}) => {
     <TouchableOpacity onPress={() => downloadFile()}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={getFileIcon(item.media[0].split('.').pop())}
+          source={getFileIcon(item.media[0].split(';')[1].split('.').pop())}
           style={{width: 24, height: 24, marginRight: 10}}
         />
         <View>
           <View>
             <Text style={{color: PRIMARY_TEXT_COLOR}}>
-              {truncateFileName(item.media[0].split('%2F').pop(), 20)}
+              {truncateFileName(item.media[0].split(';')[1], 20)}
             </Text>
             {downloaded && (
               <View>

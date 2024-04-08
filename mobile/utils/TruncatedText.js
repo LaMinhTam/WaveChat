@@ -6,7 +6,6 @@ import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 export const TruncatedText = ({text}) => {
   const [textShown, setTextShown] = useState(false);
   const [lengthMore, setLengthMore] = useState(false);
-
   const toggleNumberOfLines = () => {
     setTextShown(!textShown);
   };

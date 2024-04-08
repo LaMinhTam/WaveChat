@@ -33,7 +33,7 @@ const FriendScreen = ({navigation}) => {
     const newConversation = {
       name: friend.full_name,
       avatar: friend.avatar,
-      members: [
+      virtual_members: [
         {
           _id: userInfo._id,
           avatar: userInfo.avatar,
@@ -45,6 +45,7 @@ const FriendScreen = ({navigation}) => {
           full_name: friend.full_name,
         },
       ],
+      members: [userInfo._id, friend.user_id],
       type: 2,
     };
     setMessages([]);

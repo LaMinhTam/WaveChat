@@ -2,8 +2,17 @@ import {Text} from 'react-native';
 import Message from './Message';
 import React, {useState} from 'react';
 
-const MessageItem = ({item, searchKeyword, userInfo, handleOptionSelect}) => {
-  const parts = item.message.split(new RegExp(`(${searchKeyword})`, 'gi'));
+const MessageItem = ({
+  item,
+  searchKeyword,
+  userInfo,
+  handleOptionSelect,
+  handleReactToMessage,
+}) => {
+  const parts = searchKeyword
+    ? item.message.split(new RegExp(`(${searchKeyword})`, 'gi'))
+    : [item.message];
+
   const [isContextMenuVisible, setContextMenuVisible] = useState(false);
 
   const handleContextMenuSelect = (option, item) => {
@@ -28,6 +37,7 @@ const MessageItem = ({item, searchKeyword, userInfo, handleOptionSelect}) => {
       handleContextMenuSelect={handleContextMenuSelect}
       isContextMenuVisible={isContextMenuVisible}
       setContextMenuVisible={setContextMenuVisible}
+      handleReactToMessage={handleReactToMessage}
     />
   );
 };

@@ -9,11 +9,11 @@ import {sendImageMessage, uploadFileToS3} from '../utils/S3Bucket';
 import DocumentPicker from 'react-native-document-picker';
 import {notifyMessageToOtherMembers} from '../utils/SendMessage';
 import {handleConvertFileTypeToNumber} from '../constants';
-
+import EmojiPicker from 'rn-emoji-keyboard';
 const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   const [newMessage, setNewMessage] = useState('');
   const {socket, currentConversation, setCurrentConversation} = useSocket();
-
+  const [isOpen, setIsOpen] = useState(false);
   function handleFileType(fileName) {
     const fileType = fileName.split('.');
     const type = fileType[fileType.length - 1];
@@ -24,10 +24,9 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   const getConversationId = async accessToken => {
     if (!currentConversation._id) {
       const newConversation = await createConversation(
-        memberId._id,
+        memberId[0],
         accessToken,
       );
-
       const updateConversation = {
         ...currentConversation,
         _id: newConversation.data.conversation_id,
@@ -47,14 +46,28 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
   };
 
   const handleSelectImage = () => {
-    ImagePicker.openPicker({multiple: true, cropping: false})
-      .then(images => {
+    ImagePicker.openPicker({
+      multiple: true,
+      cropping: false,
+      mediaType: 'photo',
+    })
+      .then(async images => {
+        const timestamp = new Date().getTime();
+        let media = [];
+        let conversationID = await getConversationId(accessTokens);
         images.map(async image => {
-          let conversationID = await getConversationId(accessTokens);
-
-          const fileName = await sendImageMessage(image, conversationID);
-          handleMessage(conversationID, '', 2, fileName);
+          media.push(
+            `${image.mime};${timestamp}-${image.path.split('/').pop()};${
+              image.size
+            }`,
+          );
+          sendImageMessage(
+            image,
+            conversationID,
+            `${timestamp}-${image.path.split('/').pop()}`,
+          );
         });
+        handleMessage(conversationID, '', 2, media);
       })
       .catch(error => {});
   };
@@ -67,12 +80,12 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
         allowMultiSelection: true,
       });
       results.forEach(async file => {
+        const timestamp = new Date().getTime();
         let type = handleFileType(file.name);
         let conversationID = await getConversationId(accessTokens);
-        uploadFileToS3(file, conversationID);
-        const fileName = `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${conversationID}/files/${file.name}`;
-        console.log(fileName);
-        handleMessage(conversationID, '', type, fileName);
+        uploadFileToS3(file, conversationID, `${timestamp}-${file.name}`);
+        const media = `${file.type};${timestamp}-${file.name};${file.size}`;
+        handleMessage(conversationID, '', type, media);
       });
     } catch (error) {
       if (DocumentPicker.isCancel(error)) {
@@ -83,15 +96,15 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
     }
   };
 
-  const handleMessage = (conversationID, messageContent, type, fileName) => {
+  const handleMessage = (conversationID, messageContent, type, files) => {
     const message = {
       conversation_id: conversationID,
       message: messageContent,
       type: type,
       created_at: new Date().getTime(),
-      ...(fileName && {media: [fileName]}),
+      ...(files && {media: files}),
     };
-
+    console.log(message);
     socket.emit('message', message);
 
     notifyMessageToOtherMembers(message, currentConversation, userInfo);
@@ -111,12 +124,23 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
         onChangeText={setNewMessage}
       />
       {newMessage.trim() ? (
-        <TouchableOpacity
-          onPress={handleSendMessage}
-          disabled={!newMessage.trim()}
-          style={{paddingHorizontal: 10}}>
-          <Ionicons name="send" size={24} color={MAIN_COLOR} />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity
+            onPress={handleSendMessage}
+            disabled={!newMessage.trim()}
+            style={{padding: 10}}>
+            <Ionicons name="send" size={24} color={MAIN_COLOR} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              console.log(!isOpen);
+              setIsOpen(!isOpen);
+            }}
+            style={{padding: 10}}>
+            <Ionicons name="happy" size={24} color={MAIN_COLOR} />
+          </TouchableOpacity>
+        </View>
       ) : (
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity
@@ -127,8 +151,19 @@ const ChatTextInput = ({accessTokens, memberId, userInfo}) => {
           <TouchableOpacity onPress={handleSelectImage} style={{padding: 10}}>
             <Ionicons name="image-outline" size={24} color={MAIN_COLOR} />
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsOpen(!isOpen)}
+            style={{padding: 10}}>
+            <Ionicons name="happy" size={24} color={MAIN_COLOR} />
+          </TouchableOpacity>
         </View>
       )}
+      <EmojiPicker
+        onEmojiSelected={emoji => {
+          setNewMessage(prevMessage => prevMessage + emoji.emoji);
+        }}
+        open={isOpen}
+        onClose={() => setIsOpen(false)}></EmojiPicker>
     </View>
   );
 };

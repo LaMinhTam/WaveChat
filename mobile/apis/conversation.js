@@ -168,3 +168,36 @@ export async function forwardMessage(message_id, conversation_ids, token) {
   );
   return res.data;
 }
+
+export async function toggleNotification(conversation_id, token) {
+  const res = await axios.post(
+    waveChatApi.toggleNotification(conversation_id),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function reactToMessage(message_id) {
+  const token = await AsyncStorage.getItem('accessToken');
+
+  const res = await axios.post(
+    waveChatApi.reactToMessage(),
+    {
+      message_id: message_id,
+      type: 1,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}

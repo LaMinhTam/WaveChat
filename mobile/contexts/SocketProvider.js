@@ -49,14 +49,20 @@ export const SocketProvider = ({children}) => {
 
     newSocket.on('message', incomingMessage => {
       const {message} = incomingMessage;
-      setMessages(prevMessages => [message, ...prevMessages]);
+      console.log('message', message);
+      console.log(currentConversation._id, '-', message.conversation_id);
+      if (
+        currentConversation._id === message.conversation_id ||
+        currentConversation._id
+      ) {
+        setMessages(prevMessages => [message, ...prevMessages]);
+      }
       handleConversationOnIncomingMessage(message);
     });
 
     newSocket.on('revoke-message', incomingMessage => {
       const {message} = incomingMessage;
 
-      console.log(message);
       setMessages(prevMessages => {
         const updatedMessages = prevMessages.map(prevMessage => {
           if (prevMessage._id === message._id) {
@@ -82,8 +88,7 @@ export const SocketProvider = ({children}) => {
         if (conversation._id === message.conversation_id) {
           isNewConversation = false;
           let count = 0;
-          console.log(currentConversation);
-          if (currentConversation._id !== conversation._id) {
+          if (message.user._id !== userInfo._id) {
             count = conversation.unread_count
               ? conversation.unread_count + 1
               : 1;

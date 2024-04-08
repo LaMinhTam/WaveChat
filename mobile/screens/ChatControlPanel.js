@@ -18,12 +18,19 @@ import {
   getMembers,
   leaveGroup,
   removeMember,
+  toggleNotification,
 } from '../apis/conversation';
 import {blockUser, getBlockList, removeBlock} from '../apis/user';
+import {setCurrentConversation} from '../store/chatSlice';
 
 const ChatControlPanel = ({navigation}) => {
-  const {userInfo, accessTokens} = useUserData();
-  const {currentConversation, messages, setConversations} = useSocket();
+  const {userInfo, friends, setFriends, accessTokens} = useUserData();
+  const {
+    currentConversation,
+    setCurrentConversation,
+    messages,
+    setConversations,
+  } = useSocket();
   const [members, setMembers] = useState([]);
   const [isMemberCollapsed, setIsMemberCollapsed] = useState(true);
   const [isBlockUser, setIsBlockUser] = useState(false);
@@ -32,28 +39,33 @@ const ChatControlPanel = ({navigation}) => {
   }, []);
 
   const fetchMembers = async () => {
-    const data = await getMembers(currentConversation._id, accessTokens);
-    const members = data.data.map(member => {
-      if (member._id === userInfo._id) {
-        return {...member, avatar: userInfo.avatar};
-      }
-      return member;
-    });
-    setMembers(members);
+    if (currentConversation._id !== undefined) {
+      const data = await getMembers(currentConversation._id, accessTokens);
+      const members = data.data.map(member => {
+        if (member._id === userInfo._id) {
+          return {...member, avatar: userInfo.avatar};
+        }
+        return member;
+      });
+      setMembers(members);
+    } else {
+      setMembers(currentConversation.virtual_members);
+    }
 
     const blocks = await getBlockList(accessTokens);
     const blockList = blocks.data;
-    const otherMember = members.filter(member => member._id !== userInfo._id);
-    console.log(blockList);
     const isBlock = blockList.some(
-      block => block.user_block_id._id === otherMember[0]._id,
+      block =>
+        block.user_block_id._id === currentConversation.members[0] ||
+        block.user_block_id._id === currentConversation.members[1],
     );
     setIsBlockUser(isBlock);
   };
 
-  const mediaMessage = messages.filter(
-    message => message.type === 2 || message.type === 3,
-  );
+  const mediaMessage = messages
+    ?.filter(message => message.type === 2 || message.type === 3)
+    .flatMap(message => message.media);
+
   const viewUserPage = () => {
     const userIds = currentConversation.members;
     navigation.navigate('UserInfomation', {userIds});
@@ -65,10 +77,12 @@ const ChatControlPanel = ({navigation}) => {
 
   const renderImageItem = ({item}) => (
     <View style={styles.imageContainer}>
-      {item.type === 2 && (
+      {item.startsWith('image') && (
         <Image
           source={{
-            uri: item.media[0],
+            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+              currentConversation._id
+            }/images/${item.split(';')[1]}`,
           }}
           style={styles.image}
         />
@@ -137,10 +151,26 @@ const ChatControlPanel = ({navigation}) => {
       setIsBlockUser(false);
     } else {
       data = await blockUser(otherMember[0]._id, accessTokens);
+      setFriends(
+        friends.filter(friend => friend.user_id !== otherMember[0]._id),
+      );
+      setCurrentConversation({...currentConversation, block_type: 1});
       setIsBlockUser(true);
     }
     Alert.alert('Thông báo', data.data);
   };
+
+  const handleToggleNotification = async () => {
+    const data = await toggleNotification(
+      currentConversation._id,
+      accessTokens,
+    );
+    console.log(data);
+  };
+
+  const mediaMessageForSection = messages?.filter(
+    message => message.type === 2 || message.type === 3,
+  );
 
   return (
     <View style={styles.container}>
@@ -198,6 +228,17 @@ const ChatControlPanel = ({navigation}) => {
           </View>
           <Text style={styles.buttonText}>Đổi hình nền</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            handleToggleNotification();
+          }}>
+          <View style={styles.iconContainer}>
+            <FeatherIcon name="bell-off" size={24} color="#000" />
+          </View>
+          <Text style={styles.buttonText}>Tắt thông báo</Text>
+        </TouchableOpacity>
       </View>
       <TouchableOpacity
         style={styles.memberSection}
@@ -238,11 +279,13 @@ const ChatControlPanel = ({navigation}) => {
       {mediaMessage.length > 0 && (
         <TouchableOpacity
           style={styles.imageSection}
-          onPress={() => navigation.navigate('ImagesScreen', {mediaMessage})}>
+          onPress={() =>
+            navigation.navigate('ImagesScreen', {mediaMessageForSection})
+          }>
           <Text style={styles.sectionName}>Ảnh</Text>
           <FlatList
             data={mediaMessage.slice(0, 3)}
-            keyExtractor={item => item._id}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={renderImageItem}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -355,6 +398,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderRadius: 8,
+    alignContent: 'center',
   },
   buttonText: {
     textAlign: 'center',
@@ -368,7 +412,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
   },
   imageSection: {
     width: '100%',

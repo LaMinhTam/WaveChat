@@ -1,24 +1,27 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {getConversations} from '../apis/conversation';
+import {getConversationDetail, getConversations} from '../apis/conversation';
 import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {formatTimeLastActivity} from '../utils/format-time-message.util';
 import {FILE_TYPE} from '../constants';
+import {getBlockList} from '../apis/user';
 
 const HomeScreen = ({navigation}) => {
   const {conversations, setConversations, setCurrentConversation} = useSocket();
   const {accessTokens, userInfo} = useUserData();
+  const [blockUser, setBlockUser] = useState([]);
+
   const constructMessage = (lastMessage, userInfo) => {
     const type = lastMessage.type;
     if (type != 1 && type != 14) {
-      return `[${FILE_TYPE[type]}] ${lastMessage.media[0]
-        .split('/')
-        .pop()
-        .split('%2F')
-        .pop()}`;
+      if (type === 2) {
+        return `[${FILE_TYPE[type]}]`;
+      } else {
+        return `[${FILE_TYPE[type]}] ${lastMessage.media[0].split(';')[1]}`;
+      }
     } else {
       const senderName =
         lastMessage.user._id === userInfo._id
@@ -47,6 +50,20 @@ const HomeScreen = ({navigation}) => {
       }
     };
 
+    const fetchBlockList = async () => {
+      const data = await getBlockList(accessTokens);
+      const result = data.data.map(block => {
+        return {
+          ...block.user_block_id,
+          created_at: block.created_at,
+          updated_at: block.updated_at,
+          user_id: block.user_id,
+        };
+      });
+      setBlockUser(result);
+    };
+
+    fetchBlockList();
     fetchConversations();
   }, []);
 
@@ -58,8 +75,15 @@ const HomeScreen = ({navigation}) => {
           <TouchableOpacity
             key={conversation._id}
             style={styles.conversationRow}
-            onPress={() => {
-              setCurrentConversation(conversation);
+            onPress={async () => {
+              const data = await getConversationDetail(
+                conversation._id,
+                accessTokens,
+              );
+              setCurrentConversation({
+                ...conversation,
+                block_type: data.data.block_type,
+              });
               navigation.navigate('ChatScreen');
             }}>
             <Image

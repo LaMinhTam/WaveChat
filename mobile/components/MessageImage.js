@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
+import {View, Image, TouchableOpacity, FlatList} from 'react-native';
 import MediaViewModal from './MediaViewModal';
 
 const MessageImage = ({item}) => {
@@ -7,28 +7,65 @@ const MessageImage = ({item}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleImagePress = uri => {
-    console.log(uri);
     setSelectedImage(uri);
     setModalVisible(true);
   };
 
-  return (
-    <View>
-      <TouchableOpacity onPress={() => handleImagePress(item.media[0])}>
+  const singleImageStyle = {
+    width: '100%',
+    aspectRatio: 1,
+  };
+
+  const multipleImageStyle = {
+    width: 100,
+    height: 100,
+    margin: 5,
+  };
+
+  const renderImageItem = ({item: image, index}) => {
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          handleImagePress(
+            `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+              item.conversation_id
+            }/images/${image.split(';')[1]}`,
+          )
+        }>
         <Image
           source={{
-            uri: item.media[0],
+            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+              item.conversation_id
+            }/images/${image.split(';')[1]}`,
           }}
-          style={{width: '100%', aspectRatio: 1}}
+          style={
+            item.media.length === 1 ? singleImageStyle : multipleImageStyle
+          }
           resizeMode="cover"
         />
       </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View>
+      <FlatList
+        data={item.media}
+        renderItem={renderImageItem}
+        keyExtractor={(image, index) => index.toString()}
+        numColumns={2}
+        contentContainerStyle={{
+          justifyContent: 'center',
+        }}
+        showsVerticalScrollIndicator={false}
+      />
       <MediaViewModal
         visible={modalVisible}
-        item={item}
+        item={selectedImage}
         onClose={() => setModalVisible(false)}
       />
     </View>
   );
 };
+
 export default MessageImage;

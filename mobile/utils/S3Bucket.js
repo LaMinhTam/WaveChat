@@ -11,17 +11,15 @@ const secretKey = AWS_SECRET_ACCESS_KEY;
 const region = AWS_REGION;
 const bucket = AWS_BUCKET;
 
-export const sendImageMessage = async (image, conversationID) => {
-  const name = image.path.split('/').pop();
-
+export const sendImageMessage = async (image, conversationID, fileName) => {
   const file = {
     uri: image.path,
-    name: name,
+    name: fileName,
     type: image.mime,
   };
 
   const config = {
-    keyPrefix: `conversation/${conversationID}/images`,
+    keyPrefix: `conversation/${conversationID}/images/`,
     bucket: bucket,
     region: region,
     accessKey: accessKey,
@@ -30,6 +28,7 @@ export const sendImageMessage = async (image, conversationID) => {
 
   try {
     const response = await RNS3.put(file, config);
+    console.log(response.body.postResponse.location);
     return response.body.postResponse.location;
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -37,10 +36,10 @@ export const sendImageMessage = async (image, conversationID) => {
   }
 };
 
-export const uploadFileToS3 = async (uploadFile, conversationID) => {
+export const uploadFileToS3 = async (uploadFile, conversationID, fileName) => {
   const file = {
     uri: uploadFile.fileCopyUri,
-    name: uploadFile.name,
+    name: fileName,
     type: uploadFile.type,
   };
 

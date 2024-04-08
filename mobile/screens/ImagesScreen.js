@@ -6,13 +6,23 @@ import {
   StyleSheet,
   Modal,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import VideoPlayer from 'react-native-video-player';
 
 const ImagesScreen = ({navigate, route}) => {
-  const {mediaMessage} = route.params;
+  const {mediaMessageForSection} = route.params;
   const [selectedImage, setSelectedImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const mediaMessage = mediaMessageForSection.flatMap(message => {
+    return message.media.map(mediaItem => {
+      return {
+        ...message,
+        media: mediaItem,
+      };
+    });
+  });
 
   const groupedMediaMessages = mediaMessage.reduce((acc, message) => {
     const date = new Date(message.created_at);
@@ -37,7 +47,7 @@ const ImagesScreen = ({navigate, route}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {groupedMediaMessages &&
         Object.keys(groupedMediaMessages).map((dayKey, index) => (
           <View key={index}>
@@ -50,13 +60,19 @@ const ImagesScreen = ({navigate, route}) => {
                   key={messageIndex}
                   onPress={() => {
                     if (message.type === 2) {
-                      handleImagePress(message.media[0]);
+                      handleImagePress(
+                        `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+                          message.conversation_id
+                        }/images/${message.media.split(';')[1]}`,
+                      );
                     }
                   }}>
                   {message.type === 2 && (
                     <Image
                       source={{
-                        uri: message.media[0],
+                        uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+                          message.conversation_id
+                        }/images/${message.media.split(';')[1]}`,
                       }}
                       style={styles.image}
                     />
@@ -65,8 +81,9 @@ const ImagesScreen = ({navigate, route}) => {
                     <VideoPlayer
                       style={styles.image}
                       video={{
-                        uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-                        // uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${item.conversation_id}/${item.media[0]}`,
+                        uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+                          message.conversation_id
+                        }/files/${message.media.split(';')[1]}`,
                       }}></VideoPlayer>
                   )}
                 </TouchableOpacity>
@@ -92,7 +109,7 @@ const ImagesScreen = ({navigate, route}) => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -104,12 +121,13 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   image: {
     width: 100,
     height: 100,
-    marginHorizontal: 5,
+    marginBottom: 15,
   },
   tag: {
     fontWeight: 'bold',

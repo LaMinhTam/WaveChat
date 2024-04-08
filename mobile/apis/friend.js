@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {waveChatApi} from './constants';
+import {createConversation} from './conversation';
 
 export async function getFriends(type, accessToken) {
   const res = await axios.get(waveChatApi.getFriends(type), {
@@ -36,6 +37,11 @@ export async function acceptFriendRequest(id, accessToken) {
       },
     },
   );
+
+  if (res.data.status === 200) {
+    await createConversation(id, accessToken);
+  }
+
   return res.data;
 }
 

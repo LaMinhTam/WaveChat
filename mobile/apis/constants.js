@@ -39,6 +39,9 @@ export const waveChatApi = {
   removeBlock: id => `${waveChatEndpoint}/user/remove-block-user/${id}`,
   getBlockList: () => `${waveChatEndpoint}/user/list-block-user`,
   forwardMessage: () => `${waveChatEndpoint}/message/share-message`,
+  toggleNotification: id =>
+    `${waveChatEndpoint}/conversation/notify?conversation_id=${id}`,
+  reactToMessage: () => `${waveChatEndpoint}/message/react`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

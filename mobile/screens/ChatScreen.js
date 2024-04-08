@@ -1,15 +1,13 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {deleteMessage, getMessage} from '../apis/conversation';
+import {deleteMessage, getMessage, reactToMessage} from '../apis/conversation';
 import ChatTextInput from '../components/ChatTextInput';
 import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import SearchMessages from '../components/SearchMessages';
 import MessageItem from '../components/MessageItem';
-import firestore from '@react-native-firebase/firestore';
 import {updateUnreadTrack} from '../utils/firestoreManage';
-import {setCurrentConversation} from '../store/chatSlice';
 
 const ChatScreen = ({navigation, route}) => {
   const {userInfo, accessTokens} = useUserData();
@@ -82,13 +80,14 @@ const ChatScreen = ({navigation, route}) => {
 
   const loadMessages = async () => {
     let newMessages = await getMessage(currentConversation._id, accessTokens);
-    // if (newMessages.data !== undefined) {
-    //   const filteredMessages = newMessages.data.filter(message => {
-    //     return !message.user_deleted.includes(userInfo._id);
-    //   });
-
-    setMessages(newMessages.data);
-    // }
+    if (newMessages.status === 200) {
+      const filteredMessages = newMessages.data.filter(message => {
+        return !message.user_deleted.includes(userInfo._id);
+      });
+      setMessages(filteredMessages);
+    } else {
+      setMessages([]);
+    }
   };
 
   const scrollToMessage = keyword => {
@@ -124,8 +123,8 @@ const ChatScreen = ({navigation, route}) => {
     }
   };
 
-  const otherUser = currentConversation.members.find(
-    member => member._id !== userInfo._id,
+  const otherUser = currentConversation.members.filter(
+    member => member !== userInfo._id,
   );
 
   const handleOptionSelect = async (option, message) => {
@@ -137,10 +136,52 @@ const ChatScreen = ({navigation, route}) => {
     } else if (option === 'Xóa') {
       const data = await deleteMessage(message._id);
       console.log(data);
+      if (messages[0]._id === message._id) {
+        console.log('deleted last', messages[1]);
+        setCurrentConversation(prevConversation => ({
+          ...prevConversation,
+          last_message: messages[1],
+        }));
+        setConversations(prevConversations =>
+          prevConversations.map(conversation =>
+            conversation._id === currentConversation._id
+              ? {...conversation, last_message: messages[1]}
+              : conversation,
+          ),
+        );
+      }
+      setMessages(prevMessages =>
+        prevMessages.filter(msg => msg._id !== message._id),
+      );
     } else if (option === 'Chuyển tiếp') {
       navigation.navigate('ForwardMessage', {message_id: message._id});
     }
     // console.log('Option selected: ', option, 'Message ID: ', message);
+  };
+
+  const handleReactToMessage = async messageId => {
+    const data = await reactToMessage(messageId);
+
+    setMessages(prevMessages =>
+      prevMessages.map(msg => {
+        if (msg._id === messageId) {
+          const userReactionExists = (msg.reaction || []).some(
+            react => react.user_id === userInfo._id,
+          );
+
+          return {
+            ...msg,
+            reaction: userReactionExists
+              ? (msg.reaction || []).filter(
+                  react => react.user_id !== userInfo._id,
+                )
+              : [...(msg.reaction || []), {type: 1, user_id: userInfo._id}],
+          };
+        } else {
+          return msg;
+        }
+      }),
+    );
   };
 
   return (
@@ -169,16 +210,29 @@ const ChatScreen = ({navigation, route}) => {
             searchKeyword={searchKeyword}
             userInfo={userInfo}
             handleOptionSelect={handleOptionSelect}
+            handleReactToMessage={handleReactToMessage}
           />
         )}
         inverted
         style={{padding: 5}}
       />
-      <ChatTextInput
-        accessTokens={accessTokens}
-        memberId={otherUser}
-        userInfo={userInfo}
-      />
+      {currentConversation.block_type === 2 && (
+        <Text style={{textAlign: 'center', color: '#000'}}>
+          Bạn đã bị người dùng này chặn
+        </Text>
+      )}
+      {currentConversation.block_type === 1 && (
+        <Text style={{textAlign: 'center', color: '#000'}}>
+          Bạn đã chặn người dùng này
+        </Text>
+      )}
+      {currentConversation.block_type === 0 && (
+        <ChatTextInput
+          accessTokens={accessTokens}
+          memberId={otherUser}
+          userInfo={userInfo}
+        />
+      )}
     </View>
   );
 };

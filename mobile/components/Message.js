@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -16,6 +16,7 @@ import MessageImage from './MessageImage';
 import MessageVideo from './MessageVideo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import RevokedMessage from './RevokedMessage';
+import {reactToMessage} from '../apis/conversation';
 
 const Message = ({
   item,
@@ -23,9 +24,17 @@ const Message = ({
   handleContextMenuSelect,
   isContextMenuVisible,
   setContextMenuVisible,
+  handleReactToMessage,
 }) => {
   const [contextMenuOptions, setContextMenuOptions] = useState([]);
   const isCurrentUser = item.user._id === userInfo._id;
+  const [isReacted, setIsReacted] = useState(false);
+
+  useEffect(() => {
+    setIsReacted(
+      item.reaction.some(reaction => reaction.user_id === userInfo._id),
+    );
+  }, [item]);
 
   const renderContent = () => {
     switch (item.type) {
@@ -101,10 +110,14 @@ const Message = ({
               padding: 10,
               overflow: 'hidden',
               borderRadius: 100,
+            }}
+            onPress={() => {
+              console.log('like');
+              handleReactToMessage(item._id);
             }}>
             <Fontisto
               name="like"
-              style={{color: true ? 'gray' : 'gray'}}></Fontisto>
+              style={{color: isReacted ? 'yellow' : 'gray'}}></Fontisto>
           </TouchableOpacity>
         )}
       </TouchableOpacity>
