@@ -16,7 +16,7 @@ const HomeScreen = ({navigation}) => {
 
   const constructMessage = (lastMessage, userInfo) => {
     const type = lastMessage.type;
-    if (type != 1 && type != 14) {
+    if (type != 1 && type != 14 && type != 16) {
       if (type === 2) {
         return `[${FILE_TYPE[type]}]`;
       } else {

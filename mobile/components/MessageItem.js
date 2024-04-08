@@ -8,6 +8,7 @@ const MessageItem = ({
   userInfo,
   handleOptionSelect,
   handleReactToMessage,
+  scrollById,
 }) => {
   const parts = searchKeyword
     ? item.message.split(new RegExp(`(${searchKeyword})`, 'gi'))
@@ -38,6 +39,7 @@ const MessageItem = ({
       isContextMenuVisible={isContextMenuVisible}
       setContextMenuVisible={setContextMenuVisible}
       handleReactToMessage={handleReactToMessage}
+      scrollById={scrollById}
     />
   );
 };

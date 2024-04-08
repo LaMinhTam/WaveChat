@@ -17,6 +17,7 @@ import MessageVideo from './MessageVideo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import RevokedMessage from './RevokedMessage';
 import {reactToMessage} from '../apis/conversation';
+import {MAIN_COLOR} from '../styles/styles';
 
 const Message = ({
   item,
@@ -25,20 +26,20 @@ const Message = ({
   isContextMenuVisible,
   setContextMenuVisible,
   handleReactToMessage,
+  scrollById,
 }) => {
   const [contextMenuOptions, setContextMenuOptions] = useState([]);
   const isCurrentUser = item.user._id === userInfo._id;
   const [isReacted, setIsReacted] = useState(false);
 
   useEffect(() => {
-    setIsReacted(
-      item.reaction.some(reaction => reaction.user_id === userInfo._id),
-    );
+    setIsReacted(item.reaction.some(reaction => reaction));
   }, [item]);
 
   const renderContent = () => {
     switch (item.type) {
       case 1:
+      case 16:
         return <TruncatedText text={item.message} />;
       case 2:
         return <MessageImage item={item} />;
@@ -54,7 +55,7 @@ const Message = ({
   };
 
   const handleContextMenu = () => {
-    setContextMenuOptions(['Xóa']);
+    setContextMenuOptions(['Trả lời tin nhắn', 'Xóa']);
     if (item.type != 14) {
       setContextMenuOptions(prevState => [...prevState, 'Chuyển tiếp']);
       if (isCurrentUser) {
@@ -94,6 +95,26 @@ const Message = ({
           shadowRadius: 4,
           elevation: 3,
         }}>
+        {item.type === 16 && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#f0ecf4',
+              borderRightColor: MAIN_COLOR,
+              borderLeftWidth: 1,
+            }}
+            onPress={() => {
+              scrollById(item.message_reply._id);
+            }}>
+            <Text style={{color: '#333', padding: 5}}>
+              {item.user.full_name}
+            </Text>
+            <Text style={{color: '#999', padding: 5}}>
+              {item.message_reply.type != 1 && item.message_reply.type != 16
+                ? 'Tệp tin'
+                : item.message_reply.message}
+            </Text>
+          </TouchableOpacity>
+        )}
         {renderContent()}
 
         <Text style={{color: '#777', fontSize: 12, marginTop: 5}}>

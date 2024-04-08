@@ -22,6 +22,7 @@ const ChatScreen = ({navigation, route}) => {
   const [currentIndex, setCurrentIndex] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const {socket} = useSocket();
+  const [replyTo, setReplyTo] = useState();
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -107,6 +108,13 @@ const ChatScreen = ({navigation, route}) => {
     }
   };
 
+  const scrollById = id => {
+    const index = messages.findIndex(msg => msg._id === id);
+    if (index !== -1) {
+      flatListRef.current.scrollToIndex({index});
+    }
+  };
+
   const handleNextResult = () => {
     if (currentIndex !== null && currentIndex < searchResults.length - 1) {
       const nextIndex = currentIndex + 1;
@@ -155,10 +163,17 @@ const ChatScreen = ({navigation, route}) => {
       );
     } else if (option === 'Chuyển tiếp') {
       navigation.navigate('ForwardMessage', {message_id: message._id});
+    } else if (option === 'Trả lời tin nhắn') {
+      messages.map(msg => {
+        if (msg._id === message._id) {
+          console.log('msg', msg);
+          setReplyTo(msg);
+        }
+      });
     }
     // console.log('Option selected: ', option, 'Message ID: ', message);
   };
-
+  console.log(currentConversation);
   const handleReactToMessage = async messageId => {
     const data = await reactToMessage(messageId);
 
@@ -211,6 +226,7 @@ const ChatScreen = ({navigation, route}) => {
             userInfo={userInfo}
             handleOptionSelect={handleOptionSelect}
             handleReactToMessage={handleReactToMessage}
+            scrollById={scrollById}
           />
         )}
         inverted
@@ -231,6 +247,8 @@ const ChatScreen = ({navigation, route}) => {
           accessTokens={accessTokens}
           memberId={otherUser}
           userInfo={userInfo}
+          replyTo={replyTo}
+          setReplyTo={setReplyTo}
         />
       )}
     </View>

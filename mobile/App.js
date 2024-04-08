@@ -1,46 +1,46 @@
-// import React, {useEffect} from 'react';
-// import {Provider} from 'react-redux';
-// import store from './store/configureStore';
-// import LoginStackNavigator from './navigations/LoginStackNavigator';
-// import {UserDataProvider} from './contexts/auth-context';
-// import {useUserData} from './contexts/auth-context';
-// import TabNavigator from './navigations/TabNavigator';
-// import {NavigationContainer} from '@react-navigation/native';
-// import {SocketProvider} from './contexts/SocketProvider';
-// import {PermissionsAndroid} from 'react-native';
-// const App = () => {
-//   useEffect(() => {
-//     PermissionsAndroid.request(
-//       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-//     );
-//   }, []);
+import React, {useEffect} from 'react';
+import {Provider} from 'react-redux';
+import store from './store/configureStore';
+import LoginStackNavigator from './navigations/LoginStackNavigator';
+import {UserDataProvider} from './contexts/auth-context';
+import {useUserData} from './contexts/auth-context';
+import TabNavigator from './navigations/TabNavigator';
+import {NavigationContainer} from '@react-navigation/native';
+import {SocketProvider} from './contexts/SocketProvider';
+import {PermissionsAndroid} from 'react-native';
+const App = () => {
+  useEffect(() => {
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+  }, []);
 
-//   return (
-//     <Provider store={store}>
-//       <UserDataProvider>
-//         <NavigationContainer>
-//           <Main></Main>
-//         </NavigationContainer>
-//       </UserDataProvider>
-//     </Provider>
-//   );
-// };
+  return (
+    <Provider store={store}>
+      <UserDataProvider>
+        <NavigationContainer>
+          <Main></Main>
+        </NavigationContainer>
+      </UserDataProvider>
+    </Provider>
+  );
+};
 
-// const Main = () => {
-//   const {accessTokens} = useUserData();
-//   return (
-//     <>
-//       {accessTokens ? (
-//         <SocketProvider>
-//           <TabNavigator />
-//         </SocketProvider>
-//       ) : (
-//         <LoginStackNavigator />
-//       )}
-//     </>
-//   );
-// };
-// export default App;
+const Main = () => {
+  const {accessTokens} = useUserData();
+  return (
+    <>
+      {accessTokens ? (
+        <SocketProvider>
+          <TabNavigator />
+        </SocketProvider>
+      ) : (
+        <LoginStackNavigator />
+      )}
+    </>
+  );
+};
+export default App;
 
 // import React, {useEffect, useRef} from 'react';
 
@@ -273,153 +273,3 @@
 // });
 
 // export default App;
-
-// App.js
-
-import React, {useState, useEffect} from 'react';
-import {View, Button, StyleSheet} from 'react-native';
-import {RTCView, mediaDevices} from 'react-native-webrtc';
-import SimplePeer from 'simple-peer';
-import WebSocket from 'ws';
-
-const SERVER_URL = 'ws://your-signaling-server-url';
-
-const App = () => {
-  const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
-  const [peer, setPeer] = useState(null);
-  const [ws, setWs] = useState(null);
-
-  useEffect(() => {
-    const initWebSocket = () => {
-      const socket = new WebSocket(SERVER_URL);
-      socket.onopen = () => {
-        console.log('WebSocket connected');
-      };
-      socket.onmessage = event => {
-        const message = JSON.parse(event.data);
-        handleMessage(message);
-      };
-      setWs(socket);
-    };
-
-    initWebSocket();
-
-    return () => {
-      if (ws) {
-        ws.close();
-      }
-      if (localStream) {
-        localStream.release();
-      }
-    };
-  }, []);
-
-  const handleMessage = message => {
-    if (message.type === 'offer') {
-      handleOffer(message.offer);
-    } else if (message.type === 'answer') {
-      handleAnswer(message.answer);
-    } else if (message.type === 'candidate') {
-      handleCandidate(message.candidate);
-    }
-  };
-
-  const handleOffer = offer => {
-    const newPeer = new SimplePeer({
-      initiator: false,
-      stream: localStream,
-    });
-
-    newPeer.on('signal', data => {
-      ws.send(JSON.stringify({type: 'answer', answer: data}));
-    });
-
-    newPeer.on('stream', stream => {
-      setRemoteStream(stream);
-    });
-
-    newPeer.signal(offer);
-    setPeer(newPeer);
-  };
-
-  const handleAnswer = answer => {
-    if (peer) {
-      peer.signal(answer);
-    }
-  };
-
-  const handleCandidate = candidate => {
-    if (peer) {
-      peer.signal(candidate);
-    }
-  };
-
-  const handleCall = async () => {
-    const stream = await mediaDevices.getUserMedia({video: true, audio: true});
-    setLocalStream(stream);
-
-    const newPeer = new SimplePeer({
-      initiator: true,
-      stream: localStream,
-    });
-
-    newPeer.on('signal', data => {
-      ws.send(JSON.stringify({type: 'offer', offer: data}));
-    });
-
-    newPeer.on('stream', stream => {
-      setRemoteStream(stream);
-    });
-
-    setPeer(newPeer);
-  };
-
-  const handleHangup = () => {
-    if (peer) {
-      peer.destroy();
-      setPeer(null);
-      setRemoteStream(null);
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.videoContainer}>
-        {localStream && (
-          <RTCView streamURL={localStream.toURL()} style={styles.video} />
-        )}
-        {remoteStream && (
-          <RTCView streamURL={remoteStream.toURL()} style={styles.video} />
-        )}
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button title="Call" onPress={handleCall} />
-        <Button title="Hang Up" onPress={handleHangup} />
-      </View>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  videoContainer: {
-    flexDirection: 'row',
-  },
-  video: {
-    width: 200,
-    height: 200,
-    margin: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-
-export default App;

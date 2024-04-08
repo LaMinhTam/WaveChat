@@ -19,7 +19,9 @@ const MessageVideo = ({item}) => {
         disableFullscreen={false}
         video={{
           // uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          uri: item.media[0],
+          uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+            item.conversation_id
+          }/files/${item.media[0].split(';')[1]}`,
         }}></VideoPlayer>
       <MediaViewModal
         visible={modalVisible}

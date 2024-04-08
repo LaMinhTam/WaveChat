@@ -50,13 +50,13 @@ export const SocketProvider = ({children}) => {
     newSocket.on('message', incomingMessage => {
       const {message} = incomingMessage;
       console.log('message', message);
-      console.log(currentConversation._id, '-', message.conversation_id);
-      if (
-        currentConversation._id === message.conversation_id ||
-        currentConversation._id
-      ) {
-        setMessages(prevMessages => [message, ...prevMessages]);
-      }
+      console.log(currentConversation._id, '\n', message.conversation_id);
+      // if (
+      //   currentConversation._id === message.conversation_id ||
+      //   currentConversation._id
+      // ) {
+      setMessages(prevMessages => [message, ...prevMessages]);
+      // }
       handleConversationOnIncomingMessage(message);
     });
 
