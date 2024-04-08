@@ -22,7 +22,13 @@ import { setId } from "../../store/conversationSlice";
 const ProfileDetailsModal = () => {
     // 0 - Nhắn tin | 1 - Kết bạn | 2 - Thu hồi | 3 - Chấp nhận
     const dispatch = useDispatch();
-    const { setShowProfileDetails, profileDetailsRef } = useChat();
+    const {
+        setShowProfileDetails,
+        profileDetailsRef,
+        setRenderBlock,
+        isBlocked,
+        setIsBlocked,
+    } = useChat();
     const {
         show: showOption,
         setShow: setShowOption,
@@ -31,7 +37,6 @@ const ProfileDetailsModal = () => {
     const [isOpenAvatar, setIsOpenAvatar] = React.useState(false);
     const [status, setStatus] = React.useState(0);
     const [isOpenBG, setIsOpenBG] = React.useState(false);
-    const [isBlocked, setIsBlocked] = React.useState(false);
     const listFriend = useSelector((state) => state.user.listFriend);
     const listFriendRequest = useSelector(
         (state) => state.friend.listFriendRequest
@@ -121,6 +126,7 @@ const ProfileDetailsModal = () => {
             );
             if (res.data.status === 200) {
                 setIsBlocked(true);
+                setRenderBlock(Math.random() * 1000);
                 toast.success("Đã chặn người dùng");
             }
         } catch (error) {
@@ -136,6 +142,7 @@ const ProfileDetailsModal = () => {
             );
             if (res.data.status === 200) {
                 setIsBlocked(false);
+                setRenderBlock(Math.random() * 1000);
                 toast.success("Đã bỏ chặn người dùng");
             }
         } catch (error) {

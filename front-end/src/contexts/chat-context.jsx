@@ -9,6 +9,10 @@ export function ChatProvider(props) {
     const [renderMessageDelete, setRenderMessageDelete] = React.useState(0);
     const [forwardMessage, setForwardMessage] = React.useState({});
     const [messageRefs, setMessageRefs] = React.useState({});
+    const [blockType, setBlockType] = React.useState(0);
+    const [renderBlock, setRenderBlock] = React.useState(0);
+    const [isBlocked, setIsBlocked] = React.useState(false);
+    const [replyMessage, setReplyMessage] = React.useState({});
     // This code to save the selected person when create group chat
     const [selectedList, setSelectedList] = React.useState([]);
     const {
@@ -106,6 +110,14 @@ export function ChatProvider(props) {
         searchMessageModalRef,
         messageRefs,
         setMessageRefs,
+        blockType,
+        setBlockType,
+        renderBlock,
+        setRenderBlock,
+        isBlocked,
+        setIsBlocked,
+        replyMessage,
+        setReplyMessage,
     };
     return (
         <ChatContext.Provider

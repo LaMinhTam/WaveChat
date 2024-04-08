@@ -8,7 +8,7 @@ import useS3ImageConversation from "../../../hooks/useS3ImageConversation";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 
-const ConversationToolbar = ({ socket, user_id, block }) => {
+const ConversationToolbar = ({ socket, user_id, blockType }) => {
     const { setValue, getValues } = useForm();
     const { conversationId, setConversationId } = useChat();
 
@@ -87,7 +87,7 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
             const clientImage = {
                 conversation_id: res.data.data.conversation_id,
                 type: 2,
-                message: "Hình ảnh",
+                message: "",
                 media: listFormatMessage,
                 created_at: "",
             };
@@ -96,7 +96,7 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
             const clientImage = {
                 conversation_id: conversationId,
                 type: 2,
-                message: "Hình ảnh",
+                message: "",
                 media: listFormatMessage,
                 created_at: "",
             };
@@ -105,6 +105,7 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
     };
 
     const handleSendFile = async (fileName, fileType, size = 0, timestamp) => {
+        const typed = fileType.split("/")[0];
         if (!socket) return;
         if (!conversationId) {
             const res = await axiosPrivate.post("/conversation/create", {
@@ -113,8 +114,8 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
             setConversationId(res.data.data.conversation_id);
             const clientFile = {
                 conversation_id: res.data.data.conversation_id,
-                type: 5,
-                message: "Tệp tin",
+                type: typed === "video" ? 3 : 5,
+                message: "",
                 media: `${fileType};${timestamp}-${fileName};${size}`,
                 created_at: "",
             };
@@ -122,8 +123,8 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
         } else {
             const clientFile = {
                 conversation_id: conversationId,
-                type: 5,
-                message: "Tệp tin",
+                type: typed === "video" ? 3 : 5,
+                message: "",
                 media: `${fileType};${timestamp}-${fileName};${size}`,
                 created_at: "",
             };
@@ -146,7 +147,7 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
                     className="hidden-input"
                     onChange={handleSelectImage}
                     multiple
-                    disabled={block}
+                    disabled={blockType === 1 || blockType === 2}
                 />
                 <label
                     htmlFor="fileInput"
@@ -160,7 +161,7 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
                     className="hidden-input"
                     onChange={handleSelectFile}
                     multiple
-                    disabled={block}
+                    disabled={blockType === 1 || blockType === 2}
                 />
                 <button className="flex items-center justify-center w-10 h-10 rounded hover:bg-text3 hover:bg-opacity-10">
                     <IconCard />
@@ -173,7 +174,7 @@ const ConversationToolbar = ({ socket, user_id, block }) => {
 ConversationToolbar.propTypes = {
     socket: PropTypes.object,
     user_id: PropTypes.string,
-    block: PropTypes.bool,
+    blockType: PropTypes.number,
 };
 
 export default ConversationToolbar;

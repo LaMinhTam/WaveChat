@@ -7,65 +7,71 @@ import { useEffect, useState } from "react";
 import ConversationInfo from "./ConversationInfo";
 import { motion } from "framer-motion";
 import { useSocket } from "../../../contexts/socket-context";
-import { getUserId } from "../../../utils/auth";
 import Swal from "sweetalert2";
 import { axiosPrivate } from "../../../api/axios";
+import { useChat } from "../../../contexts/chat-context";
 
 const Conversation = () => {
     const friendInfo = useSelector((state) => state.user.friendInfo);
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
-    const [isBlocked, setIsBlocked] = useState(false);
-    const currentUserId = getUserId();
-    const listBlockUser = useSelector((state) => state.user.listBlockUser);
     const { message, socket } = useSocket();
 
     const [imageMessage, setImageMessage] = useState([]);
     const [fileMessage, setFileMessage] = useState([]);
+    const { blockType, setBlockType, setIsBlocked, showProfileDetails } =
+        useChat(); // [0: not block, 1: block, 2: blocked by other user]
 
     useEffect(() => {
-        if (
-            listBlockUser?.user_block_id?.length > 0 &&
-            currentUserId === listBlockUser?.user_id
-        ) {
-            const isBlock = listBlockUser.some(
-                (user) => user._id === friendInfo._id
-            );
-            if (isBlock) {
-                Swal.fire({
-                    title: "Bạn đang chặn người dùng này! Hủy chặn?",
-                    text: "Bạn sẽ không thể hoàn tác hành động này!",
-                    icon: "Cảnh báo",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Có, hãy hủy!",
-                    cancelButtonText: "Không!",
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        const res = await axiosPrivate.post(
-                            "/user/unblock-user",
-                            {
-                                user_id: friendInfo._id,
-                            }
+        if (blockType === 0) {
+            return;
+        } else if (blockType === 1 && !showProfileDetails) {
+            Swal.fire({
+                title: "Bạn đang chặn người dùng này! Hủy chặn?",
+                text: "Bạn sẽ không thể hoàn tác hành động này!",
+                icon: "Cảnh báo",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Có, hãy hủy!",
+                cancelButtonText: "Không!",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    console.log("unblock user");
+                    const res = await axiosPrivate.post(
+                        `/user/remove-block-user/${friendInfo._id}`
+                    );
+                    if (res.data.status === 200) {
+                        Swal.fire(
+                            "Đã hủy chặn!",
+                            "Người dùng đã được hủy chặn.",
+                            "Thành công"
                         );
-                        if (res.data.status === 200) {
-                            Swal.fire(
-                                "Đã hủy chặn!",
-                                "Người dùng đã được hủy chặn.",
-                                "Thành công"
-                            );
-                        } else {
-                            Swal.fire("Lỗi!", "Đã có lỗi xảy ra.", "error");
-                        }
+                        setBlockType(0);
+                        setIsBlocked(false);
+                    } else {
+                        Swal.fire("Lỗi!", "Đã có lỗi xảy ra.", "error");
                     }
-                });
-            } else {
-                setIsBlocked(false);
-            }
+                } else {
+                    return;
+                }
+            });
+        } else if (blockType === 2) {
+            Swal.fire({
+                title: "Thông báo",
+                text: "Bạn đã bị chặn bởi người này",
+                icon: "warning",
+                confirmButtonText: "OK",
+            });
         }
-    }, [listBlockUser, friendInfo._id, currentUserId]);
+    }, [
+        blockType,
+        friendInfo._id,
+        setBlockType,
+        setIsBlocked,
+        showProfileDetails,
+    ]);
 
     useEffect(() => {
         setImageMessage([]);
@@ -115,23 +121,24 @@ const Conversation = () => {
 
     return (
         <div className="flex items-center justify-center">
-            <div className="flex flex-col w-full h-full min-h-screen">
+            <div className="relative flex flex-col w-full h-full min-h-screen">
                 <ConversationHeader
                     name={friendInfo.full_name}
                     avatar={friendInfo.avatar}
                     userId={friendInfo._id}
                 />
                 <ConversationContent message={message} socket={socket} />
-                <div className="mt-auto shadow-md">
+                <div className="absolute bottom-0 left-0 right-0 flex-shrink-0 mt-auto shadow-md">
                     <ConversationToolbar
                         user_id={friendInfo._id}
                         socket={socket}
-                        block={isBlocked}
+                        blockType={blockType}
                     />
                     <ConversationChatInput
                         user_id={friendInfo._id}
                         socket={socket}
-                        block={isBlocked}
+                        blockType={blockType}
+                        setBlockType={setBlockType}
                     />
                 </div>
             </div>

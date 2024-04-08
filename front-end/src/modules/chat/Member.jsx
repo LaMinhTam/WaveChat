@@ -18,7 +18,8 @@ import { axiosPrivate } from "../../api/axios";
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
-    const { setConversationId, conversationId } = useChat();
+    const { setConversationId, conversationId, setBlockType, renderBlock } =
+        useChat();
     const { unreadCount, setUnreadCount, setMessage } = useSocket();
     const current_userId = getUserId();
     const dispatch = useDispatch();
@@ -48,7 +49,27 @@ const Member = ({ user }) => {
         isActive = false;
     }
 
+    useEffect(() => {
+        async function fetchBlockType() {
+            try {
+                const resDetails = await axiosPrivate.get(
+                    `/conversation/detail?conversation_id=${user._id}`
+                );
+                if (resDetails.data.status === 200) {
+                    let block_type = resDetails.data.data.block_type;
+                    setBlockType(block_type);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if (renderBlock) {
+            fetchBlockType();
+        }
+    }, [renderBlock, setBlockType, user._id]);
+
     const handleClickedMember = async () => {
+        setBlockType(0);
         try {
             if (conversationId === user._id) return;
             else {
@@ -61,6 +82,13 @@ const Member = ({ user }) => {
                     setMessage(data);
                 } else {
                     setMessage([]);
+                }
+                const resDetails = await axiosPrivate.get(
+                    `/conversation/detail?conversation_id=${user._id}`
+                );
+                if (resDetails.data.status === 200) {
+                    let block_type = resDetails.data.data.block_type;
+                    setBlockType(block_type);
                 }
             }
             setIncomingClassName("");
@@ -92,8 +120,14 @@ const Member = ({ user }) => {
         let message = "";
         if (msg?.type === 14) {
             message = "Tin nhắn đã thu hồi";
-        } else if (msg?.type === 1 || msg?.type === 2 || msg?.type === 5) {
+        } else if (msg?.type === 1) {
             message = msg.message;
+        } else if (msg?.type === 2) {
+            message = "Hình ảnh";
+        } else if (msg.type === 3) {
+            message = "video";
+        } else if (msg.type === 5) {
+            message = "Tệp tin";
         } else {
             message = "";
         }

@@ -55,6 +55,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         showChatOptionModal,
         setShowForwardModal,
         setForwardMessage,
+        setReplyMessage,
     } = useChat();
     const messageShowOption = useSelector(
         (state) => state.common.messageShowOption
@@ -77,6 +78,17 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         }
     };
 
+    const handleReplyMessage = () => {
+        setReplyMessage(msg);
+        // socket.emit("message-reply", {
+        //     message: "",
+        //     conversation_id: msg.conversation_id,
+        //     type: msg.type,
+        //     message_reply_id: msg._id,
+        //     created_at: "",
+        // });
+    };
+
     const handleDeleteReaction = async () => {
         try {
             const type = reactionToType(reactionEmoji);
@@ -90,6 +102,12 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         } catch (error) {
             console.log(error);
         }
+    };
+
+    const handleCopyToClipboard = () => {
+        navigator.clipboard.writeText(msg.message).then(() => {
+            setShowChatOptionModal(false);
+        });
     };
 
     const handleReaction = async (reaction) => {
@@ -110,7 +128,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     };
 
     useEffect(() => {
-        if (msg.message === "Hình ảnh" && msg?.media?.length > 0) {
+        if (msg.type === 2 && msg?.media?.length > 0) {
             let imageList = msg.media.map((media) => {
                 let fileName = media.split(";")[1];
                 return s3ConversationUrl(fileName, msg.conversation_id);
@@ -178,40 +196,16 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                         className={`relative flex flex-col items-start justify-center p-3 rounded gap-y-2 bg-tertiary custom-message__block ml-auto`}
                     >
                         <span>{handleFormatMessage(msg)}</span>
-                        {msg.message === "Tệp tin" &&
+                        {msg.type === 5 &&
                             msg?.media?.length > 0 &&
                             msg.media.map((media) => {
-                                let fileType = media.split(";")[0];
                                 let fileName = media.split(";")[1];
                                 let file_name = fileName.split("-")[1];
-                                const fileUri = s3ConversationUrl(
-                                    fileName,
-                                    msg.conversation_id,
-                                    "file"
-                                );
-
-                                let type = fileType.split("/")[0];
                                 let fileExtension = fileName.split(".")[1];
                                 let size = media.split(";")[2];
                                 return (
                                     <div key={uuidv4()}>
                                         <div className="flex flex-col items-center gap-y-2 w-[376px]">
-                                            {type === "video" && (
-                                                <ReactPlayer
-                                                    url={fileUri}
-                                                    controls
-                                                    width="100%"
-                                                    height="200px"
-                                                    config={{
-                                                        file: {
-                                                            attributes: {
-                                                                controlsList:
-                                                                    "nodownload",
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-                                            )}
                                             <div className="flex items-center w-full">
                                                 <div className="flex items-center justify-center gap-x-3">
                                                     {fileExtension ===
@@ -224,9 +218,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                                         "docx" && <IconDocs />}
                                                     {fileExtension ===
                                                         "txt" && <IconTxt />}
-                                                    {type !== "video" &&
-                                                        fileExtension !==
-                                                            "pdf" &&
+                                                    {fileExtension !== "pdf" &&
                                                         fileExtension !==
                                                             "csv" &&
                                                         fileExtension !==
@@ -237,9 +229,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                                             "txt" && (
                                                             <IconFileDefault />
                                                         )}
-                                                    {type === "video" && (
-                                                        <IconVideo />
-                                                    )}
                                                     <div className="flex flex-col">
                                                         <span className="text-sm text-wrap">
                                                             {file_name}
@@ -283,51 +272,121 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                     </div>
                                 );
                             })}
-                        {msg.message === "Hình ảnh" &&
-                            msg?.media?.length > 0 && (
-                                <div className="grid grid-cols-2 gap-4">
-                                    {msg.media.map((media) => {
-                                        let fileName = media.split(";")[1];
-                                        const imageUri = s3ConversationUrl(
-                                            fileName,
-                                            msg.conversation_id
-                                        );
-                                        return (
-                                            <div key={uuidv4()}>
-                                                <div
-                                                    className="w-[250px] h-[250px] rounded cursor-pointer"
+                        {msg.type === 3 &&
+                            msg?.media?.length > 0 &&
+                            msg.media.map((media) => {
+                                let fileName = media.split(";")[1];
+                                let file_name = fileName.split("-")[1];
+                                const fileUri = s3ConversationUrl(
+                                    fileName,
+                                    msg.conversation_id,
+                                    "file"
+                                );
+                                let size = media.split(";")[2];
+                                return (
+                                    <div key={uuidv4()}>
+                                        <div className="flex flex-col items-center gap-y-2 w-[376px]">
+                                            <ReactPlayer
+                                                url={fileUri}
+                                                controls
+                                                width="100%"
+                                                height="200px"
+                                                config={{
+                                                    file: {
+                                                        attributes: {
+                                                            controlsList:
+                                                                "nodownload",
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                            <div className="flex items-center w-full">
+                                                <div className="flex items-center justify-center gap-x-3">
+                                                    <IconVideo />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm text-wrap">
+                                                            {file_name}
+                                                        </span>
+                                                        <div className="flex items-center justify-between">
+                                                            {progress > 0 &&
+                                                                currentFileName ===
+                                                                    file_name && (
+                                                                    <div className="w-full h-2 bg-gray-200 rounded">
+                                                                        <div
+                                                                            className="h-full text-xs text-center text-white bg-blue-500 rounded"
+                                                                            style={{
+                                                                                width: `${progress}%`,
+                                                                            }}
+                                                                        ></div>
+                                                                    </div>
+                                                                )}
+                                                            <span className="flex-shrink-0 text-xs text-text3">
+                                                                {formatSize(
+                                                                    size
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite"
+                                                    disabled={progress > 0}
                                                     onClick={() =>
-                                                        setIsOpenImage(true)
+                                                        handleDownloadFile(
+                                                            fileName,
+                                                            msg.conversation_id
+                                                        )
                                                     }
                                                 >
-                                                    <img
-                                                        src={imageUri}
-                                                        alt=""
-                                                        className="object-cover w-full h-full rounded"
-                                                        onError={(e) => {
-                                                            e.target.onerror =
-                                                                null;
-                                                            e.target.src =
-                                                                imageUri;
-                                                            return;
-                                                        }}
-                                                    />
-                                                </div>
-
-                                                <Viewer
-                                                    visible={isOpenImage}
-                                                    onClose={() => {
-                                                        setIsOpenImage(false);
+                                                    <IconDownload />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        {msg.type === 2 && msg?.media?.length > 0 && (
+                            <div className="grid grid-cols-2 gap-4">
+                                {msg.media.map((media) => {
+                                    let fileName = media.split(";")[1];
+                                    const imageUri = s3ConversationUrl(
+                                        fileName,
+                                        msg.conversation_id
+                                    );
+                                    return (
+                                        <div key={uuidv4()}>
+                                            <div
+                                                className="w-[250px] h-[250px] rounded cursor-pointer"
+                                                onClick={() =>
+                                                    setIsOpenImage(true)
+                                                }
+                                            >
+                                                <img
+                                                    src={imageUri}
+                                                    alt=""
+                                                    className="object-cover w-full h-full rounded"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.src = imageUri;
+                                                        return;
                                                     }}
-                                                    images={imageList.map(
-                                                        (src) => ({ src })
-                                                    )}
                                                 />
                                             </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+
+                                            <Viewer
+                                                visible={isOpenImage}
+                                                onClose={() => {
+                                                    setIsOpenImage(false);
+                                                }}
+                                                images={imageList.map(
+                                                    (src) => ({ src })
+                                                )}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                         <span className="text-sm text-text3">
                             {formatDate(msg.created_at)}
                         </span>
@@ -375,7 +434,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                         className={`absolute px-8 py-2 w-[350px] h-[300px]`}
                     >
                         <div className="w-[116px] h-[24px] flex items-center justify-between bg-lite p-2">
-                            <button>
+                            <button onClick={handleReplyMessage}>
                                 <IconReply />
                             </button>
                             <button
@@ -403,8 +462,9 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                     <ModalChatOption
                         onRecallMessage={handleRecallMessage}
                         onDeleteMessage={onDeleteMessage}
+                        onCopyToClipboard={handleCopyToClipboard}
                         style={{
-                            top: `-${position.topSub}px`,
+                            top: 0,
                             right:
                                 type === "send"
                                     ? `${position.right}px`
@@ -415,7 +475,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                     : "auto",
                             position: "absolute",
                         }}
-                        className={`w-[200px] h-[150px] bg-lite text-sm p-2 ml-[120px] mb-10 z-50`}
+                        className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
                     />
                 )}
             </div>
