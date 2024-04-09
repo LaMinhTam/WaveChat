@@ -15,6 +15,7 @@ import { useAuth } from "../../contexts/auth-context";
 import { saveToken } from "../../utils/auth";
 import { setId } from "../../store/conversationSlice";
 import { setContactOption, setRender } from "../../store/friendSlice";
+import { setShowConversation } from "../../store/commonSlice";
 
 const sidebarLinks = [
     {
@@ -105,6 +106,7 @@ const DashboardSideBar = () => {
                                           saveToken();
                                           setShow(false);
                                           toast.success("Đăng xuất thành công");
+                                          dispatch(setShowConversation(false));
                                           navigate("/login");
                                       }
                                     : item.onClick

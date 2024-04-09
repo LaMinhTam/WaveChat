@@ -120,13 +120,13 @@ const Member = ({ user }) => {
         let message = "";
         if (msg?.type === 14) {
             message = "Tin nhắn đã thu hồi";
-        } else if (msg?.type === 1) {
+        } else if (msg?.type === 1 || msg?.type === 16) {
             message = msg.message;
         } else if (msg?.type === 2) {
             message = "Hình ảnh";
-        } else if (msg.type === 3) {
+        } else if (msg?.type === 3) {
             message = "video";
-        } else if (msg.type === 5) {
+        } else if (msg?.type === 5) {
             message = "Tệp tin";
         } else {
             message = "";

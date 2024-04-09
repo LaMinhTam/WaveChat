@@ -23,6 +23,7 @@ const useHover = () => {
     return {
         hovered,
         nodeRef,
+        setHovered,
     };
 };
 

@@ -85,10 +85,6 @@ export function SocketProvider(props) {
             );
         });
 
-        newSocket.on("message-reply", (data) => {
-            console.log("newSocket.on ~ data:", data);
-        });
-
         setSocket(newSocket);
 
         return () => {

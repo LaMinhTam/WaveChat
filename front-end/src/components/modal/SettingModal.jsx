@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useChat } from "../../contexts/chat-context";
 import Swal from "sweetalert2";
 import { axiosPrivate } from "../../api/axios";
+import { useDispatch } from "react-redux";
+import { setShowConversation } from "../../store/commonSlice";
 
 const SettingModal = () => {
     const {
@@ -14,11 +16,13 @@ const SettingModal = () => {
         setShowChangePasswordModal,
     } = useChat();
     const { setUserInfo } = useAuth();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogout = () => {
         setUserInfo(null);
         saveToken();
         setShowSettingModal(false);
+        dispatch(setShowConversation(false));
         toast.success("Đăng xuất thành công");
         navigate("/login");
     };

@@ -13,6 +13,7 @@ export function ChatProvider(props) {
     const [renderBlock, setRenderBlock] = React.useState(0);
     const [isBlocked, setIsBlocked] = React.useState(false);
     const [replyMessage, setReplyMessage] = React.useState({});
+    const [isOpenReply, setIsOpenReply] = React.useState(false);
     // This code to save the selected person when create group chat
     const [selectedList, setSelectedList] = React.useState([]);
     const {
@@ -118,6 +119,8 @@ export function ChatProvider(props) {
         setIsBlocked,
         replyMessage,
         setReplyMessage,
+        isOpenReply,
+        setIsOpenReply,
     };
     return (
         <ChatContext.Provider

@@ -1,14 +1,4 @@
-import {
-    IconCSV,
-    IconClose,
-    IconDocs,
-    IconEmoji,
-    IconFileDefault,
-    IconPdf,
-    IconSend,
-    IconTxt,
-    IconXLSX,
-} from "../../../components/icons";
+import { IconClose, IconEmoji, IconSend } from "../../../components/icons";
 import PropTypes from "prop-types";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -21,6 +11,9 @@ import s3ImageUrl from "../../../utils/s3ImageUrl";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
 import formatSize from "../../../utils/formatSize";
 import IconVideo from "../../../components/icons/IconVideo";
+import MessageFile from "./message/MessageFile";
+import { v4 as uuidv4 } from "uuid";
+import alertRemoveBlock from "../../../utils/alertRemoveBlock";
 
 const ConversationChatInput = ({
     user_id,
@@ -28,14 +21,16 @@ const ConversationChatInput = ({
     blockType,
     setBlockType,
 }) => {
-    const [messageSend, setMessageSend] = useState("");
     const [listImage, setListImage] = useState([]);
+    const [messageSend, setMessageSend] = useState("");
     const {
         conversationId,
         setConversationId,
         setIsBlocked,
         replyMessage,
         setReplyMessage,
+        isOpenReply,
+        setIsOpenReply,
     } = useChat();
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -47,6 +42,7 @@ const ConversationChatInput = ({
 
     const onCloseReplyMessage = () => {
         setReplyMessage({});
+        setIsOpenReply(false);
     };
 
     const handleSendMessage = async () => {
@@ -57,54 +53,55 @@ const ConversationChatInput = ({
                     member_id: user_id,
                 });
                 setConversationId(res.data.data.conversation_id);
-                const message = {
-                    conversation_id: res.data.data.conversation_id,
-                    message: messageSend,
-                    type: 1,
-                    created_at: "",
-                };
-                socket.emit("message", message);
+                let message = {};
+                if (replyMessage && replyMessage._id) {
+                    message = {
+                        message: messageSend,
+                        conversation_id: replyMessage.conversation_id,
+                        type: 6,
+                        message_reply_id: replyMessage._id,
+                        created_at: "",
+                    };
+                } else {
+                    message = {
+                        conversation_id: res.data.data.conversation_id,
+                        message: messageSend,
+                        type: 1,
+                        created_at: "",
+                    };
+                }
+                setIsOpenReply(false);
+                setReplyMessage("");
                 setMessageSend("");
+                socket.emit("message", message);
             } else {
-                const message = {
-                    conversation_id: conversationId,
-                    message: messageSend,
-                    type: 1,
-                    created_at: "",
-                };
-                socket.emit("message", message);
+                let message = {};
+                if (replyMessage && replyMessage._id) {
+                    message = {
+                        message: messageSend,
+                        conversation_id: replyMessage.conversation_id,
+                        type: 6,
+                        message_reply_id: replyMessage._id,
+                        created_at: "",
+                    };
+                } else {
+                    message = {
+                        conversation_id: conversationId,
+                        message: messageSend,
+                        type: 1,
+                        created_at: "",
+                    };
+                }
+                setIsOpenReply(false);
+                setReplyMessage("");
                 setMessageSend("");
+                socket.emit("message", message);
             }
         } else if (blockType === 1) {
-            Swal.fire({
-                title: "Bạn đang chặn người dùng này! Hủy chặn?",
-                text: "Bạn sẽ không thể hoàn tác hành động này!",
-                icon: "Cảnh báo",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Có, hãy hủy!",
-                cancelButtonText: "Không!",
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    console.log("unblock user");
-                    const res = await axiosPrivate.post(
-                        `/user/remove-block-user/${user_id}`
-                    );
-                    if (res.data.status === 200) {
-                        Swal.fire(
-                            "Đã hủy chặn!",
-                            "Người dùng đã được hủy chặn.",
-                            "Thành công"
-                        );
-                        setBlockType(0);
-                        setIsBlocked(false);
-                    } else {
-                        Swal.fire("Lỗi!", "Đã có lỗi xảy ra.", "error");
-                    }
-                } else {
-                    return;
-                }
+            alertRemoveBlock({
+                user_id,
+                setIsBlocked,
+                setBlockType,
             });
         } else if (blockType === 2) {
             Swal.fire({
@@ -139,7 +136,7 @@ const ConversationChatInput = ({
     return (
         <>
             <div className="relative flex flex-col w-full h-full shadow-md">
-                {replyMessage && replyMessage._id && (
+                {isOpenReply && replyMessage && (
                     <div className="flex flex-col justify-center w-full p-3 border-b gap-y-2 bg-text6">
                         <button
                             className="absolute top-0 right-0"
@@ -151,20 +148,20 @@ const ConversationChatInput = ({
                             <img
                                 src={
                                     s3ImageUrl(
-                                        replyMessage.user.avatar,
-                                        replyMessage.user._id
+                                        replyMessage?.user?.avatar,
+                                        replyMessage?.user?._id
                                     ) || ""
                                 }
                                 alt="avatar"
                                 className="w-8 h-8 rounded-full"
                             />
                             <span className="font-semibold">
-                                {replyMessage.user.full_name}
+                                {replyMessage?.user?.full_name}
                             </span>
                         </div>
-                        {replyMessage.type === 1 && (
+                        {[1, 16].includes(replyMessage?.type) && (
                             <span className="ml-10">
-                                {replyMessage.message}
+                                {replyMessage?.message}
                             </span>
                         )}
                         {replyMessage.type === 2 && listImage.length > 0 && (
@@ -180,51 +177,15 @@ const ConversationChatInput = ({
                             </div>
                         )}
                         {replyMessage.type === 5 &&
-                            replyMessage.media.map((media, index) => {
-                                let fileName = media.split(";")[1];
-                                let file_name = fileName.split("-")[1];
-                                let fileExtension = fileName.split(".")[1];
-                                let size = media.split(";")[2];
-                                return (
-                                    <div key={index}>
-                                        <div className="flex flex-col items-center gap-y-2 w-[376px]">
-                                            <div className="flex items-center w-full">
-                                                <div className="flex items-center justify-center gap-x-3">
-                                                    {fileExtension ===
-                                                        "pdf" && <IconPdf />}
-                                                    {fileExtension ===
-                                                        "csv" && <IconCSV />}
-                                                    {fileExtension ===
-                                                        "xlsx" && <IconXLSX />}
-                                                    {fileExtension ===
-                                                        "docx" && <IconDocs />}
-                                                    {fileExtension ===
-                                                        "txt" && <IconTxt />}
-                                                    {fileExtension !== "pdf" &&
-                                                        fileExtension !==
-                                                            "csv" &&
-                                                        fileExtension !==
-                                                            "xlsx" &&
-                                                        fileExtension !==
-                                                            "docx" &&
-                                                        fileExtension !==
-                                                            "txt" && (
-                                                            <IconFileDefault />
-                                                        )}
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm text-wrap">
-                                                            {file_name}
-                                                        </span>
-                                                        <span className="flex-shrink-0 text-xs text-text3">
-                                                            {formatSize(size)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            replyMessage.media.map((media) => (
+                                <MessageFile
+                                    key={uuidv4()}
+                                    media={media}
+                                    conversation_id={
+                                        replyMessage.conversation_id
+                                    }
+                                />
+                            ))}
                         {replyMessage.type === 3 &&
                             replyMessage.media.map((media) => {
                                 let fileName = media.split(";")[1];

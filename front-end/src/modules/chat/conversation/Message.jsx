@@ -2,91 +2,50 @@ import PropTypes from "prop-types";
 import formatDate from "../../../utils/formatDate";
 import Picker from "emoji-picker-react";
 import { v4 as uuidv4 } from "uuid";
-import {
-    IconCSV,
-    IconDocs,
-    IconDownload,
-    IconFileDefault,
-    IconForward,
-    IconHorizontalMore,
-    IconLike,
-    IconPdf,
-    IconReply,
-    IconTxt,
-    IconXLSX,
-} from "../../../components/icons";
-import ReactPlayer from "react-player";
-import formatSize from "../../../utils/formatSize";
+import { IconLike } from "../../../components/icons";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import Viewer from "react-viewer";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import useHover from "../../../hooks/useHover";
 import { toast } from "react-toastify";
 import { useChat } from "../../../contexts/chat-context";
-import ModalChatOption from "../../../components/modal/ModalChatOption";
-import { setMessageShowOption } from "../../../store/commonSlice";
 import handleFormatMessage from "../../../utils/handleFormatMessage";
-import handleDownloadFile from "../../../utils/handleDownLoadFile";
-import IconVideo from "../../../components/icons/IconVideo";
 import typeToReaction, { reactionToType } from "../../../utils/reactionOfType";
 import { axiosPrivate } from "../../../api/axios";
+import MessageFile from "./message/MessageFile";
+import MessageImage from "./message/MessageImage";
+import MessageVideo from "./message/MessageVideo";
+import MessageReply from "./message/MessageReply";
+import MessageFeature from "./message/MessageFeature";
+import ModalChatOption from "../../../components/modal/ModalChatOption";
 const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [reactionEmoji, setReactionEmoji] = useState("");
     const [imageList, setImageList] = useState([]);
-    const [position, setPosition] = useState({
-        top: "0px",
-        topSub: "0px",
-        left: "0px",
-        right: "0px",
-    });
     const { hovered, nodeRef } = useHover();
     const { hovered: hoveredReaction, nodeRef: nodeRefReaction } = useHover();
     const progress = useSelector((state) => state.common.progress);
     const currentFileName = useSelector(
         (state) => state.common.currentFileName
     );
-    const messageRef = useRef(null);
 
-    const {
-        setShowChatOptionModal,
-        showChatOptionModal,
-        setShowForwardModal,
-        setForwardMessage,
-        setReplyMessage,
-    } = useChat();
     const messageShowOption = useSelector(
         (state) => state.common.messageShowOption
     );
 
-    const dispatch = useDispatch();
-
-    const handleRecallMessage = () => {
-        if (!socket || !msg.conversation_id || !msg._id) return;
-        else {
-            if (type === "send") {
-                socket.emit("revoke-message", {
-                    conversation_id: msg.conversation_id,
-                    message_id: msg._id,
-                });
-                setShowChatOptionModal(false);
-            } else {
-                toast.error("Bạn không thể thu hồi tin nhắn của người khác!");
-            }
-        }
-    };
+    const {
+        setReplyMessage,
+        setIsOpenReply,
+        messageRefs,
+        setShowChatOptionModal,
+        showChatOptionModal,
+    } = useChat();
 
     const handleReplyMessage = () => {
         setReplyMessage(msg);
-        // socket.emit("message-reply", {
-        //     message: "",
-        //     conversation_id: msg.conversation_id,
-        //     type: msg.type,
-        //     message_reply_id: msg._id,
-        //     created_at: "",
-        // });
+        setIsOpenReply(true);
     };
 
     const handleDeleteReaction = async () => {
@@ -104,12 +63,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         }
     };
 
-    const handleCopyToClipboard = () => {
-        navigator.clipboard.writeText(msg.message).then(() => {
-            setShowChatOptionModal(false);
-        });
-    };
-
     const handleReaction = async (reaction) => {
         console.log(reaction?.emoji);
         try {
@@ -125,6 +78,27 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         } catch (error) {
             console.log(error);
         }
+    };
+
+    const handleRecallMessage = () => {
+        if (!socket || !msg.conversation_id || !msg._id) return;
+        else {
+            if (type === "send") {
+                socket.emit("revoke-message", {
+                    conversation_id: msg.conversation_id,
+                    message_id: msg._id,
+                });
+                setShowChatOptionModal(false);
+            } else {
+                toast.error("Bạn không thể thu hồi tin nhắn của người khác!");
+            }
+        }
+    };
+
+    const handleCopyToClipboard = () => {
+        navigator.clipboard.writeText(msg.message).then(() => {
+            setShowChatOptionModal(false);
+        });
     };
 
     useEffect(() => {
@@ -145,36 +119,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         }
     }, [msg.reaction]);
 
-    useEffect(() => {
-        const observer = new ResizeObserver(() => {
-            if (messageRef.current) {
-                const width = messageRef.current.offsetWidth;
-                const height = messageRef.current.offsetHeight;
-                const offsetLeft = messageRef.current.offsetLeft;
-                const offsetRight =
-                    messageRef.current.offsetParent.offsetWidth -
-                    width -
-                    offsetLeft;
-                const top = `${height / 2 - 12}`;
-                const topSub = `${height / 2 - 12 + 100}`;
-                const left = `${offsetLeft + width - 35}`;
-                const right = `${offsetRight + width - 35}`;
-                setPosition({ top, topSub, left, right });
-            }
-        });
-
-        if (messageRef.current) {
-            observer.observe(messageRef.current);
-        }
-
-        return () => {
-            if (messageRef.current) {
-                // eslint-disable-next-line react-hooks/exhaustive-deps
-                observer.unobserve(messageRef.current);
-            }
-        };
-    }, []);
-
     return (
         <>
             <div ref={nodeRef}>
@@ -191,294 +135,141 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                             />
                         </div>
                     )}
-                    <div
-                        ref={messageRef}
-                        className={`relative flex flex-col items-start justify-center p-3 rounded gap-y-2 bg-tertiary custom-message__block ml-auto`}
-                    >
-                        <span>{handleFormatMessage(msg)}</span>
-                        {msg.type === 5 &&
-                            msg?.media?.length > 0 &&
-                            msg.media.map((media) => {
-                                let fileName = media.split(";")[1];
-                                let file_name = fileName.split("-")[1];
-                                let fileExtension = fileName.split(".")[1];
-                                let size = media.split(";")[2];
-                                return (
-                                    <div key={uuidv4()}>
-                                        <div className="flex flex-col items-center gap-y-2 w-[376px]">
-                                            <div className="flex items-center w-full">
-                                                <div className="flex items-center justify-center gap-x-3">
-                                                    {fileExtension ===
-                                                        "pdf" && <IconPdf />}
-                                                    {fileExtension ===
-                                                        "csv" && <IconCSV />}
-                                                    {fileExtension ===
-                                                        "xlsx" && <IconXLSX />}
-                                                    {fileExtension ===
-                                                        "docx" && <IconDocs />}
-                                                    {fileExtension ===
-                                                        "txt" && <IconTxt />}
-                                                    {fileExtension !== "pdf" &&
-                                                        fileExtension !==
-                                                            "csv" &&
-                                                        fileExtension !==
-                                                            "xlsx" &&
-                                                        fileExtension !==
-                                                            "docx" &&
-                                                        fileExtension !==
-                                                            "txt" && (
-                                                            <IconFileDefault />
-                                                        )}
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm text-wrap">
-                                                            {file_name}
-                                                        </span>
-
-                                                        <div className="flex items-center justify-between">
-                                                            {progress > 0 &&
-                                                                currentFileName ===
-                                                                    file_name && (
-                                                                    <div className="w-full h-2 bg-gray-200 rounded">
-                                                                        <div
-                                                                            className="h-full text-xs text-center text-white bg-blue-500 rounded"
-                                                                            style={{
-                                                                                width: `${progress}%`,
-                                                                            }}
-                                                                        ></div>
-                                                                    </div>
-                                                                )}
-                                                            <span className="flex-shrink-0 text-xs text-text3">
-                                                                {formatSize(
-                                                                    size
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite"
-                                                    disabled={progress > 0}
-                                                    onClick={() =>
-                                                        handleDownloadFile(
-                                                            fileName,
-                                                            msg.conversation_id
-                                                        )
-                                                    }
-                                                >
-                                                    <IconDownload />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        {msg.type === 3 &&
-                            msg?.media?.length > 0 &&
-                            msg.media.map((media) => {
-                                let fileName = media.split(";")[1];
-                                let file_name = fileName.split("-")[1];
-                                const fileUri = s3ConversationUrl(
-                                    fileName,
-                                    msg.conversation_id,
-                                    "file"
-                                );
-                                let size = media.split(";")[2];
-                                return (
-                                    <div key={uuidv4()}>
-                                        <div className="flex flex-col items-center gap-y-2 w-[376px]">
-                                            <ReactPlayer
-                                                url={fileUri}
-                                                controls
-                                                width="100%"
-                                                height="200px"
-                                                config={{
-                                                    file: {
-                                                        attributes: {
-                                                            controlsList:
-                                                                "nodownload",
-                                                        },
-                                                    },
-                                                }}
-                                            />
-                                            <div className="flex items-center w-full">
-                                                <div className="flex items-center justify-center gap-x-3">
-                                                    <IconVideo />
-                                                    <div className="flex flex-col">
-                                                        <span className="text-sm text-wrap">
-                                                            {file_name}
-                                                        </span>
-                                                        <div className="flex items-center justify-between">
-                                                            {progress > 0 &&
-                                                                currentFileName ===
-                                                                    file_name && (
-                                                                    <div className="w-full h-2 bg-gray-200 rounded">
-                                                                        <div
-                                                                            className="h-full text-xs text-center text-white bg-blue-500 rounded"
-                                                                            style={{
-                                                                                width: `${progress}%`,
-                                                                            }}
-                                                                        ></div>
-                                                                    </div>
-                                                                )}
-                                                            <span className="flex-shrink-0 text-xs text-text3">
-                                                                {formatSize(
-                                                                    size
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite"
-                                                    disabled={progress > 0}
-                                                    onClick={() =>
-                                                        handleDownloadFile(
-                                                            fileName,
-                                                            msg.conversation_id
-                                                        )
-                                                    }
-                                                >
-                                                    <IconDownload />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        {msg.type === 2 && msg?.media?.length > 0 && (
-                            <div className="grid grid-cols-2 gap-4">
-                                {msg.media.map((media) => {
-                                    let fileName = media.split(";")[1];
-                                    const imageUri = s3ConversationUrl(
-                                        fileName,
-                                        msg.conversation_id
-                                    );
-                                    return (
-                                        <div key={uuidv4()}>
-                                            <div
-                                                className="w-[250px] h-[250px] rounded cursor-pointer"
-                                                onClick={() =>
-                                                    setIsOpenImage(true)
-                                                }
-                                            >
-                                                <img
-                                                    src={imageUri}
-                                                    alt=""
-                                                    className="object-cover w-full h-full rounded"
-                                                    onError={(e) => {
-                                                        e.target.onerror = null;
-                                                        e.target.src = imageUri;
-                                                        return;
-                                                    }}
-                                                />
-                                            </div>
-
-                                            <Viewer
-                                                visible={isOpenImage}
-                                                onClose={() => {
-                                                    setIsOpenImage(false);
-                                                }}
-                                                images={imageList.map(
-                                                    (src) => ({ src })
-                                                )}
-                                            />
-                                        </div>
-                                    );
-                                })}
+                    <div className="flex items-center justify-center ml-auto">
+                        {type === "send" && (
+                            <div className="flex items-center justify-center gap-x-3">
+                                {showChatOptionModal &&
+                                    msg._id === messageShowOption && (
+                                        <ModalChatOption
+                                            onRecallMessage={
+                                                handleRecallMessage
+                                            }
+                                            onDeleteMessage={onDeleteMessage}
+                                            onCopyToClipboard={
+                                                handleCopyToClipboard
+                                            }
+                                            className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
+                                        />
+                                    )}
+                                {type === "send" &&
+                                    hovered &&
+                                    msg?.type !== 14 && (
+                                        <MessageFeature
+                                            msg={msg}
+                                            handleReplyMessage={
+                                                handleReplyMessage
+                                            }
+                                        />
+                                    )}
                             </div>
                         )}
-                        <span className="text-sm text-text3">
-                            {formatDate(msg.created_at)}
-                        </span>
-                    </div>
-                    {type === "receive" && msg.type !== 14 && (
-                        <>
-                            <button
-                                ref={nodeRefReaction}
-                                className="absolute bottom-[-20px] right-0"
-                            >
-                                {hoveredReaction && !reactionEmoji && (
-                                    <Picker
-                                        reactionsDefaultOpen={true}
-                                        onReactionClick={handleReaction}
+                        <div className="flex flex-col p-3 bg-opacity-50 rounded-md gap-y-2 bg-tertiary custom-message__block">
+                            <MessageReply msg={msg} messageRefs={messageRefs} />
+                            <span>{handleFormatMessage(msg)}</span>
+                            {msg.type === 5 &&
+                                msg?.media?.length > 0 &&
+                                msg.media.map((media) => (
+                                    <MessageFile
+                                        key={uuidv4()}
+                                        media={media}
+                                        progress={progress}
+                                        currentFileName={currentFileName}
+                                        conversation_id={msg.conversation_id}
+                                    />
+                                ))}
+                            {msg.type === 3 &&
+                                msg?.media?.length > 0 &&
+                                msg.media.map((media) => (
+                                    <MessageVideo
+                                        key={uuidv4()}
+                                        media={media}
+                                        conversation_id={msg.conversation_id}
+                                        progress={progress}
+                                        currentFileName={currentFileName}
+                                    />
+                                ))}
+                            {msg.type === 2 && msg?.media?.length > 0 && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    {msg.media.map((media) => (
+                                        <MessageImage
+                                            key={uuidv4()}
+                                            media={media}
+                                            conversation_id={
+                                                msg.conversation_id
+                                            }
+                                            setIsOpenImage={setIsOpenImage}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                            <span className="text-sm text-text3">
+                                {formatDate(msg.created_at)}
+                            </span>
+
+                            {msg.type !== 14 && (
+                                <>
+                                    <button
+                                        ref={nodeRefReaction}
+                                        className={`absolute bottom-[-20px] ${
+                                            type === "send"
+                                                ? "right-0"
+                                                : "left-0"
+                                        }`}
+                                    >
+                                        {hoveredReaction && !reactionEmoji && (
+                                            <Picker
+                                                reactionsDefaultOpen={true}
+                                                onReactionClick={handleReaction}
+                                                className="z-50"
+                                            />
+                                        )}
+                                        {reactionEmoji ? (
+                                            <span
+                                                className="text-[24px]"
+                                                onClick={handleDeleteReaction}
+                                            >
+                                                {reactionEmoji}
+                                            </span>
+                                        ) : (
+                                            <IconLike />
+                                        )}
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                        {type === "receive" && (
+                            <div className="flex items-center justify-center gap-x-3">
+                                {hovered && msg?.type !== 14 && (
+                                    <MessageFeature
+                                        msg={msg}
+                                        handleReplyMessage={handleReplyMessage}
                                     />
                                 )}
-                                {reactionEmoji ? (
-                                    <span
-                                        className="text-[24px]"
-                                        onClick={handleDeleteReaction}
-                                    >
-                                        {reactionEmoji}
-                                    </span>
-                                ) : (
-                                    <IconLike />
-                                )}
-                            </button>
-                        </>
-                    )}
-                </div>
-
-                {hovered && msg?.type !== 14 && (
-                    <div
-                        style={{
-                            top: `${position.top}px`,
-                            right:
-                                type === "send"
-                                    ? `${position.right}px`
-                                    : "auto",
-                            left:
-                                type === "receive"
-                                    ? `${position.left}px`
-                                    : "auto",
-                        }}
-                        className={`absolute px-8 py-2 w-[350px] h-[300px]`}
-                    >
-                        <div className="w-[116px] h-[24px] flex items-center justify-between bg-lite p-2">
-                            <button onClick={handleReplyMessage}>
-                                <IconReply />
-                            </button>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowForwardModal(true);
-                                    setForwardMessage(msg);
-                                }}
-                            >
-                                <IconForward />
-                            </button>
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    dispatch(setMessageShowOption(msg._id));
-                                    setShowChatOptionModal(true);
-                                }}
-                            >
-                                <IconHorizontalMore />
-                            </button>
-                        </div>
+                                {showChatOptionModal &&
+                                    msg._id === messageShowOption && (
+                                        <ModalChatOption
+                                            onRecallMessage={
+                                                handleRecallMessage
+                                            }
+                                            onDeleteMessage={onDeleteMessage}
+                                            onCopyToClipboard={
+                                                handleCopyToClipboard
+                                            }
+                                            className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
+                                        />
+                                    )}
+                            </div>
+                        )}
                     </div>
-                )}
-                {showChatOptionModal && msg._id === messageShowOption && (
-                    <ModalChatOption
-                        onRecallMessage={handleRecallMessage}
-                        onDeleteMessage={onDeleteMessage}
-                        onCopyToClipboard={handleCopyToClipboard}
-                        style={{
-                            top: 0,
-                            right:
-                                type === "send"
-                                    ? `${position.right}px`
-                                    : "auto",
-                            left:
-                                type === "receive"
-                                    ? `${position.left}px`
-                                    : "auto",
-                            position: "absolute",
-                        }}
-                        className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
-                    />
-                )}
+                </div>
             </div>
+            <Viewer
+                visible={isOpenImage}
+                onClose={() => {
+                    setIsOpenImage(false);
+                }}
+                images={imageList.map((src) => ({ src }))}
+            />
         </>
     );
 };

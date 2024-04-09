@@ -26,6 +26,10 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
             const fileType = file.type.split("/")[0];
             const fileName = file.name;
             const size = file.size;
+            if (size > 1e9) {
+                toast.error("Không được gửi file quá 1GB!");
+                return;
+            }
             if (fileType === "image") {
                 toast.error("Please select a file");
                 return;

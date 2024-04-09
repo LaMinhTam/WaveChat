@@ -37,6 +37,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
         async function fetchProfileFriendData() {
             try {
                 const user = await fetchUserProfile(userId);
+                console.log("fetchProfileFriendData ~ user:", user);
                 setProfile(user);
             } catch (error) {
                 console.log("error", error);
