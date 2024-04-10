@@ -107,6 +107,28 @@ export async function removeMember(conversation_id, member_id, token) {
   return res.data;
 }
 
+export async function updatePermission(
+  conversation_id,
+  member_id,
+  permission,
+  token,
+) {
+  const res = await axios.post(
+    waveChatApi.updatePermission(conversation_id),
+    {
+      user_id: member_id,
+      permission: permission,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
 export async function leaveGroup(conversation_id, token) {
   const res = await axios.post(
     waveChatApi.leaveGroup(conversation_id),
@@ -124,6 +146,20 @@ export async function leaveGroup(conversation_id, token) {
 export async function deleteConversation(conversation_id, token) {
   const res = await axios.post(
     waveChatApi.deleteConversation(conversation_id),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function disbandConversation(conversation_id, token) {
+  const res = await axios.post(
+    waveChatApi.disbandConversation(conversation_id),
     {},
     {
       headers: {
@@ -192,6 +228,34 @@ export async function reactToMessage(message_id) {
       message_id: message_id,
       type: 1,
     },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function acceptJoinByLink(groupID, token) {
+  const res = await axios.post(
+    waveChatApi.acceptJoinByLink(groupID),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function joinByScanLink(link, token) {
+  const res = await axios.post(
+    waveChatApi.joinByScanLink(link),
+    {},
     {
       headers: {
         'Content-Type': 'application/json',

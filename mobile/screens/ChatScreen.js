@@ -131,7 +131,7 @@ const ChatScreen = ({navigation, route}) => {
     }
   };
 
-  const otherUser = currentConversation.members.filter(
+  const otherUser = currentConversation?.members?.filter(
     member => member !== userInfo._id,
   );
 
@@ -173,7 +173,7 @@ const ChatScreen = ({navigation, route}) => {
     }
     // console.log('Option selected: ', option, 'Message ID: ', message);
   };
-  console.log(currentConversation);
+
   const handleReactToMessage = async messageId => {
     const data = await reactToMessage(messageId);
 

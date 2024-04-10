@@ -15,6 +15,7 @@ import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import {
   deleteConversation,
+  disbandConversation,
   getMembers,
   leaveGroup,
   removeMember,
@@ -22,6 +23,7 @@ import {
 } from '../apis/conversation';
 import {blockUser, getBlockList, removeBlock} from '../apis/user';
 import {setCurrentConversation} from '../store/chatSlice';
+import MemberOptionsModal from '../components/MemberOptionsModal';
 
 const ChatControlPanel = ({navigation}) => {
   const {userInfo, friends, setFriends, accessTokens} = useUserData();
@@ -34,6 +36,19 @@ const ChatControlPanel = ({navigation}) => {
   const [members, setMembers] = useState([]);
   const [isMemberCollapsed, setIsMemberCollapsed] = useState(true);
   const [isBlockUser, setIsBlockUser] = useState(false);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleLongPressMember = member => {
+    setSelectedMember(member);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMember(null);
+    setIsModalVisible(false);
+  };
+
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -118,14 +133,16 @@ const ChatControlPanel = ({navigation}) => {
 
   const handleLeaveGroup = async () => {
     const data = await leaveGroup(currentConversation._id, accessTokens);
-    setConversations(prevConversations =>
-      prevConversations.filter(
-        conversation => conversation._id !== currentConversation._id,
-      ),
-    );
 
     if (data.status === 200) {
       navigation.navigate('HomeScreen');
+      setConversations(prevConversations =>
+        prevConversations.filter(
+          conversation => conversation._id !== currentConversation._id,
+        ),
+      );
+    } else {
+      Alert.alert('Thông báo', data.message);
     }
   };
 
@@ -135,6 +152,20 @@ const ChatControlPanel = ({navigation}) => {
       accessTokens,
     );
     console.log(data);
+    setConversations(prevConversations =>
+      prevConversations.filter(
+        conversation => conversation._id !== currentConversation._id,
+      ),
+    );
+    navigation.navigate('HomeScreen');
+  };
+
+  const handleDisbandConversation = async () => {
+    const data = await disbandConversation(
+      currentConversation._id,
+      accessTokens,
+    );
+
     setConversations(prevConversations =>
       prevConversations.filter(
         conversation => conversation._id !== currentConversation._id,
@@ -253,27 +284,36 @@ const ChatControlPanel = ({navigation}) => {
       {!isMemberCollapsed && (
         <View style={styles.memberList}>
           {members.map(member => (
-            <View
+            <TouchableOpacity
               key={member._id}
               onPress={() => console.log(member)}
+              onLongPress={() => handleLongPressMember(member)}
               style={styles.memberItem}>
               <Image
                 source={{uri: member.avatar}}
                 style={styles.memberAvatar}
               />
               <Text style={{color: '#000'}}>{member.full_name}</Text>
-              {member._id != userInfo._id &&
-                currentConversation.owner_id === userInfo._id && (
-                  <TouchableOpacity
-                    style={{marginLeft: 'auto'}}
-                    onPress={() => {
-                      handleRemoveMember(member._id);
-                    }}>
-                    <FeatherIcon name="trash" size={20} color="red" />
-                  </TouchableOpacity>
-                )}
-            </View>
+              {member._id == currentConversation.owner_id && (
+                <Text style={{marginLeft: 'auto', color: '#aaa'}}>
+                  Trưởng nhóm
+                </Text>
+              )}
+            </TouchableOpacity>
           ))}
+          <MemberOptionsModal
+            visible={isModalVisible}
+            onClose={handleCloseModal}
+            onRemove={() => handleRemoveMember(selectedMember._id)}
+            onAddAsCoLeader={() => handleAddAsCoLeader(selectedMember._id)}
+            onTransferOwnership={() =>
+              handleTransferOwnership(selectedMember._id)
+            }
+            selectedMember={selectedMember}
+            currentConversation={currentConversation}
+            accessTokens={accessTokens}
+            setMembers={setMembers}
+          />
         </View>
       )}
       {mediaMessage.length > 0 && (
@@ -295,27 +335,50 @@ const ChatControlPanel = ({navigation}) => {
         </TouchableOpacity>
       )}
       {currentConversation.type === 1 && (
-        <TouchableOpacity
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#f0f0f0',
-            padding: 10,
-            borderRadius: 8,
-            marginTop: 10,
-          }}
-          onPress={() => {
-            handleLeaveGroup();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              {color: 'red', fontSize: 18, fontWeight: 700},
-            ]}>
-            Rời nhóm
-          </Text>
-        </TouchableOpacity>
+        <View style={{width: '100%'}}>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#f0f0f0',
+              padding: 10,
+              borderRadius: 8,
+              marginTop: 10,
+            }}
+            onPress={() => {
+              handleLeaveGroup();
+            }}>
+            <Text
+              style={[
+                styles.buttonText,
+                {color: 'red', fontSize: 18, fontWeight: 700},
+              ]}>
+              Rời nhóm
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#f0f0f0',
+              padding: 10,
+              borderRadius: 8,
+              marginTop: 10,
+            }}
+            onPress={() => {
+              handleDisbandConversation();
+            }}>
+            <Text
+              style={[
+                styles.buttonText,
+                {color: 'red', fontSize: 18, fontWeight: 700},
+              ]}>
+              Giải tán nhóm
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
       {currentConversation.type === 2 && (
         <TouchableOpacity

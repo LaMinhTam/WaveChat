@@ -13,6 +13,8 @@ import UserInformationScreen from '../screens/UserInformationScreen';
 import ImagesScreen from '../screens/ImagesScreen';
 import AddMember from '../screens/AddMember';
 import ForwardMessage from '../screens/ForwardMessage';
+import JoinByLinkScreen from '../screens/JoinByLinkScreen';
+import QRScanner from '../screens/QRScanner';
 
 const Stack = createStackNavigator();
 
@@ -57,6 +59,11 @@ const ConversationStackNavigator = () => {
         name="ForwardMessage"
         component={ForwardMessage}
         options={{headerTitle: 'Chuyển tiếp tin nhắn'}}></Stack.Screen>
+      <Stack.Screen name="QRScreen" component={QRScanner} />
+      <Stack.Screen
+        name="JoinByLink"
+        component={JoinByLinkScreen}
+        options={{title: 'Mời vào nhóm bằng link'}}></Stack.Screen>
     </Stack.Navigator>
   );
 };

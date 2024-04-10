@@ -61,7 +61,11 @@ const SearchScreen = ({navigation}) => {
             />
           </View>
         </View>
-        <TouchableOpacity style={styles.touchAble}>
+        <TouchableOpacity
+          style={styles.touchAble}
+          onPress={() => {
+            navigation.navigate('QRScreen');
+          }}>
           <Icon name="qrcode-scan" size={24} color="#fff" />
         </TouchableOpacity>
       </View>

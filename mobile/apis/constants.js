@@ -34,6 +34,10 @@ export const waveChatApi = {
     `${waveChatEndpoint}/conversation-group/leave?conversation_id=${id}`,
   deleteConversation: id =>
     `${waveChatEndpoint}/conversation/delete?conversation_id=${id}`,
+  disbandConversation: id =>
+    `${waveChatEndpoint}/conversation-group/disband?conversation_id=${id}`,
+  updatePermission: conversation_id =>
+    `${waveChatEndpoint}/conversation-group/update-permission?conversation_id=${conversation_id}`,
   resetPassowrd: () => `${waveChatEndpoint}/auth/reset-password`,
   blockUser: id => `${waveChatEndpoint}/user/block-user/${id}`,
   removeBlock: id => `${waveChatEndpoint}/user/remove-block-user/${id}`,
@@ -42,6 +46,10 @@ export const waveChatApi = {
   toggleNotification: id =>
     `${waveChatEndpoint}/conversation/notify?conversation_id=${id}`,
   reactToMessage: () => `${waveChatEndpoint}/message/react`,
+  acceptJoinByLink: id =>
+    `${waveChatEndpoint}/conversation-group/join-link?conversation_id=${id}`,
+  joinByScanLink: link =>
+    `${waveChatEndpoint}/conversation-group/join-with-link?link_join=${link}`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

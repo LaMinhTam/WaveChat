@@ -83,6 +83,7 @@ const HomeScreen = ({navigation}) => {
               setCurrentConversation({
                 ...conversation,
                 block_type: data.data.block_type,
+                my_permission: data.data.my_permission,
               });
               navigation.navigate('ChatScreen');
             }}>

@@ -30,11 +30,12 @@ const CreateGroupScreen = ({navigation}) => {
       accessTokens,
     );
 
-    let currentConversation = {
-      ...(await getConversationDetail(data.data.conversation_id, accessTokens)),
-      _id: data.data.conversation_id,
-    };
-    setCurrentConversation(currentConversation);
+    const currentConversation = await getConversationDetail(
+      data.data.conversation_id,
+      accessTokens,
+    );
+    console.log('new currentConversation', currentConversation);
+    setCurrentConversation(currentConversation.data);
     const conversation = await getConversations(accessTokens);
     setConversations(conversation.data);
     navigation.pop();
