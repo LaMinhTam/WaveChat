@@ -14,8 +14,10 @@ import formatTime from "../../utils/formatTime";
 import { useChat } from "../../contexts/chat-context";
 import { useSocket } from "../../contexts/socket-context";
 import { axiosPrivate } from "../../api/axios";
+import { setIsGroupChat } from "../../store/conversationSlice";
 
 const Member = ({ user }) => {
+    console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
     const { setConversationId, conversationId, setBlockType, renderBlock } =
@@ -32,6 +34,10 @@ const Member = ({ user }) => {
     let otherUserId = null;
     if (user.type === 2) {
         otherUserId = user.members.find((member) => member !== current_userId);
+    } else if (user.type === 1) {
+        otherUserId = user.members.filter(
+            (member) => member !== current_userId
+        );
     }
 
     const otherUserInfo = {
@@ -77,6 +83,7 @@ const Member = ({ user }) => {
                     `/message/${user._id}?limit=100000`
                 );
                 const data = res.data.data;
+                console.log("handleClickedMember ~ data:", data);
                 if (data) {
                     data.reverse();
                     setMessage(data);
@@ -100,6 +107,7 @@ const Member = ({ user }) => {
                 dispatch(setActiveConversation(user.user_id));
             }
             dispatch(setFriendInfo(otherUserInfo));
+            dispatch(setIsGroupChat(user.type === 1 ? true : false));
             dispatch(setShowConversation(true));
             setConversationId(user._id);
         } catch (error) {

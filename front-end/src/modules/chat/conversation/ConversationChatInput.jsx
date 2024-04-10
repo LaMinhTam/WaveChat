@@ -14,6 +14,7 @@ import IconVideo from "../../../components/icons/IconVideo";
 import MessageFile from "./message/MessageFile";
 import { v4 as uuidv4 } from "uuid";
 import alertRemoveBlock from "../../../utils/alertRemoveBlock";
+import { useSelector } from "react-redux";
 
 const ConversationChatInput = ({
     user_id,
@@ -33,6 +34,7 @@ const ConversationChatInput = ({
         setIsOpenReply,
     } = useChat();
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
 
     const onEnterPress = async (e) => {
         if (e.key === "Enter" && blockType === 0) {
@@ -48,7 +50,7 @@ const ConversationChatInput = ({
     const handleSendMessage = async () => {
         if (blockType === 0) {
             if (!socket) return;
-            if (!conversationId) {
+            if (!conversationId && !isGroupChat) {
                 const res = await axiosPrivate.post("/conversation/create", {
                     member_id: user_id,
                 });
@@ -251,7 +253,7 @@ const ConversationChatInput = ({
 };
 
 ConversationChatInput.propTypes = {
-    user_id: PropTypes.string,
+    user_id: PropTypes.any,
     socket: PropTypes.object,
     blockType: PropTypes.number,
     setBlockType: PropTypes.func,

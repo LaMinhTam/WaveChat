@@ -4,6 +4,7 @@ const conversationSlice = createSlice({
     initialState: {
         conversations: [],
         id: null,
+        isGroupChat: false,
     },
     reducers: {
         setConversations: (state, action) => {
@@ -12,7 +13,11 @@ const conversationSlice = createSlice({
         setId: (state, action) => {
             state.id = action.payload;
         },
+        setIsGroupChat: (state, action) => {
+            state.isGroupChat = action.payload;
+        },
     },
 });
-export const { setConversations, setId } = conversationSlice.actions;
+export const { setConversations, setId, setIsGroupChat } =
+    conversationSlice.actions;
 export default conversationSlice.reducer;

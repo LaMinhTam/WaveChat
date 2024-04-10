@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { IconBlock, IconTrash } from "../../../components/icons";
+import { IconBlock, IconLogout, IconTrash } from "../../../components/icons";
 import InfoFile from "./Info/InfoFile";
 import InfoHeader from "./Info/InfoHeader";
 import InfoImage from "./Info/InfoImage";
@@ -25,6 +25,7 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const groupImage = groupMessagesByDate(images);
     const groupFile = groupMessagesByDate(files);
     const { conversationId } = useChat();
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const handleDeleteConversation = async () => {
         try {
             const res = await axiosPrivate.post(
@@ -96,13 +97,15 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
                         conversation_id={conversationId}
                     />
                     <InfoFile files={files} conversation_id={conversationId} />
-                    <button
-                        onClick={handleBlockUser}
-                        className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"
-                    >
-                        <IconBlock />
-                        <span>Chặn người dùng này</span>
-                    </button>
+                    {!isGroupChat && (
+                        <button
+                            onClick={handleBlockUser}
+                            className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"
+                        >
+                            <IconBlock />
+                            <span>Chặn người dùng này</span>
+                        </button>
+                    )}
                     <button
                         onClick={handleDeleteConversation}
                         className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"
@@ -110,6 +113,12 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
                         <IconTrash />
                         <span>Xóa lịch sử trò chuyện</span>
                     </button>
+                    {isGroupChat && (
+                        <button className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error">
+                            <IconLogout />
+                            <span>Rời khỏi nhóm</span>
+                        </button>
+                    )}
                 </div>
             )}
         </div>

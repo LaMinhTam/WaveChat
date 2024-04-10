@@ -24,6 +24,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const currentUserId = getUserId();
     const {
         setShowCreateGroupChat,
@@ -37,14 +38,17 @@ const ConversationHeader = ({ name, avatar, userId }) => {
         async function fetchProfileFriendData() {
             try {
                 const user = await fetchUserProfile(userId);
-                console.log("fetchProfileFriendData ~ user:", user);
                 setProfile(user);
             } catch (error) {
                 console.log("error", error);
             }
         }
-        fetchProfileFriendData();
-    }, [dispatch, userId]);
+        if (!isGroupChat) {
+            fetchProfileFriendData();
+        } else {
+            setProfile({});
+        }
+    }, [dispatch, isGroupChat, userId]);
 
     return (
         <div className="flex items-center justify-center px-4 min-h-[68px] bg-lite shadow-md">
@@ -79,16 +83,18 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                 </div>
             </div>
             <div className="flex items-center justify-center gap-x-2">
-                <button
-                    className="w-[32px] h-[32px] flex items-center justify-center"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedList([profile]);
-                        setShowCreateGroupChat(!showCreateGroupChat);
-                    }}
-                >
-                    <IconAddGroup />
-                </button>
+                {!isGroupChat && (
+                    <button
+                        className="w-[32px] h-[32px] flex items-center justify-center"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedList([profile]);
+                            setShowCreateGroupChat(!showCreateGroupChat);
+                        }}
+                    >
+                        <IconAddGroup />
+                    </button>
+                )}
                 <button className="w-[32px] h-[32px] flex items-center justify-center">
                     <IconPhone />
                 </button>
@@ -120,7 +126,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
 ConversationHeader.propTypes = {
     name: PropTypes.string,
     avatar: PropTypes.string,
-    userId: PropTypes.string,
+    userId: PropTypes.any,
 };
 
 export default ConversationHeader;

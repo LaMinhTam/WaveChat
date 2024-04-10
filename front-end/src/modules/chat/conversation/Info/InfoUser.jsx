@@ -1,5 +1,6 @@
 import {
     IconAddGroup,
+    IconAddUser,
     IconBell,
     IconCheck,
     IconEdit,
@@ -14,6 +15,7 @@ import fetchUserProfile from "../../../../api/fetchUserProfile";
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../../../api/axios";
 import { setId } from "../../../../store/conversationSlice";
+import { useSelector } from "react-redux";
 
 const InfoUser = ({ name, avatar, userId }) => {
     const [profile, setProfile] = useState({});
@@ -24,6 +26,7 @@ const InfoUser = ({ name, avatar, userId }) => {
         setSelectedList,
         conversationId,
     } = useChat();
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const [isEdited, setIsEdited] = useState(false);
     const [newName, setNewName] = useState(name);
     useEffect(() => {
@@ -67,7 +70,9 @@ const InfoUser = ({ name, avatar, userId }) => {
             <div className="flex items-center justify-center">
                 <input
                     type="text"
-                    className="h-8 text-lg font-medium bg-transparent border-none text-text1 w-[150px]"
+                    className={`${
+                        isGroupChat ? "w-full" : "w-[150px]"
+                    } h-8 text-lg font-medium bg-transparent border-none text-text1`}
                     onChange={(e) => setNewName(e.target.value)}
                     value={newName}
                     disabled={!isEdited}
@@ -116,20 +121,30 @@ const InfoUser = ({ name, avatar, userId }) => {
                     </span>
                 </div>
                 <div className="flex flex-col items-center">
-                    <button
-                        className="flex items-center justify-center w-8 h-8 rounded-full bg-text6"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedList([profile]);
-                            setShowCreateGroupChat(!showCreateGroupChat);
-                        }}
-                    >
-                        <span className="flex items-center justify-center w-5 h-5">
-                            <IconAddGroup />
-                        </span>
-                    </button>
+                    {isGroupChat ? (
+                        <button className="flex items-center justify-center w-8 h-8 rounded-full bg-text6">
+                            <span className="flex items-center justify-center w-5 h-5">
+                                <IconAddUser />
+                            </span>
+                        </button>
+                    ) : (
+                        <button
+                            className="flex items-center justify-center w-8 h-8 rounded-full bg-text6"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedList([profile]);
+                                setShowCreateGroupChat(!showCreateGroupChat);
+                            }}
+                        >
+                            <span className="flex items-center justify-center w-5 h-5">
+                                <IconAddGroup />
+                            </span>
+                        </button>
+                    )}
                     <span className="px-2 py-1 text-xs font-normal text-center text-text7 text-wrap w-[84px]">
-                        Tạo nhóm trò chuyện
+                        {isGroupChat
+                            ? "Thêm thành viên"
+                            : "Tạo nhóm trò chuyện"}
                     </span>
                 </div>
             </div>

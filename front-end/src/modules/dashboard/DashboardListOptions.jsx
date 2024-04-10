@@ -36,6 +36,8 @@ const DashboardListOptions = () => {
                         } else {
                             temp.push(conversation);
                         }
+                    } else if (conversation.type === 1) {
+                        temp.push(conversation);
                     }
                 });
             }

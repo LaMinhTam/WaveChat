@@ -3,7 +3,6 @@ import formatDate from "../../../utils/formatDate";
 import Picker from "emoji-picker-react";
 import { v4 as uuidv4 } from "uuid";
 import { IconLike } from "../../../components/icons";
-import s3ImageUrl from "../../../utils/s3ImageUrl";
 import Viewer from "react-viewer";
 import { useEffect, useState } from "react";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
@@ -34,6 +33,8 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const messageShowOption = useSelector(
         (state) => state.common.messageShowOption
     );
+
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
 
     const {
         setReplyMessage,
@@ -124,16 +125,15 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
             <div ref={nodeRef}>
                 <div className="flex items-center justify-center gap-x-3">
                     {type === "receive" && (
-                        <div className="w-10 h-10 rounded-full">
-                            <img
-                                src={s3ImageUrl(
-                                    msg.user?.avatar,
-                                    msg.user?._id
-                                )}
-                                alt=""
-                                className="object-cover w-full h-full rounded-full"
-                            />
-                        </div>
+                        <>
+                            <div className="w-10 h-10 rounded-full">
+                                <img
+                                    src={msg.user?.avatar}
+                                    alt=""
+                                    className="object-cover w-full h-full rounded-full"
+                                />
+                            </div>
+                        </>
                     )}
                     <div className="flex items-center justify-center ml-auto">
                         {type === "send" && (
@@ -164,6 +164,11 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                             </div>
                         )}
                         <div className="flex flex-col p-3 bg-opacity-50 rounded-md gap-y-2 bg-tertiary custom-message__block">
+                            {isGroupChat && type === "receive" && (
+                                <span className="text-xs text-text3">
+                                    {msg.user?.full_name}
+                                </span>
+                            )}
                             <MessageReply msg={msg} messageRefs={messageRefs} />
                             <span>{handleFormatMessage(msg)}</span>
                             {msg.type === 5 &&

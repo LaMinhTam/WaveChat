@@ -7,10 +7,12 @@ import { axiosPrivate } from "../../../api/axios";
 import useS3ImageConversation from "../../../hooks/useS3ImageConversation";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const ConversationToolbar = ({ socket, user_id, blockType }) => {
     const { setValue, getValues } = useForm();
     const { conversationId, setConversationId } = useChat();
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
 
     const { handleUploadFile } = useS3File(getValues);
     const { handleUploadImage } = useS3ImageConversation(getValues);
@@ -74,16 +76,16 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
             });
             setConversationId(res.data.data.conversation_id);
         }
-        if (!conversationId) {
+        if (!conversationId || !isGroupChat) {
             createConversation();
         } else {
             return;
         }
-    }, [conversationId, setConversationId, user_id]);
+    }, [conversationId, isGroupChat, setConversationId, user_id]);
 
     const handleSendImage = async (listFormatMessage) => {
         if (!socket) return;
-        if (!conversationId) {
+        if (!conversationId && !isGroupChat) {
             const res = await axiosPrivate.post("/conversation/create", {
                 member_id: user_id,
             });
@@ -111,7 +113,7 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
     const handleSendFile = async (fileName, fileType, size = 0, timestamp) => {
         const typed = fileType.split("/")[0];
         if (!socket) return;
-        if (!conversationId) {
+        if (!conversationId && !isGroupChat) {
             const res = await axiosPrivate.post("/conversation/create", {
                 member_id: user_id,
             });
@@ -177,7 +179,7 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
 
 ConversationToolbar.propTypes = {
     socket: PropTypes.object,
-    user_id: PropTypes.string,
+    user_id: PropTypes.any,
     blockType: PropTypes.number,
 };
 
