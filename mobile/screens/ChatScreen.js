@@ -12,6 +12,7 @@ import {updateUnreadTrack} from '../utils/firestoreManage';
 const ChatScreen = ({navigation, route}) => {
   const {userInfo, accessTokens} = useUserData();
   const {
+    socket,
     currentConversation,
     setCurrentConversation,
     setConversations,
@@ -77,6 +78,23 @@ const ChatScreen = ({navigation, route}) => {
         return conversation;
       });
     });
+  };
+  const handleCall = () => {
+    if (currentConversation.type == 2) {
+      const data = {
+        target_user_id: currentConversation.members.find(
+          member => member !== userInfo._id,
+        ),
+        signal_data: {},
+        message: 'call to user_id' + currentConversation.members[1]._id,
+        name: currentConversation.name,
+      };
+
+      socket.emit('send-call-request', data);
+
+      navigation.navigate('CallPhoneScreen', {data: data, type: 'call-to'});
+      console.log('handleCall ~ data:', data);
+    }
   };
 
   const loadMessages = async () => {
