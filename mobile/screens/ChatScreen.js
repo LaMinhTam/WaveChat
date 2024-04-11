@@ -22,7 +22,6 @@ const ChatScreen = ({navigation, route}) => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentIndex, setCurrentIndex] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
-  const {socket} = useSocket();
   const [replyTo, setReplyTo] = useState();
   const flatListRef = useRef(null);
 
@@ -50,6 +49,12 @@ const ChatScreen = ({navigation, route}) => {
       ),
       headerRight: () => (
         <View style={{flexDirection: 'row', marginRight: 10, gap: 20}}>
+          <TouchableOpacity onPress={() => handleCall()}>
+            <FeatherIcon name="phone" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleVideoCall()}>
+            <FeatherIcon name="video" size={24} color="#fff" />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('ChatControlPanel')}>
             <FeatherIcon name="menu" size={24} color="#fff" />
