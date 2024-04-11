@@ -9,19 +9,21 @@ import {
   Alert,
 } from 'react-native';
 import {removeMember, updatePermission} from '../apis/conversation';
+import {setCurrentConversation} from '../store/chatSlice';
 
 const MemberOptionsModal = ({
   visible,
   onClose,
-  onRemove,
-  onAddAsCoLeader,
-  onTransferOwnership,
   selectedMember,
+  setCurrentConversation,
   currentConversation,
   accessTokens,
   setMembers,
+  navigation,
+  setConversations,
 }) => {
   const [contextMenuOptions, setContextMenuOptions] = useState([]);
+
   useEffect(() => {
     if (currentConversation.my_permission == 2) {
       setContextMenuOptions([
@@ -32,7 +34,7 @@ const MemberOptionsModal = ({
     } else if (currentConversation.my_permission == 1) {
       setContextMenuOptions(['Xóa khỏi nhóm']);
     } else if (currentConversation.my_permission == 0) {
-      setContextMenuOptions([]);
+      setContextMenuOptions(['Xem trang cá nhân']);
     }
   }, [selectedMember]);
 
@@ -50,16 +52,19 @@ const MemberOptionsModal = ({
       handleGrantDeputy();
     } else if (option === 'Chuyển quyền trưởng nhóm') {
       handleGrantAdmin();
+    } else if (option === 'Xem trang cá nhân') {
+      const userIds = selectedMember.user_id;
+      navigation.navigate('UserInfomation', {userIds: [userIds]});
     }
+    onClose();
   };
 
   const handleRemoveMember = async () => {
     const data = await removeMember(
       currentConversation._id,
-      selectedMember._id,
+      selectedMember.user_id,
       accessTokens,
     );
-    console.log(data);
     if (data.status === 200) {
       setMembers(members.filter(member => member._id !== selectedMember._id));
     } else {
@@ -70,7 +75,7 @@ const MemberOptionsModal = ({
   const handleGrantDeputy = async () => {
     const data = await updatePermission(
       currentConversation._id,
-      selectedMember._id,
+      selectedMember.user_id,
       1,
       accessTokens,
     );
@@ -80,9 +85,23 @@ const MemberOptionsModal = ({
   const handleGrantAdmin = async () => {
     const data = await updatePermission(
       currentConversation._id,
-      selectedMember._id,
+      selectedMember.user_id,
       2,
       accessTokens,
+    );
+
+    setCurrentConversation({
+      ...currentConversation,
+      my_permission: 0,
+      owner_id: selectedMember.user_id,
+    });
+
+    setConversations(prevState =>
+      prevState.map(conversation =>
+        conversation._id === currentConversation._id
+          ? {...conversation, owner_id: selectedMember.user_id}
+          : conversation,
+      ),
     );
     console.log(data);
   };

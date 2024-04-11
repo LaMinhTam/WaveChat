@@ -14,6 +14,7 @@ import {MAIN_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import {
+  acceptJoinByLink,
   deleteConversation,
   disbandConversation,
   getMembers,
@@ -294,7 +295,7 @@ const ChatControlPanel = ({navigation}) => {
                 style={styles.memberAvatar}
               />
               <Text style={{color: '#000'}}>{member.full_name}</Text>
-              {member._id == currentConversation.owner_id && (
+              {member.user_id == currentConversation.owner_id && (
                 <Text style={{marginLeft: 'auto', color: '#aaa'}}>
                   Trưởng nhóm
                 </Text>
@@ -304,15 +305,13 @@ const ChatControlPanel = ({navigation}) => {
           <MemberOptionsModal
             visible={isModalVisible}
             onClose={handleCloseModal}
-            onRemove={() => handleRemoveMember(selectedMember._id)}
-            onAddAsCoLeader={() => handleAddAsCoLeader(selectedMember._id)}
-            onTransferOwnership={() =>
-              handleTransferOwnership(selectedMember._id)
-            }
             selectedMember={selectedMember}
+            setCurrentConversation={setCurrentConversation}
             currentConversation={currentConversation}
             accessTokens={accessTokens}
             setMembers={setMembers}
+            navigation={navigation}
+            setConversations={setConversations}
           />
         </View>
       )}
@@ -336,6 +335,55 @@ const ChatControlPanel = ({navigation}) => {
       )}
       {currentConversation.type === 1 && (
         <View style={{width: '100%'}}>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              backgroundColor: '#f0f0f0',
+              padding: 10,
+              borderRadius: 8,
+              marginTop: 10,
+            }}
+            onPress={() => {
+              if (currentConversation.is_join_with_link === 0) {
+                Alert.alert(
+                  'Chưa kích hoạt tham gia bằng liên kết',
+                  'Bạn có muốn kích hoạt tính năng tham gia bằng liên kết không?',
+                  [
+                    {
+                      text: 'Có',
+                      onPress: async () => {
+                        const data = await acceptJoinByLink(
+                          currentConversation._id,
+                          accessTokens,
+                        );
+                        setCurrentConversation({
+                          ...currentConversation,
+                          is_join_with_link: 1,
+                          link_join: data.data.link_join,
+                        });
+                        navigation.navigate('JoinByLink');
+                      },
+                    },
+                    {
+                      text: 'Không',
+                      style: 'cancel',
+                    },
+                  ],
+                  {cancelable: false},
+                );
+              } else {
+                navigation.navigate('JoinByLink');
+              }
+            }}>
+            <Text
+              style={[
+                styles.buttonText,
+                {color: '#000', fontSize: 18, fontWeight: 700},
+              ]}>
+              Link tham gia nhóm
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={{
               width: '100%',
@@ -381,50 +429,51 @@ const ChatControlPanel = ({navigation}) => {
         </View>
       )}
       {currentConversation.type === 2 && (
-        <TouchableOpacity
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#f0f0f0',
-            padding: 10,
-            borderRadius: 8,
-            marginTop: 10,
-          }}
-          onPress={() => {
-            handleBlockUser();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              {color: 'red', fontSize: 18, fontWeight: 700},
-            ]}>
-            {isBlockUser ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
-          </Text>
-        </TouchableOpacity>
-      )}
-      {currentConversation.type === 2 && (
-        <TouchableOpacity
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#f0f0f0',
-            padding: 10,
-            borderRadius: 8,
-            marginTop: 10,
-          }}
-          onPress={() => {
-            handleDeleteConversation();
-          }}>
-          <Text
-            style={[
-              styles.buttonText,
-              {color: 'red', fontSize: 18, fontWeight: 700},
-            ]}>
-            Xóa cuộc trò chuyện
-          </Text>
-        </TouchableOpacity>
+        <View style={{width: '100%'}}>
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#f0f0f0',
+              padding: 10,
+              borderRadius: 8,
+              marginTop: 10,
+            }}
+            onPress={() => {
+              handleBlockUser();
+            }}>
+            <Text
+              style={[
+                styles.buttonText,
+                {color: 'red', fontSize: 18, fontWeight: 700},
+              ]}>
+              {isBlockUser ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#f0f0f0',
+              padding: 10,
+              borderRadius: 8,
+              marginTop: 10,
+            }}
+            onPress={() => {
+              handleDeleteConversation();
+            }}>
+            <Text
+              style={[
+                styles.buttonText,
+                {color: 'red', fontSize: 18, fontWeight: 700},
+              ]}>
+              Xóa cuộc trò chuyện
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );

@@ -13,20 +13,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import {useUserData} from '../contexts/auth-context';
 
 const QRScanner = () => {
-  const [scan, setScan] = useState('Scan your QR code!');
   const {accessTokens} = useUserData();
-
-  useEffect(() => {
-    const fetchJoinByScanLink = async ({link}) => {
-      try {
-        const response = await joinByScanLink(link, accessTokens);
-        console.log(response);
-      } catch (error) {
-        console.error('Error fetching conversations:', error);
-      }
-    };
-    fetchJoinByScanLink();
-  }, []);
 
   return (
     <QRCodeScanner
@@ -38,7 +25,7 @@ const QRScanner = () => {
       showMarker={true}
       topContent={
         <Text style={styles.centerText}>
-          <Text style={styles.textBold}>{scan}</Text>
+          <Text style={styles.textBold}>Scan your QR code!</Text>
         </Text>
       }
     />
