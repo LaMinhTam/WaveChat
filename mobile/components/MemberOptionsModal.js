@@ -9,7 +9,6 @@ import {
   Alert,
 } from 'react-native';
 import {removeMember, updatePermission} from '../apis/conversation';
-import {setCurrentConversation} from '../store/chatSlice';
 
 const MemberOptionsModal = ({
   visible,
@@ -18,9 +17,9 @@ const MemberOptionsModal = ({
   setCurrentConversation,
   currentConversation,
   accessTokens,
-  setMembers,
   navigation,
   setConversations,
+  userId,
 }) => {
   const [contextMenuOptions, setContextMenuOptions] = useState([]);
 
@@ -66,7 +65,12 @@ const MemberOptionsModal = ({
       accessTokens,
     );
     if (data.status === 200) {
-      setMembers(members.filter(member => member._id !== selectedMember._id));
+      setCurrentConversation({
+        ...currentConversation,
+        virtual_members: currentConversation.virtual_members.filter(
+          member => member._id !== selectedMember._id,
+        ),
+      });
     } else {
       Alert.alert('Lỗi', data.message);
     }
@@ -79,6 +83,12 @@ const MemberOptionsModal = ({
       1,
       accessTokens,
     );
+    setCurrentConversation({
+      ...currentConversation,
+      virtual_members: currentConversation.virtual_members.map(member =>
+        member._id === selectedMember._id ? {...member, permission: 1} : member,
+      ),
+    });
     console.log(data);
   };
 
@@ -94,6 +104,13 @@ const MemberOptionsModal = ({
       ...currentConversation,
       my_permission: 0,
       owner_id: selectedMember.user_id,
+      virtual_members: currentConversation.virtual_members.map(member =>
+        member._id === selectedMember._id
+          ? {...member, permission: 2}
+          : member.user_id === userId
+          ? {...member, permission: 0}
+          : member,
+      ),
     });
 
     setConversations(prevState =>
@@ -103,7 +120,7 @@ const MemberOptionsModal = ({
           : conversation,
       ),
     );
-    console.log(data);
+    // console.log(data);
   };
 
   return (

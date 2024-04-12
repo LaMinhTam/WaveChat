@@ -38,11 +38,13 @@ const FriendScreen = ({navigation}) => {
           _id: userInfo._id,
           avatar: userInfo.avatar,
           full_name: userInfo.full_name,
+          permission: 0,
         },
         {
           _id: friend.user_id,
           avatar: friend.avatar,
           full_name: friend.full_name,
+          permission: 0,
         },
       ],
       members: [userInfo._id, friend.user_id],

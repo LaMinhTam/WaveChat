@@ -50,6 +50,10 @@ export const waveChatApi = {
     `${waveChatEndpoint}/conversation-group/join-link?conversation_id=${id}`,
   joinByScanLink: link =>
     `${waveChatEndpoint}/conversation-group/join-with-link?link_join=${link}`,
+  getListMember: id =>
+    `${waveChatEndpoint}/conversation-group/member?conversation_id=${id}`,
+  updateName: id =>
+    `${waveChatEndpoint}/conversation/update-name?conversation_id=${id}`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

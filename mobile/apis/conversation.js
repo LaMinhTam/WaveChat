@@ -22,6 +22,16 @@ export async function getConversationDetail(id, token) {
   return res.data;
 }
 
+export async function getListMember(id, token) {
+  const res = await axios.get(waveChatApi.getListMember(id), {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+}
+
 export async function createConversation(member_id, token) {
   const res = await axios.post(
     waveChatApi.createConversation(),
@@ -256,6 +266,22 @@ export async function joinByScanLink(link, token) {
   const res = await axios.post(
     waveChatApi.joinByScanLink(link),
     {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function updateName(conversation_id, name, token) {
+  const res = await axios.post(
+    waveChatApi.updateName(conversation_id),
+    {
+      name: name,
+    },
     {
       headers: {
         'Content-Type': 'application/json',

@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {getConversationDetail, getConversations} from '../apis/conversation';
+import {
+  getConversationDetail,
+  getConversations,
+  getListMember,
+} from '../apis/conversation';
 import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
@@ -80,10 +84,15 @@ const HomeScreen = ({navigation}) => {
                 conversation._id,
                 accessTokens,
               );
+              virtual_members = await getListMember(
+                conversation._id,
+                accessTokens,
+              );
               setCurrentConversation({
                 ...conversation,
                 block_type: data.data.block_type,
                 my_permission: data.data.my_permission,
+                virtual_members: virtual_members.data,
               });
               navigation.navigate('ChatScreen');
             }}>

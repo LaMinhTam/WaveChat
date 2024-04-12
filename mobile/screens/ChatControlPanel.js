@@ -17,14 +17,13 @@ import {
   acceptJoinByLink,
   deleteConversation,
   disbandConversation,
-  getMembers,
   leaveGroup,
-  removeMember,
   toggleNotification,
+  updateName,
 } from '../apis/conversation';
 import {blockUser, getBlockList, removeBlock} from '../apis/user';
-import {setCurrentConversation} from '../store/chatSlice';
 import MemberOptionsModal from '../components/MemberOptionsModal';
+import EditGroupNameModal from '../components/EditGroupNameModal';
 
 const ChatControlPanel = ({navigation}) => {
   const {userInfo, friends, setFriends, accessTokens} = useUserData();
@@ -34,11 +33,17 @@ const ChatControlPanel = ({navigation}) => {
     messages,
     setConversations,
   } = useSocket();
-  const [members, setMembers] = useState([]);
+
+  const [mediaMessage, setMediaMessage] = useState(
+    messages
+      ?.filter(message => message.type === 2 || message.type === 3)
+      .flatMap(message => message.media),
+  );
   const [isMemberCollapsed, setIsMemberCollapsed] = useState(true);
   const [isBlockUser, setIsBlockUser] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalRenameVisible, setIsModalRenameVisible] = useState(false);
 
   const handleLongPressMember = member => {
     setSelectedMember(member);
@@ -55,19 +60,6 @@ const ChatControlPanel = ({navigation}) => {
   }, []);
 
   const fetchMembers = async () => {
-    if (currentConversation._id !== undefined) {
-      const data = await getMembers(currentConversation._id, accessTokens);
-      const members = data.data.map(member => {
-        if (member._id === userInfo._id) {
-          return {...member, avatar: userInfo.avatar};
-        }
-        return member;
-      });
-      setMembers(members);
-    } else {
-      setMembers(currentConversation.virtual_members);
-    }
-
     const blocks = await getBlockList(accessTokens);
     const blockList = blocks.data;
     const isBlock = blockList.some(
@@ -77,10 +69,6 @@ const ChatControlPanel = ({navigation}) => {
     );
     setIsBlockUser(isBlock);
   };
-
-  const mediaMessage = messages
-    ?.filter(message => message.type === 2 || message.type === 3)
-    .flatMap(message => message.media);
 
   const viewUserPage = () => {
     const userIds = currentConversation.members;
@@ -120,17 +108,6 @@ const ChatControlPanel = ({navigation}) => {
       <FeatherIcon name="chevron-right" size={30} color={'#fff'} />
     </View>
   );
-
-  const handleRemoveMember = async memberId => {
-    const data = await removeMember(
-      currentConversation._id,
-      memberId,
-      accessTokens,
-    );
-    if (data.status === 200) {
-      setMembers(members.filter(member => member._id !== memberId));
-    }
-  };
 
   const handleLeaveGroup = async () => {
     const data = await leaveGroup(currentConversation._id, accessTokens);
@@ -176,7 +153,9 @@ const ChatControlPanel = ({navigation}) => {
   };
 
   const handleBlockUser = async () => {
-    const otherMember = members.filter(member => member._id !== userInfo._id);
+    const otherMember = currentConversation.members.filter(member =>
+      console.log(member !== userInfo._id, member, userInfo._id),
+    );
     let data;
     if (isBlockUser) {
       data = await removeBlock(otherMember[0]._id, accessTokens);
@@ -204,6 +183,23 @@ const ChatControlPanel = ({navigation}) => {
     message => message.type === 2 || message.type === 3,
   );
 
+  const handleSaveNewName = async newName => {
+    const data = await updateName(
+      currentConversation._id,
+      newName,
+      accessTokens,
+    );
+
+    setCurrentConversation({...currentConversation, name: newName});
+    setConversations(prevConversations =>
+      prevConversations.map(conversation =>
+        conversation._id === currentConversation._id
+          ? {...conversation, name: newName}
+          : conversation,
+      ),
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
@@ -216,7 +212,29 @@ const ChatControlPanel = ({navigation}) => {
           style={styles.avatar}
         />
       </View>
-      <Text style={styles.conversationName}>{currentConversation.name}</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 20,
+        }}>
+        <Text style={styles.conversationName}>{currentConversation.name}</Text>
+        {currentConversation.type === 1 && (
+          <TouchableOpacity onPress={() => setIsModalRenameVisible(true)}>
+            <FeatherIcon
+              style={{backgroundColor: '#eee', borderRadius: 20, padding: 5}}
+              name="edit-3"
+              size={20}
+              color={'#000'}></FeatherIcon>
+          </TouchableOpacity>
+        )}
+        <EditGroupNameModal
+          visible={isModalRenameVisible}
+          onClose={() => setIsModalRenameVisible(false)}
+          onSave={handleSaveNewName}
+        />
+      </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -275,7 +293,9 @@ const ChatControlPanel = ({navigation}) => {
       <TouchableOpacity
         style={styles.memberSection}
         onPress={() => setIsMemberCollapsed(!isMemberCollapsed)}>
-        <Text style={styles.sectionName}>Thành viên ({members.length})</Text>
+        <Text style={styles.sectionName}>
+          Thành viên ({currentConversation.virtual_members.length})
+        </Text>
         <FeatherIcon
           name={isMemberCollapsed ? 'chevron-down' : 'chevron-up'}
           size={20}
@@ -284,7 +304,7 @@ const ChatControlPanel = ({navigation}) => {
       </TouchableOpacity>
       {!isMemberCollapsed && (
         <View style={styles.memberList}>
-          {members.map(member => (
+          {currentConversation.virtual_members.map(member => (
             <TouchableOpacity
               key={member._id}
               onPress={() => console.log(member)}
@@ -295,11 +315,10 @@ const ChatControlPanel = ({navigation}) => {
                 style={styles.memberAvatar}
               />
               <Text style={{color: '#000'}}>{member.full_name}</Text>
-              {member.user_id == currentConversation.owner_id && (
-                <Text style={{marginLeft: 'auto', color: '#aaa'}}>
-                  Trưởng nhóm
-                </Text>
-              )}
+              <Text style={{marginLeft: 'auto', color: '#aaa'}}>
+                {member.permission === 1 ? 'Phó nhóm' : ''}
+                {member.permission === 2 ? 'Trưởng nhóm' : ''}
+              </Text>
             </TouchableOpacity>
           ))}
           <MemberOptionsModal
@@ -309,9 +328,9 @@ const ChatControlPanel = ({navigation}) => {
             setCurrentConversation={setCurrentConversation}
             currentConversation={currentConversation}
             accessTokens={accessTokens}
-            setMembers={setMembers}
             navigation={navigation}
             setConversations={setConversations}
+            userId={userInfo._id}
           />
         </View>
       )}
@@ -498,7 +517,6 @@ const styles = StyleSheet.create({
   conversationName: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
     color: PRIMARY_TEXT_COLOR,
   },
   buttonsContainer: {
