@@ -23,11 +23,13 @@ const MessageVideo = ({item}) => {
             item.conversation_id
           }/files/${item.media[0].split(';')[1]}`,
         }}></VideoPlayer>
-      <MediaViewModal
+      {/* <MediaViewModal
         visible={modalVisible}
-        item={item}
+        item={`https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
+          item.conversation_id
+        }/files/${item.media[0].split(';')[1]}`}
         onClose={() => setModalVisible(false)}
-      />
+      /> */}
     </TouchableOpacity>
   );
 };
