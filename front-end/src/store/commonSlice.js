@@ -22,6 +22,9 @@ const commonSlice = createSlice({
         incomingMessageOfConversation: "",
         messageShowOption: "",
         renderListBlockUser: 0,
+        showConversationPermission: false,
+        showListMemberInGroup: false,
+        renderListMemberInGroup: 0,
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -100,6 +103,18 @@ const commonSlice = createSlice({
             ...state,
             renderListBlockUser: action.payload,
         }),
+        setShowConversationPermission: (state, action) => ({
+            ...state,
+            showConversationPermission: action.payload,
+        }),
+        setShowListMemberInGroup: (state, action) => ({
+            ...state,
+            showListMemberInGroup: action.payload,
+        }),
+        setRenderListMemberInGroup: (state, action) => ({
+            ...state,
+            renderListBlockUser: action.payload,
+        }),
     },
 });
 export const {
@@ -122,5 +137,8 @@ export const {
     setIncomingMessageOfConversation,
     setMessageShowOption,
     setRenderListBlockUser,
+    setShowConversationPermission,
+    setShowListMemberInGroup,
+    setRenderListMemberInGroup,
 } = commonSlice.actions;
 export default commonSlice.reducer;

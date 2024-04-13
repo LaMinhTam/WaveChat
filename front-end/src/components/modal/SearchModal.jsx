@@ -48,10 +48,7 @@ const SearchModal = () => {
                     <div className="w-[40px] h-[40px] rounded-full">
                         <img
                             className="object-cover w-full h-full rounded-full"
-                            src={s3ImageUrl(
-                                guestProfile?.avatar,
-                                guestProfile?._id
-                            )}
+                            src={s3ImageUrl(guestProfile?.avatar)}
                             alt={guestProfile?.full_name}
                         />
                     </div>

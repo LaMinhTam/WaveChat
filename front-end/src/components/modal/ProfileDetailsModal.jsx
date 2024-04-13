@@ -59,13 +59,10 @@ const ProfileDetailsModal = () => {
     const guestProfile = useSelector((state) => state.user.guestProfile);
     const [avatar, cover] =
         profileType === "currentUser"
-            ? [
-                  s3ImageUrl(userProfile?.avatar, userProfile?._id),
-                  s3ImageUrl(userProfile?.cover, userProfile?._id),
-              ]
+            ? [s3ImageUrl(userProfile?.avatar), s3ImageUrl(userProfile?.cover)]
             : [
-                  s3ImageUrl(guestProfile?.avatar, guestProfile?._id),
-                  s3ImageUrl(guestProfile?.cover, guestProfile?._id),
+                  s3ImageUrl(guestProfile?.avatar),
+                  s3ImageUrl(guestProfile?.cover),
               ];
 
     const [data, setData] = React.useState({});

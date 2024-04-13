@@ -8,17 +8,21 @@ import { axiosPrivate } from "../../../../api/axios";
 import { getUserId } from "../../../../utils/auth";
 import { motion } from "framer-motion";
 import sortedPersonToAlphabet from "../../../../utils/sortedPersonToAlphabet";
+import { toast } from "react-toastify";
 
 const SearchPerson = () => {
     const [removedInputId, setRemovedInputId] = useState("");
     const { selectedList, setSelectedList } = useChat();
-    console.log("SearchPerson ~ selectedList:", selectedList);
     const [searchValue, setSearchValue] = useState("");
     const listFriend = useSelector((state) => state.user.listFriend);
     const [searchResult, setSearchResult] = useState([]);
     const [personList, setPersonList] = useState([]);
     const conversations = useSelector(
         (state) => state.conversation.conversations
+    );
+
+    const listMemberOfConversation = useSelector(
+        (state) => state.conversation.listMemberOfConversation
     );
     const finalListFriend = sortedPersonToAlphabet(listFriend);
 
@@ -41,6 +45,7 @@ const SearchPerson = () => {
         });
         // remove the null value in recentChatList
         recentChatList = recentChatList?.filter((item) => item !== null);
+
         const PersonList = [
             {
                 type: "chat_recent",
@@ -58,16 +63,25 @@ const SearchPerson = () => {
     }, []);
 
     const handleSelectPerson = (user) => {
-        setSelectedList((prevList) => {
-            const isExist = prevList.some(
-                (item) => item.user_id === user.user_id
-            );
-            if (!isExist) {
-                return [...prevList, user];
-            } else {
-                return prevList.filter((item) => item.user_id !== user.user_id);
-            }
-        });
+        let isExist = listMemberOfConversation.some(
+            (member) => member.user_id === user.user_id
+        );
+        if (isExist) {
+            toast.error("Người dùng đã tồn tại trong nhóm");
+            return;
+        } else
+            setSelectedList((prevList) => {
+                const isExist = prevList.some(
+                    (item) => item.user_id === user.user_id
+                );
+                if (!isExist) {
+                    return [...prevList, user];
+                } else {
+                    return prevList.filter(
+                        (item) => item.user_id !== user.user_id
+                    );
+                }
+            });
     };
 
     const handleRemovePerson = (user) => {

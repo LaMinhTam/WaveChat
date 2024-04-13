@@ -6,6 +6,7 @@ const ChatContext = React.createContext();
 export function ChatProvider(props) {
     const { show, setShow, nodeRef } = useClickOutSide();
     const [conversationId, setConversationId] = React.useState("");
+    const [conversationDetails, setConversationDetails] = React.useState({});
     const [renderMessageDelete, setRenderMessageDelete] = React.useState(0);
     const [forwardMessage, setForwardMessage] = React.useState({});
     const [messageRefs, setMessageRefs] = React.useState({});
@@ -70,6 +71,18 @@ export function ChatProvider(props) {
         nodeRef: searchMessageModalRef,
     } = useClickOutSide();
 
+    const {
+        show: showAddMemberModal,
+        setShow: setShowAddMemberModal,
+        nodeRef: addMemberModalRef,
+    } = useClickOutSide();
+
+    const {
+        show: showMemberOption,
+        setShow: setShowMemberOption,
+        nodeRef: memberOptionRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -79,6 +92,8 @@ export function ChatProvider(props) {
         profileDetailsRef,
         conversationId,
         setConversationId,
+        conversationDetails,
+        setConversationDetails,
         showCreateGroupChat,
         setShowCreateGroupChat,
         groupChatRef,
@@ -121,6 +136,12 @@ export function ChatProvider(props) {
         setReplyMessage,
         isOpenReply,
         setIsOpenReply,
+        showAddMemberModal,
+        setShowAddMemberModal,
+        addMemberModalRef,
+        showMemberOption,
+        setShowMemberOption,
+        memberOptionRef,
     };
     return (
         <ChatContext.Provider

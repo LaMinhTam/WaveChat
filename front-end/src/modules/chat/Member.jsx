@@ -14,14 +14,22 @@ import formatTime from "../../utils/formatTime";
 import { useChat } from "../../contexts/chat-context";
 import { useSocket } from "../../contexts/socket-context";
 import { axiosPrivate } from "../../api/axios";
-import { setIsGroupChat } from "../../store/conversationSlice";
+import {
+    setIsGroupChat,
+    setLinkJoinGroup,
+} from "../../store/conversationSlice";
+import { CONVERSATION_TYPE } from "../../api/constants";
 
 const Member = ({ user }) => {
-    console.log("Member ~ user:", user);
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
-    const { setConversationId, conversationId, setBlockType, renderBlock } =
-        useChat();
+    const {
+        setConversationId,
+        conversationId,
+        setBlockType,
+        renderBlock,
+        setConversationDetails,
+    } = useChat();
     const { unreadCount, setUnreadCount, setMessage } = useSocket();
     const current_userId = getUserId();
     const dispatch = useDispatch();
@@ -32,9 +40,9 @@ const Member = ({ user }) => {
         (state) => state.common.incomingMessageOfConversation
     );
     let otherUserId = null;
-    if (user.type === 2) {
+    if (user.type === CONVERSATION_TYPE.PERSONAL) {
         otherUserId = user.members.find((member) => member !== current_userId);
-    } else if (user.type === 1) {
+    } else if (user.type === CONVERSATION_TYPE.GROUP) {
         otherUserId = user.members.filter(
             (member) => member !== current_userId
         );
@@ -83,7 +91,6 @@ const Member = ({ user }) => {
                     `/message/${user._id}?limit=100000`
                 );
                 const data = res.data.data;
-                console.log("handleClickedMember ~ data:", data);
                 if (data) {
                     data.reverse();
                     setMessage(data);
@@ -94,6 +101,7 @@ const Member = ({ user }) => {
                     `/conversation/detail?conversation_id=${user._id}`
                 );
                 if (resDetails.data.status === 200) {
+                    setConversationDetails(resDetails.data.data);
                     let block_type = resDetails.data.data.block_type;
                     setBlockType(block_type);
                 }
@@ -107,6 +115,7 @@ const Member = ({ user }) => {
                 dispatch(setActiveConversation(user.user_id));
             }
             dispatch(setFriendInfo(otherUserInfo));
+            dispatch(setLinkJoinGroup(user?.link_join || ""));
             dispatch(setIsGroupChat(user.type === 1 ? true : false));
             dispatch(setShowConversation(true));
             setConversationId(user._id);
@@ -145,7 +154,7 @@ const Member = ({ user }) => {
 
     return (
         <div
-            className={`flex items-center gap-x-2 min-h-[74px] h-full w-full cursor-pointer ${
+            className={`flex items-center gap-x-2 min-h-[74px] h-full w-full max-w-[344px] cursor-pointer ${
                 isActive ? "bg-tertiary" : "hover:bg-text4 hover:bg-opacity-10 "
             } ${incomingClassName}`}
             onMouseEnter={() => setIsHover(true)}
@@ -155,15 +164,12 @@ const Member = ({ user }) => {
             <div className="flex items-center justify-center gap-x-3">
                 <div className="w-[48px] h-[48px] rounded-full ml-2 flex-shrink-0">
                     <img
-                        src={s3ImageUrl(
-                            otherUserInfo?.avatar,
-                            otherUserInfo?._id
-                        )}
+                        src={s3ImageUrl(otherUserInfo?.avatar)}
                         alt=""
                         className="object-cover w-full h-full rounded-full"
                     />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col w-full max-w-[200px]">
                     <span className="text-sm font-bold">
                         {otherUserInfo?.full_name}
                     </span>

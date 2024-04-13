@@ -17,6 +17,7 @@ const RegisterPage = React.lazy(() => import("./pages/RegisterPage.jsx"));
 const LoginPage = React.lazy(() => import("./pages/LoginPage.jsx"));
 const NotFoundPage = React.lazy(() => import("./pages/NotFoundPage.jsx"));
 const DashboardPage = React.lazy(() => import("./pages/DashboardPage.jsx"));
+const JoinGroupPage = React.lazy(() => import("./pages/JoinGroupPage.jsx"));
 const LayoutDashboard = React.lazy(() =>
     import("./layout/LayoutDashboard.jsx")
 );
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
         ],
     },
     { path: "/register", element: <RegisterPage /> },
+    {
+        path: "/g/conversation/:conversationId",
+        element: <JoinGroupPage />,
+    },
     { path: "/login", element: <LoginPage /> },
     { path: "/recover", element: <ResetPasswordPage /> },
     { path: "/recover/change-password", element: <ChangePasswordPage /> },

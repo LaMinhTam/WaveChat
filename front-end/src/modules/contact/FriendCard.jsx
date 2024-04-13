@@ -69,7 +69,7 @@ const FriendCard = ({ data, type }) => {
                 <div className="w-[40px] h-[40px] rounded-full">
                     <img
                         className="object-cover w-full h-full rounded-full"
-                        src={s3ImageUrl(data?.avatar, data?.user_id)}
+                        src={s3ImageUrl(data?.avatar)}
                         alt={data?.full_name}
                     />
                 </div>

@@ -67,10 +67,7 @@ const DashboardSideBar = () => {
                                 }}
                             >
                                 <img
-                                    src={s3ImageUrl(
-                                        userProfile?.avatar,
-                                        userProfile?._id
-                                    )}
+                                    src={s3ImageUrl(userProfile?.avatar)}
                                     alt="profile"
                                     className="object-cover w-full h-full rounded-full"
                                 />

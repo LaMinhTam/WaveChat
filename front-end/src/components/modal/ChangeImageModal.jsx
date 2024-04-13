@@ -37,9 +37,9 @@ const ChangeImageModal = ({ type }) => {
 
     useEffect(() => {
         if (type === "avatar" && userProfile.avatar) {
-            setImage(s3ImageUrl(userProfile.avatar, userProfile._id));
+            setImage(s3ImageUrl(userProfile.avatar));
         } else if (type === "cover" && userProfile.cover) {
-            setImage(s3ImageUrl(userProfile.cover, userProfile._id));
+            setImage(s3ImageUrl(userProfile.cover));
         }
     }, [
         setImage,

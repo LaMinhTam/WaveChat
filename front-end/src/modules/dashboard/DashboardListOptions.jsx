@@ -11,8 +11,10 @@ const DashboardListOptions = () => {
     const conversations = useSelector(
         (state) => state.conversation.conversations
     );
+    console.log("DashboardListOptions ~ conversations:", conversations);
     const listFriend = useSelector((state) => state.user.listFriend);
     const [data, setData] = useState([]);
+    console.log("DashboardListOptions ~ data:", data);
     const currentUserId = getUserId();
     const id = useSelector((state) => state.conversation.id);
     useEffect(() => {
@@ -47,7 +49,8 @@ const DashboardListOptions = () => {
                 listFriend.forEach((friend) => {
                     const isFriendInConversation = conversations?.some(
                         (conversation) =>
-                            conversation.members.includes(friend.user_id)
+                            conversation.members.includes(friend.user_id) &&
+                            conversation.type === 2
                     );
                     if (!isFriendInConversation) {
                         temp.push(friend);

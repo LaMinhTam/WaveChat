@@ -10,18 +10,80 @@ import { useSocket } from "../../../contexts/socket-context";
 import Swal from "sweetalert2";
 import { useChat } from "../../../contexts/chat-context";
 import alertRemoveBlock from "../../../utils/alertRemoveBlock";
+import { axiosPrivate } from "../../../api/axios";
+import { useDispatch } from "react-redux";
+import {
+    setIsAdmin,
+    setIsSubAdmin,
+    setListMemberOfConversation,
+} from "../../../store/conversationSlice";
+import { getUserId } from "../../../utils/auth";
+import { CONVERSATION_MEMBER_PERMISSION } from "../../../api/constants";
 
 const Conversation = () => {
+    const dispatch = useDispatch();
     const friendInfo = useSelector((state) => state.user.friendInfo);
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
+    const currentUserId = getUserId();
     const { message, socket } = useSocket();
+    const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
+    const renderListMemberInGroup = useSelector(
+        (state) => state.conversation.renderListMemberInGroup
+    );
 
     const [imageMessage, setImageMessage] = useState([]);
     const [fileMessage, setFileMessage] = useState([]);
-    const { blockType, setBlockType, setIsBlocked, showProfileDetails } =
-        useChat(); // [0: not block, 1: block, 2: blocked by other user]
+    const {
+        blockType,
+        setBlockType,
+        setIsBlocked,
+        showProfileDetails,
+        conversationId,
+    } = useChat(); // [0: not block, 1: block, 2: blocked by other user]
+
+    useEffect(() => {
+        async function fetchMemberInConversation() {
+            const res = await axiosPrivate.get(
+                `/conversation-group/member?conversation_id=${conversationId}`
+            );
+            console.log("fetchMemberInConversation ~ res:", res);
+            if (res.data.status === 200) {
+                const listMember = res.data.data;
+                let admin = listMember.find(
+                    (member) =>
+                        member.permission ===
+                        CONVERSATION_MEMBER_PERMISSION.OWNER
+                );
+                if (admin && admin.user_id === currentUserId) {
+                    dispatch(setIsAdmin(true));
+                } else {
+                    dispatch(setIsAdmin(false));
+                }
+                let subAdmin = listMember.find(
+                    (member) =>
+                        member.permission ===
+                        CONVERSATION_MEMBER_PERMISSION.DEPUTY
+                );
+                if (subAdmin && subAdmin.user_id === currentUserId) {
+                    dispatch(setIsSubAdmin(true));
+                } else {
+                    dispatch(setIsSubAdmin(false));
+                }
+                dispatch(setListMemberOfConversation(res.data.data));
+            }
+        }
+        if (isGroupChat && conversationId) {
+            fetchMemberInConversation();
+        }
+    }, [
+        conversationId,
+        currentUserId,
+        dispatch,
+        isGroupChat,
+        renderListMemberInGroup,
+    ]);
 
     useEffect(() => {
         if (blockType === 0) {

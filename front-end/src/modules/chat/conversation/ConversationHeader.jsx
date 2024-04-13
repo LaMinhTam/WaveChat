@@ -66,7 +66,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                     }}
                 >
                     <img
-                        src={s3ImageUrl(avatar, userId)}
+                        src={s3ImageUrl(avatar)}
                         alt=""
                         className="object-cover w-full h-full rounded-full"
                     />

@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import parse, { domToReact } from "html-react-parser";
 import formatDate from "../../../utils/formatDate";
 import Picker from "emoji-picker-react";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +11,6 @@ import { useSelector } from "react-redux";
 import useHover from "../../../hooks/useHover";
 import { toast } from "react-toastify";
 import { useChat } from "../../../contexts/chat-context";
-import handleFormatMessage from "../../../utils/handleFormatMessage";
 import typeToReaction, { reactionToType } from "../../../utils/reactionOfType";
 import { axiosPrivate } from "../../../api/axios";
 import MessageFile from "./message/MessageFile";
@@ -19,8 +19,11 @@ import MessageVideo from "./message/MessageVideo";
 import MessageReply from "./message/MessageReply";
 import MessageFeature from "./message/MessageFeature";
 import ModalChatOption from "../../../components/modal/ModalChatOption";
+import s3ImageUrl from "../../../utils/s3ImageUrl";
+import { Link } from "react-router-dom";
 const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
+    const [messageFormat, setMessageFormat] = useState("");
     const [reactionEmoji, setReactionEmoji] = useState("");
     const [imageList, setImageList] = useState([]);
     const { hovered, nodeRef } = useHover();
@@ -103,6 +106,28 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     };
 
     useEffect(() => {
+        const regex = /((http|https):\/\/[^\s]+)/g;
+        if (msg.message.match(regex)) {
+            const formattedMessage = msg.message.replace(regex, function (url) {
+                let linkJoinGroup = url.split("/g/")[1];
+                return `<a href="/g/${linkJoinGroup}" target="_blank" class="underline text-secondary">${url}</a>`;
+            });
+            setMessageFormat(formattedMessage);
+        } else {
+            let message = "";
+            if (msg?.type === 14) {
+                message = "Tin nhắn đã thu hồi";
+            } else if (msg?.type === 1 || msg?.type === 16) {
+                message = msg.message;
+            } else {
+                message = "";
+            }
+            setMessageFormat(message);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
         if (msg.type === 2 && msg?.media?.length > 0) {
             let imageList = msg.media.map((media) => {
                 let fileName = media.split(";")[1];
@@ -128,7 +153,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                         <>
                             <div className="w-10 h-10 rounded-full">
                                 <img
-                                    src={msg.user?.avatar}
+                                    src={s3ImageUrl(msg.user?.avatar)}
                                     alt=""
                                     className="object-cover w-full h-full rounded-full"
                                 />
@@ -170,7 +195,28 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                 </span>
                             )}
                             <MessageReply msg={msg} messageRefs={messageRefs} />
-                            <span>{handleFormatMessage(msg)}</span>
+                            <div>
+                                {parse(messageFormat, {
+                                    replace: (domNode) => {
+                                        if (
+                                            domNode.attribs &&
+                                            domNode.attribs.href
+                                        ) {
+                                            return (
+                                                <Link
+                                                    to={domNode.attribs.href}
+                                                    target="_blank"
+                                                    className="underline text-secondary"
+                                                >
+                                                    {domToReact(
+                                                        domNode.children
+                                                    )}
+                                                </Link>
+                                            );
+                                        }
+                                    },
+                                })}
+                            </div>
                             {msg.type === 5 &&
                                 msg?.media?.length > 0 &&
                                 msg.media.map((media) => (

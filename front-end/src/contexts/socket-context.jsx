@@ -77,6 +77,7 @@ export function SocketProvider(props) {
                     if (msg._id === data.message._id) {
                         return {
                             ...msg,
+                            type: 14,
                             message: "Tin nhắn đã thu hồi",
                         };
                     }

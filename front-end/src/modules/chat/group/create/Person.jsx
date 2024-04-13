@@ -9,7 +9,6 @@ const Person = ({
     fullName,
     onClick = () => {},
 }) => {
-    const avatar = s3ImageUrl(avatarName, inputName);
     return (
         <>
             {kind === "primary" && (
@@ -29,7 +28,7 @@ const Person = ({
                         <div className="flex items-center gap-x-3">
                             <div className="w-10 h-10 rounded-full">
                                 <img
-                                    src={avatar}
+                                    src={s3ImageUrl(avatarName)}
                                     alt={fullName}
                                     className="object-cover w-full h-full rounded-full"
                                 />
@@ -44,7 +43,7 @@ const Person = ({
                     <div className="flex items-center justify-center mr-auto">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full">
                             <img
-                                src={avatar}
+                                src={s3ImageUrl(avatarName)}
                                 alt={fullName}
                                 className="object-cover w-full h-full rounded-full"
                             />

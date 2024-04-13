@@ -75,10 +75,7 @@ const SearchMessageModal = () => {
                             <div className="flex items-center gap-x-2">
                                 <div className="w-12 h-12 rounded-full">
                                     <img
-                                        src={s3ImageUrl(
-                                            item.user.avatar,
-                                            item.user._id
-                                        )}
+                                        src={s3ImageUrl(item.user.avatar)}
                                         alt={item.user.full_name}
                                         className="object-cover w-full h-full rounded-full"
                                     />

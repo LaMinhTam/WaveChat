@@ -149,10 +149,7 @@ const ConversationChatInput = ({
                         <div className="flex items-center gap-x-2">
                             <img
                                 src={
-                                    s3ImageUrl(
-                                        replyMessage?.user?.avatar,
-                                        replyMessage?.user?._id
-                                    ) || ""
+                                    s3ImageUrl(replyMessage?.user?.avatar) || ""
                                 }
                                 alt="avatar"
                                 className="w-8 h-8 rounded-full"
