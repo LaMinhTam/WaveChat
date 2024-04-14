@@ -24,7 +24,7 @@ const commonSlice = createSlice({
         renderListBlockUser: 0,
         showConversationPermission: false,
         showListMemberInGroup: false,
-        renderListMemberInGroup: 0,
+        triggerFetchListMember: false,
         futureOwner: {},
     },
     reducers: {
@@ -120,6 +120,10 @@ const commonSlice = createSlice({
             ...state,
             futureOwner: action.payload,
         }),
+        setTriggerFetchListMember: (state, action) => ({
+            ...state,
+            triggerFetchListMember: action.payload,
+        }),
     },
 });
 export const {
@@ -146,5 +150,6 @@ export const {
     setShowListMemberInGroup,
     setRenderListMemberInGroup,
     setFutureOwner,
+    setTriggerFetchListMember,
 } = commonSlice.actions;
 export default commonSlice.reducer;

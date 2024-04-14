@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useAuth } from "../../contexts/auth-context";
 import { useChat } from "../../contexts/chat-context";
-import { saveToken } from "../../utils/auth";
+import { saveToken, saveUserId } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setProfileType } from "../../store/commonSlice";
@@ -16,7 +16,7 @@ const ProfileModal = () => {
         setUserInfo(null);
         saveToken();
         setShow(false);
-
+        saveUserId();
         toast.success("Đăng xuất thành công");
         navigate("/login");
     };

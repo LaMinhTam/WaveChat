@@ -5,9 +5,15 @@ import useToggleValue from "../../../../hooks/useToggleValue";
 import { axiosPrivate } from "../../../../api/axios";
 import { useChat } from "../../../../contexts/chat-context";
 import { useDispatch, useSelector } from "react-redux";
-import { setLinkJoinGroup } from "../../../../store/conversationSlice";
+import {
+    setId,
+    setIsConfirmNewMember,
+    setLinkJoinGroup,
+} from "../../../../store/conversationSlice";
 import { toast } from "react-toastify";
 import {
+    setShowConversation,
+    setShowConversationInfo,
     setShowConversationPermission,
     setShowListMemberInGroup,
 } from "../../../../store/commonSlice";
@@ -18,12 +24,11 @@ const InfoGroupSetting = () => {
     const linkJoinGroup = useSelector(
         (state) => state.conversation.linkJoinGroup
     );
+    const isConfirmNewMember = useSelector(
+        (state) => state.conversation.isConfirmNewMember
+    );
     const waitingList = useSelector((state) => state.conversation.waitingList);
     const { conversationId } = useChat();
-    const {
-        value: toggleMembershipApproval,
-        handleToggleValue: handleToggleMembershipApproval,
-    } = useToggleValue(true);
     const { value: toggleMonitor, handleToggleValue: handleToggleMonitor } =
         useToggleValue(true);
     const {
@@ -51,7 +56,7 @@ const InfoGroupSetting = () => {
                 `/conversation/is_confirm_member?conversation_id=${conversationId}`
             );
             if (res.data.status === 200) {
-                handleToggleMembershipApproval(!toggleMembershipApproval);
+                dispatch(setIsConfirmNewMember(!isConfirmNewMember));
             }
         } catch (error) {
             console.log(error);
@@ -66,6 +71,23 @@ const InfoGroupSetting = () => {
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
                 handleToggleJoinWithLink(!toggleJoinWithLink);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleDeleteGroup = async () => {
+        try {
+            const res = await axiosPrivate.delete(
+                `/conversation-group/disband?conversation_id=${conversationId}`
+            );
+            if (res.data.status === 200) {
+                dispatch(setShowConversationPermission(false));
+                dispatch(setShowConversation(false));
+                dispatch(setShowConversationInfo(false));
+                dispatch(setId(Math.random() * 1000));
+                toast.success("Đã giải tán nhóm");
             }
         } catch (error) {
             console.log(error);
@@ -125,7 +147,7 @@ const InfoGroupSetting = () => {
             </div>
             <div className="flex flex-col px-4 py-3 pt-5 pb-3 border-t-8 gap-y-3 border-text6">
                 <Toggle
-                    checked={toggleMembershipApproval}
+                    checked={isConfirmNewMember}
                     text="Chế độ phê duyệt thành viên mới"
                     onChange={handleMembershipApproval}
                 />
@@ -173,7 +195,10 @@ const InfoGroupSetting = () => {
                 </button>
             </div>
             <div className="flex flex-col px-4 py-3 border-t-8 gap-y-3 border-text6">
-                <button className="text-center text-red-500 bg-error bg-opacity-20 px-4 h-[32px]">
+                <button
+                    className="text-center text-red-500 bg-error bg-opacity-20 px-4 h-[32px]"
+                    onClick={handleDeleteGroup}
+                >
                     Giải tán nhóm
                 </button>
             </div>

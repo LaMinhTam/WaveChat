@@ -103,7 +103,7 @@ const ChangePasswordModal = () => {
                             control={control}
                             type={showOldPassword ? "text" : "password"}
                             name="oldPassword"
-                            placeholder="Enter your old password"
+                            placeholder="Nhập mật khẩu cũ"
                             error={errors.oldPassword?.message}
                         >
                             <IconEyeToggle
@@ -118,7 +118,7 @@ const ChangePasswordModal = () => {
                             control={control}
                             type={showPassword ? "text" : "password"}
                             name="password"
-                            placeholder="Enter your new password"
+                            placeholder="Nhập mật khẩu mới"
                             error={errors.password?.message}
                         >
                             <IconEyeToggle
@@ -135,7 +135,7 @@ const ChangePasswordModal = () => {
                             control={control}
                             type={showConfirmPassword ? "text" : "password"}
                             name="confirmPassword"
-                            placeholder="Enter your new password"
+                            placeholder="Xác nhận mật khẩu mới"
                             error={errors.confirmPassword?.message}
                         >
                             <IconEyeToggle

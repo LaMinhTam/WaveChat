@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { useAuth } from "../../contexts/auth-context";
-import { saveToken } from "../../utils/auth";
+import { saveToken, saveUserId } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { useChat } from "../../contexts/chat-context";
 import Swal from "sweetalert2";
@@ -21,6 +21,7 @@ const SettingModal = () => {
     const handleLogout = () => {
         setUserInfo(null);
         saveToken();
+        saveUserId();
         setShowSettingModal(false);
         dispatch(setShowConversation(false));
         toast.success("Đăng xuất thành công");

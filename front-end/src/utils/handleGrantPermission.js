@@ -3,7 +3,7 @@ import { CONVERSATION_MEMBER_PERMISSION } from "../api/constants";
 import { toast } from "react-toastify";
 
 export default async function handleGrantPermission(
-    type = "add",
+    type,
     permissionType,
     userId,
     userName,

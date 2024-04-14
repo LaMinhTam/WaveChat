@@ -61,7 +61,8 @@ const InfoListMember = () => {
                     user_id: id,
                 }
             );
-            if (res.data.status) {
+            console.log("handleRemoveMember ~ res:", res);
+            if (res.data.status === 200) {
                 let newListMember = listMemberOfConversation.filter(
                     (member) => member.user_id !== id
                 );
@@ -69,6 +70,8 @@ const InfoListMember = () => {
                 setShowMemberOption(false);
                 dispatch(setId(Math.random() * 1000));
                 toast.success("Xóa thành viên thành công");
+            } else {
+                toast.error(res.data.message);
             }
         } catch (error) {
             console.log(error);
@@ -183,6 +186,7 @@ const InfoListMember = () => {
                                                         member.user_id
                                                     )
                                                 }
+                                                setSubAdminId={setSubAdminId}
                                                 conversationId={conversationId}
                                                 userClicked={member}
                                                 className={`flex flex-col items-start justify-center p-2 

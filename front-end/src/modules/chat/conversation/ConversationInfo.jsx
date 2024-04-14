@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { setId } from "../../../store/conversationSlice";
 import InfoGroupSetting from "./Info/InfoGroupSetting";
 import InfoListMember from "./Info/InfoListMember";
+import handleLeaveGroup from "../../../utils/handleLeaveGroup";
 
 const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const showStorage = useSelector((state) => state.common.showStorage);
@@ -29,7 +30,8 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const storageOption = useSelector((state) => state.common.storageOption);
     const groupImage = groupMessagesByDate(images);
     const groupFile = groupMessagesByDate(files);
-    const { conversationId } = useChat();
+    const { conversationId, setShowPassPermissionModal } = useChat();
+    const isAdmin = useSelector((state) => state.conversation.isAdmin);
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const handleDeleteConversation = async () => {
         try {
@@ -143,7 +145,16 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
                             <span>Xóa lịch sử trò chuyện</span>
                         </button>
                         {isGroupChat && (
-                            <button className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error">
+                            <button
+                                onClick={() =>
+                                    handleLeaveGroup(
+                                        conversationId,
+                                        setShowPassPermissionModal,
+                                        isAdmin
+                                    )
+                                }
+                                className="w-full flex items-center gap-x-2 h-[48px] hover:bg-text6 px-4 font-medium text-error"
+                            >
                                 <IconLogout />
                                 <span>Rời khỏi nhóm</span>
                             </button>

@@ -4,10 +4,14 @@ import s3ImageUrl from "../../utils/s3ImageUrl";
 import { CONVERSATION_MEMBER_PERMISSION } from "../../api/constants";
 import { IconClose } from "../icons";
 import { useChat } from "../../contexts/chat-context";
-import { setFutureOwner } from "../../store/commonSlice";
 import { toast } from "react-toastify";
 import handleGrantPermission from "../../utils/handleGrantPermission";
 import { axiosPrivate } from "../../api/axios";
+import { setId } from "../../store/conversationSlice";
+import {
+    setShowConversation,
+    setShowConversationInfo,
+} from "../../store/commonSlice";
 const ModalPassPermission = () => {
     const listMemberOfConversation = useSelector(
         (state) => state.conversation.listMemberOfConversation
@@ -20,9 +24,8 @@ const ModalPassPermission = () => {
     const { conversationId } = useChat();
     const { setShowPassPermissionModal, passPermissionModalRef } = useChat();
     const handleClickPerson = async (member) => {
-        dispatch(setFutureOwner(member));
-        setShowPassPermissionModal(false);
         await handleGrantPermission(
+            "add",
             CONVERSATION_MEMBER_PERMISSION.OWNER,
             member.user_id,
             member.full_name,
@@ -32,8 +35,11 @@ const ModalPassPermission = () => {
             `/conversation-group/leave?conversation_id=${conversationId}`
         );
         if (res.data.status === 200) {
-            dispatch(setFutureOwner({}));
             toast.success(`Bạn đã rời nhóm`);
+            dispatch(setShowConversation(false));
+            dispatch(setShowConversationInfo(false));
+            dispatch(setId(Math.random() * 1000));
+            setShowPassPermissionModal(false);
         }
     };
     return (
