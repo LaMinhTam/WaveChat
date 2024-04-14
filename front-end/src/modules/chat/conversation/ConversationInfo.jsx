@@ -63,7 +63,7 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     if (showConversationPermission) headerType = "permission";
     if (showListMemberInGroup) headerType = "listMember";
     return (
-        <div className="min-w-[344px] h-screen flex flex-col justify-start bg-lite shadow-md overflow-x-hidden overflow-y-scroll custom-scrollbar">
+        <div className="w-[344px] h-screen flex flex-col justify-start bg-lite shadow-md overflow-x-hidden overflow-y-scroll custom-scrollbar">
             <InfoHeader type={headerType} />
             {showStorage && (
                 <div>
@@ -159,7 +159,7 @@ ConversationInfo.propTypes = {
     images: PropTypes.array,
     files: PropTypes.array,
     avatar: PropTypes.string,
-    userId: PropTypes.string,
+    userId: PropTypes.any,
     conversation_id: PropTypes.string,
 };
 

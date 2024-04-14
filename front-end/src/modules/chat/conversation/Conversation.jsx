@@ -16,6 +16,7 @@ import {
     setIsAdmin,
     setIsSubAdmin,
     setListMemberOfConversation,
+    setWaitingList,
 } from "../../../store/conversationSlice";
 import { getUserId } from "../../../utils/auth";
 import { CONVERSATION_MEMBER_PERMISSION } from "../../../api/constants";
@@ -29,6 +30,9 @@ const Conversation = () => {
     const currentUserId = getUserId();
     const { message, socket } = useSocket();
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
+    const isConfirmNewMember = useSelector(
+        (state) => state.conversation.isConfirmNewMember
+    );
     const renderListMemberInGroup = useSelector(
         (state) => state.conversation.renderListMemberInGroup
     );
@@ -44,11 +48,24 @@ const Conversation = () => {
     } = useChat(); // [0: not block, 1: block, 2: blocked by other user]
 
     useEffect(() => {
+        async function fetchWaitingList() {
+            const res = await axiosPrivate.get(
+                `/conversation-group/waiting-member?conversation_id=${conversationId}`
+            );
+            if (res.data.status === 200) {
+                dispatch(setWaitingList(res.data.data));
+            }
+        }
+        if (conversationId && isGroupChat && isConfirmNewMember) {
+            fetchWaitingList();
+        }
+    }, [conversationId, dispatch, isConfirmNewMember, isGroupChat]);
+
+    useEffect(() => {
         async function fetchMemberInConversation() {
             const res = await axiosPrivate.get(
                 `/conversation-group/member?conversation_id=${conversationId}`
             );
-            console.log("fetchMemberInConversation ~ res:", res);
             if (res.data.status === 200) {
                 const listMember = res.data.data;
                 let admin = listMember.find(

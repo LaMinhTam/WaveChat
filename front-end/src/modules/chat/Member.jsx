@@ -8,6 +8,7 @@ import {
     setActiveConversation,
     setIncomingMessageOfConversation,
     setShowConversation,
+    setShowConversationInfo,
 } from "../../store/commonSlice";
 import { setFriendInfo } from "../../store/userSlice";
 import formatTime from "../../utils/formatTime";
@@ -15,6 +16,7 @@ import { useChat } from "../../contexts/chat-context";
 import { useSocket } from "../../contexts/socket-context";
 import { axiosPrivate } from "../../api/axios";
 import {
+    setIsConfirmNewMember,
     setIsGroupChat,
     setLinkJoinGroup,
 } from "../../store/conversationSlice";
@@ -85,8 +87,7 @@ const Member = ({ user }) => {
     const handleClickedMember = async () => {
         setBlockType(0);
         try {
-            if (conversationId === user._id) return;
-            else {
+            if (conversationId !== user._id) {
                 const res = await axiosPrivate.get(
                     `/message/${user._id}?limit=100000`
                 );
@@ -101,10 +102,18 @@ const Member = ({ user }) => {
                     `/conversation/detail?conversation_id=${user._id}`
                 );
                 if (resDetails.data.status === 200) {
+                    let is_confirm_new_member =
+                        resDetails.data.data.is_confirm_new_member;
+                    dispatch(
+                        setIsConfirmNewMember(
+                            is_confirm_new_member === 1 ? true : false
+                        )
+                    );
                     setConversationDetails(resDetails.data.data);
                     let block_type = resDetails.data.data.block_type;
                     setBlockType(block_type);
                 }
+                dispatch(setShowConversationInfo(false));
             }
             setIncomingClassName("");
             dispatch(setIncomingMessageOfConversation(""));

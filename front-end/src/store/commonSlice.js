@@ -25,6 +25,7 @@ const commonSlice = createSlice({
         showConversationPermission: false,
         showListMemberInGroup: false,
         renderListMemberInGroup: 0,
+        futureOwner: {},
     },
     reducers: {
         setOpenModal: (state, action) => ({
@@ -115,6 +116,10 @@ const commonSlice = createSlice({
             ...state,
             renderListBlockUser: action.payload,
         }),
+        setFutureOwner: (state, action) => ({
+            ...state,
+            futureOwner: action.payload,
+        }),
     },
 });
 export const {
@@ -140,5 +145,6 @@ export const {
     setShowConversationPermission,
     setShowListMemberInGroup,
     setRenderListMemberInGroup,
+    setFutureOwner,
 } = commonSlice.actions;
 export default commonSlice.reducer;

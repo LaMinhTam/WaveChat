@@ -42,8 +42,12 @@ const InfoUser = ({ name, avatar, userId }) => {
                 console.log("error", error);
             }
         }
-        fetchProfileFriendData();
-    }, [dispatch, userId]);
+        if (!isGroupChat) {
+            fetchProfileFriendData();
+        } else {
+            setProfile({});
+        }
+    }, [dispatch, isGroupChat, userId]);
     const handleChangeConversationName = async () => {
         try {
             const res = await axiosPrivate.post(
@@ -157,7 +161,7 @@ const InfoUser = ({ name, avatar, userId }) => {
                             : "Tạo nhóm trò chuyện"}
                     </span>
                 </div>
-                {isAdmin && (
+                {isAdmin && isGroupChat && (
                     <div className="flex flex-col items-center">
                         <button
                             className="flex items-center justify-center w-8 h-8 rounded-full bg-text6"

@@ -1,51 +1,34 @@
 import PropTypes from "prop-types";
-import { useController } from "react-hook-form";
 import classNames from "../../utils/classNames";
-
-const Checkbox = ({
-    control,
+const CheckboxSub = ({
+    checked = false,
+    onClick = () => {},
     name = "",
     children,
     error = "",
-    type = "primary",
-    onChange = () => {},
 }) => {
-    const { field } = useController({
-        control,
-        name,
-        defaultValue: false,
-    });
-
-    const handleClick = () => {
-        const newValue = !field.value;
-        field.onChange(newValue);
-        onChange(newValue);
-    };
-
     return (
         <div className="flex flex-col justify-center gap-y-2">
             <div className="flex items-start gap-x-5">
                 <div
                     className={classNames(
                         "inline-flex items-center justify-center w-5 h-5 border rounded cursor-pointer text-white",
-                        field.value
+                        checked
                             ? "bg-primary border-primary"
-                            : type === "secondary"
-                            ? "border-text5 dark:border-text3"
-                            : "border-strock dark:border-text3"
+                            : "border-text5 dark:border-text3"
                     )}
-                    onClick={handleClick}
+                    onClick={onClick}
                 >
                     <input
                         type="checkbox"
                         className="hidden"
-                        checked={field.value}
+                        checked={checked}
                         name={name}
-                        {...field}
+                        onChange={() => {}}
                     />
                     <span
                         className={classNames(
-                            field.value ? "" : "opacity-0 invisible"
+                            checked ? "" : "opacity-0 invisible"
                         )}
                     >
                         <svg
@@ -64,7 +47,7 @@ const Checkbox = ({
                 </div>
                 {children && (
                     <div
-                        onClick={handleClick}
+                        onClick={onClick}
                         className="cursor-pointer select-none"
                     >
                         {children}
@@ -79,14 +62,12 @@ const Checkbox = ({
         </div>
     );
 };
-
-Checkbox.propTypes = {
-    error: PropTypes.string,
-    control: PropTypes.any.isRequired,
+CheckboxSub.propTypes = {
+    checked: PropTypes.bool,
     name: PropTypes.string,
+    onClick: PropTypes.func,
     children: PropTypes.node,
-    type: PropTypes.oneOf(["primary", "secondary"]),
-    onChange: PropTypes.func,
+    error: PropTypes.string,
 };
 
-export default Checkbox;
+export default CheckboxSub;

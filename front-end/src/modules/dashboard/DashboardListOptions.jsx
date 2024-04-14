@@ -11,10 +11,8 @@ const DashboardListOptions = () => {
     const conversations = useSelector(
         (state) => state.conversation.conversations
     );
-    console.log("DashboardListOptions ~ conversations:", conversations);
     const listFriend = useSelector((state) => state.user.listFriend);
     const [data, setData] = useState([]);
-    console.log("DashboardListOptions ~ data:", data);
     const currentUserId = getUserId();
     const id = useSelector((state) => state.conversation.id);
     useEffect(() => {

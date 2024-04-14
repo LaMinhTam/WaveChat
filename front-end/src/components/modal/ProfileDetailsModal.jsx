@@ -265,7 +265,7 @@ const ProfileDetailsModal = () => {
                                                 );
                                             }}
                                         >
-                                            Change avatar
+                                            Cập nhật ảnh đại diện
                                         </button>
                                         <button
                                             className="px-4 py-2 hover:bg-primary hover:text-lite"
@@ -276,7 +276,7 @@ const ProfileDetailsModal = () => {
                                                 );
                                             }}
                                         >
-                                            Change cover
+                                            Cập nhật ảnh bìa
                                         </button>
                                     </div>
                                 )}

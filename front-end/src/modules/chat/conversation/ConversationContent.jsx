@@ -34,6 +34,19 @@ const ConversationContent = ({ message, socket }) => {
         }
     }, [message]);
 
+    useEffect(() => {
+        groupedMessages.forEach((group) => {
+            group?.data.forEach((msg) => {
+                if (!messageRefs[msg._id]) {
+                    setMessageRefs((refs) => ({
+                        ...refs,
+                        [msg._id]: React.createRef(),
+                    }));
+                }
+            });
+        });
+    }, [groupedMessages, messageRefs, setMessageRefs]);
+
     const dispatch = useDispatch();
 
     const handleDeleteMessage = async (id) => {
@@ -69,13 +82,6 @@ const ConversationContent = ({ message, socket }) => {
                 {groupedMessages.map((group) => (
                     <div key={uuidv4()} className="flex flex-col items-center">
                         {group?.data.map((msg) => {
-                            // Create a ref for this message if it doesn't exist
-                            if (!messageRefs[msg._id]) {
-                                setMessageRefs((refs) => ({
-                                    ...refs,
-                                    [msg._id]: React.createRef(),
-                                }));
-                            }
                             if (msg.conversation_id === conversationId) {
                                 return (
                                     <div

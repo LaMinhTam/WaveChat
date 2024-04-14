@@ -9,6 +9,8 @@ const conversationSlice = createSlice({
         isAdmin: false,
         isSubAdmin: false,
         linkJoinGroup: "",
+        isConfirmNewMember: false,
+        waitingList: [],
     },
     reducers: {
         setConversations: (state, action) => {
@@ -32,6 +34,12 @@ const conversationSlice = createSlice({
         setLinkJoinGroup: (state, action) => {
             state.linkJoinGroup = action.payload;
         },
+        setIsConfirmNewMember: (state, action) => {
+            state.isConfirmNewMember = action.payload;
+        },
+        setWaitingList: (state, action) => {
+            state.waitingList = action.payload;
+        },
     },
 });
 export const {
@@ -42,5 +50,7 @@ export const {
     setIsAdmin,
     setIsSubAdmin,
     setLinkJoinGroup,
+    setIsConfirmNewMember,
+    setWaitingList,
 } = conversationSlice.actions;
 export default conversationSlice.reducer;

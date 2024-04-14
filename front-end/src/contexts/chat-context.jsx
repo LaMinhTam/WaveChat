@@ -83,6 +83,12 @@ export function ChatProvider(props) {
         nodeRef: memberOptionRef,
     } = useClickOutSide();
 
+    const {
+        show: showPassPermissionModal,
+        setShow: setShowPassPermissionModal,
+        nodeRef: passPermissionModalRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -142,6 +148,9 @@ export function ChatProvider(props) {
         showMemberOption,
         setShowMemberOption,
         memberOptionRef,
+        showPassPermissionModal,
+        setShowPassPermissionModal,
+        passPermissionModalRef,
     };
     return (
         <ChatContext.Provider

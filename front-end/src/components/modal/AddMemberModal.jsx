@@ -3,11 +3,14 @@ import { useChat } from "../../contexts/chat-context";
 import SearchPerson from "../../modules/chat/group/create/SearchPerson";
 import { IconClose } from "../icons";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { setRenderListMemberInGroup } from "../../store/commonSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { CONVERSATION_MEMBER_PERMISSION } from "../../api/constants";
+import { setListMemberOfConversation } from "../../store/conversationSlice";
+import { useEffect, useState } from "react";
 
 const AddMemberModal = () => {
     const dispatch = useDispatch();
+    const [isInviteToWaitingList, setIsInviteToWaitingList] = useState(false);
     const {
         setShowAddMemberModal,
         addMemberModalRef,
@@ -15,9 +18,27 @@ const AddMemberModal = () => {
         setSelectedList,
         conversationId,
     } = useChat();
+    const listMemberOfConversation = useSelector(
+        (state) => state.conversation.listMemberOfConversation
+    );
+    const isConfirmNewMember = useSelector(
+        (state) => state.conversation.isConfirmNewMember
+    );
+    const isAdmin = useSelector((state) => state.conversation.isAdmin);
+    const isSubAdmin = useSelector((state) => state.conversation.isSubAdmin);
+
+    useEffect(() => {
+        if (isConfirmNewMember) {
+            if (isAdmin || isSubAdmin) {
+                setIsInviteToWaitingList(false);
+            } else {
+                setIsInviteToWaitingList(true);
+            }
+        }
+    }, [isAdmin, isConfirmNewMember, isSubAdmin]);
     const handleAddMember = async () => {
         try {
-            let members = selectedList.map((member) => member._id);
+            let members = selectedList.map((member) => member.user_id);
             const res = await axiosPrivate.post(
                 `/conversation-group/add-member?conversation_id=${conversationId}`,
                 {
@@ -25,8 +46,22 @@ const AddMemberModal = () => {
                 }
             );
             if (res.data.status === 200) {
-                toast.success("Thêm thành công");
-                dispatch(setRenderListMemberInGroup(Math.random() * 1000));
+                if (isInviteToWaitingList) {
+                    toast.success(
+                        "Đã thêm người dùng vào danh sách chờ xác nhận!"
+                    );
+                } else {
+                    toast.success("Thêm thành công");
+                    let listNewMember = selectedList.map((member) => {
+                        return {
+                            ...member,
+                            permission: CONVERSATION_MEMBER_PERMISSION.MEMBER,
+                        };
+                    });
+                    let newListMember =
+                        listMemberOfConversation.concat(listNewMember);
+                    dispatch(setListMemberOfConversation(newListMember));
+                }
                 setShowAddMemberModal(false);
             }
         } catch (error) {

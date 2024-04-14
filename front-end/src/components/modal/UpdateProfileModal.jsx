@@ -36,19 +36,24 @@ const UpdateProfileModal = () => {
     }, [gender, nickName, startDate, userProfile]);
 
     const handleUpdateProfile = async () => {
-        const res = await axiosPrivate.post("/user/update", {
-            ...userProfile,
-            nick_name: nickName,
-            gender: gender,
-            birthday: formatBirthDay(startDate),
-        });
-        if (res.data.status === 200) {
-            toast.success("Cập nhật thông tin thành công");
-            dispatch(setUserProfile(res.data.data));
-            dispatch(setShowUpdateProfile(false));
-            setShowProfileDetails(false);
+        if (!nickName) {
+            toast.error("Tên hiển thị không được để trống");
+            return;
         } else {
-            toast.error(res.data.message);
+            const res = await axiosPrivate.post("/user/update", {
+                ...userProfile,
+                nick_name: nickName,
+                gender: gender,
+                birthday: formatBirthDay(startDate),
+            });
+            if (res.data.status === 200) {
+                toast.success("Cập nhật thông tin thành công");
+                dispatch(setUserProfile(res.data.data));
+                dispatch(setShowUpdateProfile(false));
+                setShowProfileDetails(false);
+            } else {
+                toast.error(res.data.message);
+            }
         }
     };
     return (

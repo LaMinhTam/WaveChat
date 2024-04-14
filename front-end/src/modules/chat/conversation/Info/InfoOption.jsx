@@ -17,12 +17,13 @@ const InfoOption = ({ number }) => {
         (state) => state.conversation.linkJoinGroup
     );
     const { conversationId } = useChat();
-    let link = "";
-    if (linkJoinGroup) {
-        link = `wavechat.me/g/conversation/${conversationId}?link_join=${linkJoinGroup}`;
-    }
     const { setShowForwardModal } = useChat();
     const handleCopyLink = () => {
+        let link = "";
+
+        if (linkJoinGroup) {
+            link = `wavechat.me/g/conversation/${conversationId}?link_join=${linkJoinGroup}`;
+        }
         link = "https://" + link;
         navigator.clipboard.writeText(link);
         toast.success("Đã sao chép");
@@ -37,7 +38,9 @@ const InfoOption = ({ number }) => {
                     onClick={handleCopyLink}
                 >
                     <span>Link tham gia nhóm</span>
-                    <span className="text-secondary line-clamp-1">{link}</span>
+                    <span className="text-secondary line-clamp-1">
+                        {linkJoinGroup}
+                    </span>
                 </div>
                 <div className="flex items-center justify-center ml-auto gap-x-2">
                     <button

@@ -23,6 +23,7 @@ import IconFileDefault from "./IconFileDefault";
 import IconForward from "./IconForward";
 import IconHorizontalMore from "./IconHorizontalMore";
 import IconImage from "./IconImage";
+import IconKey from "./IconKey";
 import IconLetter from "./IconLetter";
 import IconLight from "./IconLight";
 import IconLike from "./IconLike";
@@ -87,4 +88,5 @@ export {
     IconVideoCall,
     IconPhone,
     IconCheck,
+    IconKey,
 };

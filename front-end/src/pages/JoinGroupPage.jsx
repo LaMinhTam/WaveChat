@@ -8,6 +8,7 @@ import { setId } from "../store/conversationSlice";
 import { useEffect } from "react";
 import { useState } from "react";
 import s3ImageUrl from "../utils/s3ImageUrl";
+import { getUserId } from "../utils/auth";
 
 const JoinGroupPage = () => {
     const { conversationId } = useParams();
@@ -15,8 +16,10 @@ const JoinGroupPage = () => {
     const linkJoin = searchParams.get("link_join");
     const dispatch = useDispatch();
     const [details, setDetails] = useState({});
+    console.log("JoinGroupPage ~ details:", details);
     const [isJoin, setIsJoin] = useState(false);
     const [isConfirm, setIsConfirm] = useState(false);
+    const currentUserId = getUserId();
     useEffect(() => {
         async function fetchConversation() {
             const res = await axiosPrivate.get(
@@ -30,11 +33,22 @@ const JoinGroupPage = () => {
             fetchConversation();
         }
     }, [conversationId]);
+
+    useEffect(() => {
+        let isInGroup = false;
+        details?.members?.forEach((member) => {
+            if (member === currentUserId) {
+                isInGroup = true;
+            }
+        });
+        setIsJoin(isInGroup);
+    }, [currentUserId, details?.members]);
     const handleJoinGroupWithLink = async () => {
         try {
             const res = await axiosPrivate.post(
                 `/conversation-group/join-with-link?link_join=${linkJoin}`
             );
+            console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {
                 if (details?.is_confirm_new_member === 0) {
                     dispatch(setId(conversationId));
