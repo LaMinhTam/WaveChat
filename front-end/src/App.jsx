@@ -3,7 +3,7 @@ import Modal from "react-modal";
 Modal.setAppElement("#root");
 Modal.defaultStyles = {};
 function App({ children }) {
-    return <div>{children}</div>;
+    return <div className="w-screen h-screen overflow-hidden">{children}</div>;
 }
 
 App.propTypes = {

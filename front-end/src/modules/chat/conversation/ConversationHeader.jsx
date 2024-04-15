@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import fetchUserProfile from "../../../api/fetchUserProfile";
 import { getUserId } from "../../../utils/auth";
 import { setGuestProfile } from "../../../store/userSlice";
+import { groupAvatarDefault } from "../../../api/constants";
 
 const ConversationHeader = ({ name, avatar, userId }) => {
     const [profile, setProfile] = useState({});
@@ -33,7 +34,13 @@ const ConversationHeader = ({ name, avatar, userId }) => {
         setShowProfileDetails,
         setShowSearchModal,
         setShowSearchMessageModal,
+        setShowModalGroupInfo,
+        showModalGroupInfo,
     } = useChat();
+    console.log(
+        "ConversationHeader ~ showModalGroupChatInfo:",
+        showModalGroupInfo
+    );
     useEffect(() => {
         async function fetchProfileFriendData() {
             try {
@@ -57,16 +64,24 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                     className="w-[48px] h-[48px] rounded-full cursor-pointer"
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (profile._id !== currentUserId) {
-                            dispatch(setProfileType("guest"));
+                        if (isGroupChat) {
+                            setShowModalGroupInfo(true);
+                        } else {
+                            if (profile._id !== currentUserId) {
+                                dispatch(setProfileType("guest"));
+                            }
+                            dispatch(setGuestProfile(profile));
+                            setShowProfileDetails(true);
+                            setShowSearchModal(false);
                         }
-                        dispatch(setGuestProfile(profile));
-                        setShowProfileDetails(true);
-                        setShowSearchModal(false);
                     }}
                 >
                     <img
-                        src={s3ImageUrl(avatar)}
+                        src={
+                            isGroupChat
+                                ? groupAvatarDefault
+                                : s3ImageUrl(avatar)
+                        }
                         alt=""
                         className="object-cover w-full h-full rounded-full"
                     />

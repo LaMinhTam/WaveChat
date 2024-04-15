@@ -89,6 +89,18 @@ export function ChatProvider(props) {
         nodeRef: passPermissionModalRef,
     } = useClickOutSide();
 
+    const {
+        show: showModalChangeGroupName,
+        setShow: setShowModalChangeGroupName,
+        nodeRef: modalChangeGroupNameRef,
+    } = useClickOutSide();
+
+    const {
+        show: showModalGroupInfo,
+        setShow: setShowModalGroupInfo,
+        nodeRef: modalGroupInfoRef,
+    } = useClickOutSide();
+
     const contextValues = {
         show,
         setShow,
@@ -151,6 +163,12 @@ export function ChatProvider(props) {
         showPassPermissionModal,
         setShowPassPermissionModal,
         passPermissionModalRef,
+        showModalChangeGroupName,
+        setShowModalChangeGroupName,
+        modalChangeGroupNameRef,
+        showModalGroupInfo,
+        setShowModalGroupInfo,
+        modalGroupInfoRef,
     };
     return (
         <ChatContext.Provider

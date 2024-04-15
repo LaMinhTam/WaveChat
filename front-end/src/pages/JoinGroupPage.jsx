@@ -25,6 +25,7 @@ const JoinGroupPage = () => {
             const res = await axiosPrivate.get(
                 `/conversation/detail?conversation_id=${conversationId}`
             );
+            console.log("fetchConversation ~ res:", res);
             if (res.data.status === 200) {
                 setDetails(res.data.data);
             }

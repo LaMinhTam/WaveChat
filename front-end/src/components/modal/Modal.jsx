@@ -11,6 +11,8 @@ import ForwardModal from "./ForwardModal";
 import SearchMessageModal from "./SearchMessageModal";
 import AddMemberModal from "./AddMemberModal";
 import ModalPassPermission from "./ModalPassPermission";
+import ModalGroupInfo from "./ModalGroupInfo";
+import ModalChangeGroupName from "./ModalChangeGroupName";
 
 const Modal = () => {
     const {
@@ -25,6 +27,8 @@ const Modal = () => {
         showSearchMessageModal,
         showAddMemberModal,
         showPassPermissionModal,
+        showModalGroupInfo,
+        showModalChangeGroupName,
     } = useChat();
     return (
         <>
@@ -69,6 +73,14 @@ const Modal = () => {
                 <ProfileDetailsModal />
             </ReactModal>
             <ReactModal
+                isOpen={showModalGroupInfo}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[400px] bg-white rounded outline-none relative"
+            >
+                <ModalGroupInfo />
+            </ReactModal>
+            <ReactModal
                 isOpen={showChangePasswordModal}
                 overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
                 flex justify-center items-center"
@@ -107,6 +119,14 @@ const Modal = () => {
                 className="modal-content w-full max-w-[520px] bg-white rounded outline-none relative"
             >
                 <ModalPassPermission />
+            </ReactModal>
+            <ReactModal
+                isOpen={showModalChangeGroupName}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[520px] bg-white rounded outline-none relative"
+            >
+                <ModalChangeGroupName />
             </ReactModal>
             <ReactModal
                 isOpen={showSearchMessageModal}

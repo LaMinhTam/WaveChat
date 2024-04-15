@@ -59,6 +59,7 @@ const ModalPassPermission = () => {
             </div>
             <div className="flex flex-col px-4 py-2 gap-y-2">
                 {listMember.map((member) => {
+                    console.log("{listMember.map ~ member:", member);
                     return (
                         <div
                             key={member.user_id}

@@ -44,9 +44,7 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("message", (incomingMessage) => {
-            console.log("newSocket.on ~ incomingMessage:", incomingMessage);
             const updatedMessage = incomingMessage.message;
-            console.log("newSocket.on ~ updatedMessage:", updatedMessage);
             setMessage((prev) =>
                 Array.isArray(prev)
                     ? [...prev, updatedMessage]

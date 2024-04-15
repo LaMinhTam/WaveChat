@@ -2,7 +2,6 @@ import {
     IconAddGroup,
     IconAddUser,
     IconBell,
-    IconCheck,
     IconEdit,
     IconPin,
     IconSetting,
@@ -13,11 +12,9 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useChat } from "../../../../contexts/chat-context";
 import fetchUserProfile from "../../../../api/fetchUserProfile";
-import { toast } from "react-toastify";
-import { axiosPrivate } from "../../../../api/axios";
-import { setId } from "../../../../store/conversationSlice";
 import { useSelector } from "react-redux";
 import { setShowConversationPermission } from "../../../../store/commonSlice";
+import { groupAvatarDefault } from "../../../../api/constants";
 
 const InfoUser = ({ name, avatar, userId }) => {
     const [profile, setProfile] = useState({});
@@ -26,13 +23,16 @@ const InfoUser = ({ name, avatar, userId }) => {
         setShowCreateGroupChat,
         showCreateGroupChat,
         setSelectedList,
-        conversationId,
         setShowAddMemberModal,
+        setShowModalChangeGroupName,
+        showModalChangeGroupName,
     } = useChat();
+    console.log(
+        "InfoUser ~ showModalChangeGroupName:",
+        showModalChangeGroupName
+    );
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const isAdmin = useSelector((state) => state.conversation.isAdmin);
-    const [isEdited, setIsEdited] = useState(false);
-    const [newName, setNewName] = useState(name);
     useEffect(() => {
         async function fetchProfileFriendData() {
             try {
@@ -48,63 +48,29 @@ const InfoUser = ({ name, avatar, userId }) => {
             setProfile({});
         }
     }, [dispatch, isGroupChat, userId]);
-    const handleChangeConversationName = async () => {
-        try {
-            const res = await axiosPrivate.post(
-                `/conversation/update-name?conversation_id=${conversationId}`,
-                {
-                    name: newName,
-                }
-            );
-            if (res.data.status === 200) {
-                dispatch(setId(Math.random() * 1000));
-                setIsEdited(false);
-                toast.success("Đổi tên thành công");
-            }
-        } catch (error) {
-            console.log("error", error);
-            toast.error("Đã xảy ra lỗi, vui lòng thử lại sau");
-        }
-    };
     return (
         <div className="flex flex-col items-center px-4 py-3 border-b-8">
             <div className="my-3 rounded-full w-14 h-14">
                 <img
-                    src={s3ImageUrl(avatar)}
+                    src={isGroupChat ? groupAvatarDefault : s3ImageUrl(avatar)}
                     alt=""
                     className="object-cover w-full h-full rounded-full"
                 />
             </div>
             <div className="flex items-center justify-center">
-                <input
-                    type="text"
-                    className={`${
-                        isGroupChat ? "w-full" : "w-[150px]"
-                    } h-8 text-lg font-medium bg-transparent border-none text-text1`}
-                    onChange={(e) => setNewName(e.target.value)}
-                    value={newName}
-                    disabled={!isEdited}
-                />
+                <span className="mr-2 text-lg font-medium">{name}</span>
                 <div className="flex items-center justify-center gap-x-2">
                     <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setShowModalChangeGroupName(true);
+                        }}
                         className="flex items-center justify-center w-6 h-6 rounded-full bg-text6"
-                        onClick={() => setIsEdited(!isEdited)}
                     >
                         <span className="flex items-center justify-center w-4 h-4">
                             <IconEdit />
                         </span>
                     </button>
-                    {isEdited && (
-                        <button
-                            className="flex items-center justify-center w-6 h-6 rounded-full bg-text6"
-                            onClick={handleChangeConversationName}
-                            disabled={name === newName}
-                        >
-                            <span className="flex items-center justify-center w-4 h-4">
-                                <IconCheck />
-                            </span>
-                        </button>
-                    )}
                 </div>
             </div>
             <div className="flex items-center justify-center w-[310px] h-[90px] pt-3">

@@ -9,3 +9,6 @@ export const CONVERSATION_TYPE = {
     GROUP: 1,
     PERSONAL: 2,
 };
+
+export const groupAvatarDefault =
+    "https://wavechat.s3.ap-southeast-1.amazonaws.com/default-group-icon-dark.webp";

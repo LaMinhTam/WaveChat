@@ -66,7 +66,6 @@ const Conversation = () => {
             const res = await axiosPrivate.get(
                 `/conversation-group/member?conversation_id=${conversationId}`
             );
-            console.log("fetchMemberInConversation ~ res:", res);
             if (res.data.status === 200) {
                 const listMember = res.data.data;
                 let admin = listMember.find(

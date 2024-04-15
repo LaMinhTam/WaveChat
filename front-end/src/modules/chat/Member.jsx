@@ -20,7 +20,7 @@ import {
     setIsGroupChat,
     setLinkJoinGroup,
 } from "../../store/conversationSlice";
-import { CONVERSATION_TYPE } from "../../api/constants";
+import { CONVERSATION_TYPE, groupAvatarDefault } from "../../api/constants";
 
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
@@ -173,7 +173,11 @@ const Member = ({ user }) => {
             <div className="flex items-center justify-center gap-x-3">
                 <div className="w-[48px] h-[48px] rounded-full ml-2 flex-shrink-0">
                     <img
-                        src={s3ImageUrl(otherUserInfo?.avatar)}
+                        src={
+                            user.type === CONVERSATION_TYPE.GROUP
+                                ? groupAvatarDefault
+                                : s3ImageUrl(user.avatar)
+                        }
                         alt=""
                         className="object-cover w-full h-full rounded-full"
                     />

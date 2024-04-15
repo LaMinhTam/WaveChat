@@ -20,8 +20,8 @@ const HeaderSearch = ({ text }) => {
                     id="selectSort"
                     className="w-full h-[32px] rounded-md border pl-10"
                 >
-                    <option value="">Tên (A-Z)</option>
-                    <option value="">Tên (Z-A)</option>
+                    <option value="sortedAZ">Tên (A-Z)</option>
+                    <option value="sortedZA">Tên (Z-A)</option>
                 </select>
                 <span className="absolute left-[6px] top-[6px]">
                     <IconSort />
