@@ -72,7 +72,7 @@ const AddMemberModal = () => {
     return (
         <div ref={addMemberModalRef}>
             <div className="flex items-center justify-between py-2 pl-4 pr-2">
-                <span className="text-lg font-semibold">Chia sẻ</span>
+                <span className="text-lg font-semibold">Thêm thành viên</span>
                 <button
                     className="flex items-center justify-center w-8 h-8 mb-1 rounded-full hover:bg-text2 hover:bg-opacity-10"
                     onClick={() => {
@@ -83,7 +83,7 @@ const AddMemberModal = () => {
                     <IconClose />
                 </button>
             </div>
-            <SearchPerson />
+            <SearchPerson type="add-member" />
             <div className="border border-t-2 border-gray-300">
                 <div className="py-[14px] px-4 flex items-center">
                     <div></div>

@@ -35,10 +35,7 @@ const InfoGroupSetting = () => {
         value: toggleReadRecentMessage,
         handleToggleValue: handleToggleReadRecentMessage,
     } = useToggleValue(true);
-    const {
-        value: toggleJoinWithLink,
-        handleToggleValue: handleToggleJoinWithLink,
-    } = useToggleValue(true);
+
     const handleCopyLink = () => {
         let link = "";
 
@@ -70,7 +67,6 @@ const InfoGroupSetting = () => {
             );
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
-                handleToggleJoinWithLink(!toggleJoinWithLink);
             }
         } catch (error) {
             console.log(error);
@@ -79,7 +75,7 @@ const InfoGroupSetting = () => {
 
     const handleDeleteGroup = async () => {
         try {
-            const res = await axiosPrivate.delete(
+            const res = await axiosPrivate.post(
                 `/conversation-group/disband?conversation_id=${conversationId}`
             );
             if (res.data.status === 200) {
@@ -164,7 +160,7 @@ const InfoGroupSetting = () => {
                     }
                 />
                 <Toggle
-                    checked={toggleJoinWithLink}
+                    checked={linkJoinGroup ? true : false}
                     text=" Cho phép dùng link tham gia nhóm"
                     onChange={handleJoinGroupWithLink}
                 />

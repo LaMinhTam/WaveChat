@@ -13,7 +13,6 @@ const FriendCard = ({ data, type }) => {
             const res = await axiosPrivate.post(
                 `/friend/accept?_id=${data?.user_id}`
             );
-            console.log("handleAccept ~ res:", res);
             if (res.data.status === 200) {
                 const response = await axiosPrivate.post(
                     "/conversation/create",

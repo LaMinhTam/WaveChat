@@ -39,6 +39,7 @@ const ForwardModal = () => {
             fetchConversationId();
         }
     }, [selectedList]);
+
     const handleShareMessage = async () => {
         try {
             const res = await axiosPrivate.post("/message/share-message", {
@@ -71,7 +72,7 @@ const ForwardModal = () => {
                     <IconClose />
                 </button>
             </div>
-            <SearchPerson />
+            <SearchPerson type={"forward"} />
             <div className="px-3 py-4 border border-t-2 border-gray-300">
                 <h3 className="text-sm font-normal text-text7">
                     Nội dung chia sẻ

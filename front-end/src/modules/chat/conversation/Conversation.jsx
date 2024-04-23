@@ -14,6 +14,7 @@ import { axiosPrivate } from "../../../api/axios";
 import { useDispatch } from "react-redux";
 import {
     setIsAdmin,
+    setIsConfirmNewMember,
     setIsSubAdmin,
     setListMemberOfConversation,
     setWaitingList,
@@ -30,6 +31,7 @@ const Conversation = () => {
     const currentUserId = getUserId();
     const { message, socket } = useSocket();
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
+    console.log("Conversation ~ isGroupChat:", isGroupChat);
     const isConfirmNewMember = useSelector(
         (state) => state.conversation.isConfirmNewMember
     );
@@ -45,7 +47,39 @@ const Conversation = () => {
         setIsBlocked,
         showProfileDetails,
         conversationId,
+        currentConversation,
+        setCurrentConversation,
     } = useChat(); // [0: not block, 1: block, 2: blocked by other user]
+    console.log("Conversation ~ currentConversation:", currentConversation);
+
+    useEffect(() => {
+        async function fetchConversationDetails() {
+            const resDetails = await axiosPrivate.get(
+                `/conversation/detail?conversation_id=${conversationId}`
+            );
+            if (resDetails.data.status === 200) {
+                let is_confirm_new_member =
+                    resDetails.data.data.is_confirm_new_member;
+                dispatch(
+                    setIsConfirmNewMember(
+                        is_confirm_new_member === 1 ? true : false
+                    )
+                );
+                setCurrentConversation(resDetails.data.data);
+                let block_type = resDetails.data.data.block_type;
+                setBlockType(block_type);
+            }
+        }
+        if (isGroupChat) {
+            fetchConversationDetails();
+        }
+    }, [
+        conversationId,
+        dispatch,
+        isGroupChat,
+        setBlockType,
+        setCurrentConversation,
+    ]);
 
     useEffect(() => {
         async function fetchWaitingList() {
@@ -177,9 +211,21 @@ const Conversation = () => {
         <div className="flex items-center justify-center">
             <div className="relative flex flex-col w-full h-full min-h-screen">
                 <ConversationHeader
-                    name={friendInfo.full_name}
-                    avatar={friendInfo.avatar}
-                    userId={friendInfo._id}
+                    name={
+                        isGroupChat
+                            ? currentConversation.name
+                            : friendInfo.full_name
+                    }
+                    avatar={
+                        isGroupChat
+                            ? currentConversation.avatar
+                            : friendInfo.avatar
+                    }
+                    userId={
+                        isGroupChat
+                            ? currentConversation.conversation_id
+                            : friendInfo._id
+                    }
                 />
                 <ConversationContent message={message} socket={socket} />
                 <div className="absolute bottom-0 left-0 right-0 flex-shrink-0 mt-auto shadow-md">
@@ -204,9 +250,21 @@ const Conversation = () => {
                     transition={{ duration: 0.3 }}
                 >
                     <ConversationInfo
-                        name={friendInfo.full_name}
-                        avatar={friendInfo.avatar}
-                        userId={friendInfo._id}
+                        name={
+                            isGroupChat
+                                ? currentConversation.name
+                                : friendInfo.full_name
+                        }
+                        avatar={
+                            isGroupChat
+                                ? currentConversation.avatar
+                                : friendInfo.avatar
+                        }
+                        userId={
+                            isGroupChat
+                                ? currentConversation.conversation_id
+                                : friendInfo._id
+                        }
                         images={imageMessage}
                         files={fileMessage}
                     />

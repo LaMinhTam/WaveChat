@@ -16,7 +16,6 @@ import { useChat } from "../../contexts/chat-context";
 import { useSocket } from "../../contexts/socket-context";
 import { axiosPrivate } from "../../api/axios";
 import {
-    setIsConfirmNewMember,
     setIsGroupChat,
     setLinkJoinGroup,
 } from "../../store/conversationSlice";
@@ -25,14 +24,9 @@ import { CONVERSATION_TYPE, groupAvatarDefault } from "../../api/constants";
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
     const [incomingClassName, setIncomingClassName] = useState("");
-    const {
-        setConversationId,
-        conversationId,
-        setBlockType,
-        renderBlock,
-        setConversationDetails,
-    } = useChat();
-    const { unreadCount, setUnreadCount, setMessage } = useSocket();
+    const { setConversationId, setBlockType, renderBlock, conversationId } =
+        useChat();
+    const { unreadCount, setUnreadCount } = useSocket();
     const current_userId = getUserId();
     const dispatch = useDispatch();
     const activeConversation = useSelector(
@@ -85,36 +79,7 @@ const Member = ({ user }) => {
     }, [renderBlock, setBlockType, user._id]);
 
     const handleClickedMember = async () => {
-        setBlockType(0);
-        try {
-            if (conversationId !== user._id) {
-                const res = await axiosPrivate.get(
-                    `/message/${user._id}?limit=100000`
-                );
-                const data = res.data.data;
-                if (data) {
-                    data.reverse();
-                    setMessage(data);
-                } else {
-                    setMessage([]);
-                }
-                const resDetails = await axiosPrivate.get(
-                    `/conversation/detail?conversation_id=${user._id}`
-                );
-                if (resDetails.data.status === 200) {
-                    let is_confirm_new_member =
-                        resDetails.data.data.is_confirm_new_member;
-                    dispatch(
-                        setIsConfirmNewMember(
-                            is_confirm_new_member === 1 ? true : false
-                        )
-                    );
-                    setConversationDetails(resDetails.data.data);
-                    let block_type = resDetails.data.data.block_type;
-                    setBlockType(block_type);
-                }
-                dispatch(setShowConversationInfo(false));
-            }
+        if (conversationId !== user._id) {
             setIncomingClassName("");
             dispatch(setIncomingMessageOfConversation(""));
             setUnreadCount(0);
@@ -128,8 +93,7 @@ const Member = ({ user }) => {
             dispatch(setIsGroupChat(user.type === 1 ? true : false));
             dispatch(setShowConversation(true));
             setConversationId(user._id);
-        } catch (error) {
-            console.log(error);
+            dispatch(setShowConversationInfo(false));
         }
     };
     useEffect(() => {

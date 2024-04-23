@@ -35,12 +35,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
         setShowSearchModal,
         setShowSearchMessageModal,
         setShowModalGroupInfo,
-        showModalGroupInfo,
     } = useChat();
-    console.log(
-        "ConversationHeader ~ showModalGroupChatInfo:",
-        showModalGroupInfo
-    );
     useEffect(() => {
         async function fetchProfileFriendData() {
             try {
@@ -103,7 +98,13 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                         className="w-[32px] h-[32px] flex items-center justify-center"
                         onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedList([profile]);
+                            setSelectedList([
+                                {
+                                    user_id: profile._id,
+                                    full_name: profile.full_name,
+                                    avatar: profile.avatar,
+                                },
+                            ]);
                             setShowCreateGroupChat(!showCreateGroupChat);
                         }}
                     >

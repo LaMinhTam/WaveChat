@@ -11,7 +11,7 @@ import {
 
 const ModalGroupInfo = () => {
     const { setShowModalGroupInfo, modalGroupInfoRef } = useChat();
-    const { conversationDetails } = useChat();
+    const { currentConversation } = useChat();
     const linkJoinGroup = useSelector(
         (state) => state.conversation.linkJoinGroup
     );
@@ -23,7 +23,7 @@ const ModalGroupInfo = () => {
         let link = "";
 
         if (linkJoinGroup) {
-            link = `wavechat.me/g/conversation/${conversationDetails.conversation_id}?link_join=${linkJoinGroup}`;
+            link = `wavechat.me/g/conversation/${currentConversation.conversation_id}?link_join=${linkJoinGroup}`;
         }
         link = "https://" + link;
         navigator.clipboard.writeText(link);
@@ -60,13 +60,13 @@ const ModalGroupInfo = () => {
                             className="object-cover w-full h-full rounded-full"
                         />
                     </div>
-                    <span>{conversationDetails?.name}</span>
+                    <span>{currentConversation?.name}</span>
                 </div>
                 <button
                     className="w-full h-[48px] text-center hover:bg-text6 mt-3"
                     onClick={handleViewMember}
                 >
-                    Danh sách thành viên ({conversationDetails?.members?.length}
+                    Danh sách thành viên ({currentConversation?.members?.length}
                     )
                 </button>
                 <span className="mt-2 text-sm font-normal text-text7">

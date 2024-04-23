@@ -17,7 +17,6 @@ export default function alertRemoveBlock({
         cancelButtonText: "Không!",
     }).then(async (result) => {
         if (result.isConfirmed) {
-            console.log("unblock user");
             const res = await axiosPrivate.post(
                 `/user/remove-block-user/${user_id}`
             );

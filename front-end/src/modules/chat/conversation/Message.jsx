@@ -68,7 +68,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     };
 
     const handleReaction = async (reaction) => {
-        console.log(reaction?.emoji);
         try {
             const type = reactionToType(reaction?.emoji);
             const res = await axiosPrivate.post("/message/react", {
@@ -339,7 +338,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                 </div>
             )}
             {msg.type === 15 && (
-                <span className="text-sm text-center text-text7">
+                <span className="flex items-center justify-center text-sm text-text7">
                     {msg.message}
                 </span>
             )}

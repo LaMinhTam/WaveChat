@@ -5,27 +5,36 @@ import { IconCamera, IconClose } from "../icons";
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../api/axios";
 import { useDispatch } from "react-redux";
-import { setId } from "../../store/conversationSlice";
+import { setId, setIsGroupChat } from "../../store/conversationSlice";
+import {
+    setActiveConversation,
+    setShowConversation,
+} from "../../store/commonSlice";
 
 const CreateGroupChatModal = () => {
     const { setShowCreateGroupChat, groupChatRef } = useChat();
     const [groupChatName, setGroupChatName] = useState("");
-    const { selectedList, setSelectedList } = useChat();
+    const { selectedList, setSelectedList, setConversationId } = useChat();
     const dispatch = useDispatch();
     const handleCreateGroupChat = async () => {
         if (selectedList.length < 2) {
             toast.error("Nhóm chat phải có ít nhất 3 người");
             return;
-        } else {
+        } else if (!groupChatName) toast.error("Tên nhóm không được để trống");
+        else {
             // Create group chat
             const member_ids = selectedList.map((person) => person.user_id);
             const res = await axiosPrivate.post("/conversation-group/create", {
                 name: groupChatName,
                 member_ids,
             });
+            setConversationId(res.data.data.conversation_id);
             dispatch(setId(res.data.data.conversation_id));
             setGroupChatName("");
             setShowCreateGroupChat(false);
+            dispatch(setActiveConversation(res.data.data.conversation_id));
+            dispatch(setShowConversation(true));
+            dispatch(setIsGroupChat(true));
             toast.success("Tạo nhóm chat thành công");
         }
     };
@@ -56,7 +65,7 @@ const CreateGroupChatModal = () => {
                         onChange={(e) => setGroupChatName(e.target.value)}
                     />
                 </div>
-                <SearchPerson />
+                <SearchPerson type="create-group" />
                 <div className="py-[14px] px-4 flex items-center">
                     <div></div>
                     <div className="flex items-center ml-auto gap-x-3">

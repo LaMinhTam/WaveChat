@@ -25,9 +25,6 @@ const ModalChangeGroupName = () => {
 
     const handleChangeConversationName = async () => {
         try {
-            console.log(
-                `/conversation/update-name?conversation_id=${conversationId}`
-            );
             const res = await axiosPrivate.post(
                 `/conversation/update-name?conversation_id=${conversationId}`,
                 {

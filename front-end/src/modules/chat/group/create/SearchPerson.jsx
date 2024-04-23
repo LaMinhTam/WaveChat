@@ -9,8 +9,9 @@ import { getUserId } from "../../../../utils/auth";
 import { motion } from "framer-motion";
 import sortedPersonToAlphabet from "../../../../utils/sortedPersonToAlphabet";
 import { toast } from "react-toastify";
+import PropTypes from "prop-types";
 
-const SearchPerson = () => {
+const SearchPerson = ({ type }) => {
     const [removedInputId, setRemovedInputId] = useState("");
     const { selectedList, setSelectedList } = useChat();
     const [searchValue, setSearchValue] = useState("");
@@ -63,12 +64,14 @@ const SearchPerson = () => {
     }, []);
 
     const handleSelectPerson = (user) => {
-        let isExist = listMemberOfConversation.some(
-            (member) => member.user_id === user.user_id
-        );
-        if (isExist) {
-            toast.error("Người dùng đã tồn tại trong nhóm");
-            return;
+        if (type === "add-member") {
+            let isExist = listMemberOfConversation.some(
+                (member) => member.user_id === user.user_id
+            );
+            if (isExist) {
+                toast.error("Người dùng đã tồn tại trong nhóm");
+                return;
+            }
         } else
             setSelectedList((prevList) => {
                 const isExist = prevList.some(
@@ -288,6 +291,10 @@ const SearchPerson = () => {
             </div>
         </div>
     );
+};
+
+SearchPerson.propTypes = {
+    type: PropTypes.string,
 };
 
 export default SearchPerson;

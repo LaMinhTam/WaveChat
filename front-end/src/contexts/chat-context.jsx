@@ -6,7 +6,7 @@ const ChatContext = React.createContext();
 export function ChatProvider(props) {
     const { show, setShow, nodeRef } = useClickOutSide();
     const [conversationId, setConversationId] = React.useState("");
-    const [conversationDetails, setConversationDetails] = React.useState({});
+    const [currentConversation, setCurrentConversation] = React.useState({});
     const [renderMessageDelete, setRenderMessageDelete] = React.useState(0);
     const [forwardMessage, setForwardMessage] = React.useState({});
     const [messageRefs, setMessageRefs] = React.useState({});
@@ -110,8 +110,8 @@ export function ChatProvider(props) {
         profileDetailsRef,
         conversationId,
         setConversationId,
-        conversationDetails,
-        setConversationDetails,
+        currentConversation,
+        setCurrentConversation,
         showCreateGroupChat,
         setShowCreateGroupChat,
         groupChatRef,

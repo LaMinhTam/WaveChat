@@ -52,8 +52,8 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
         <AuthProvider>
-            <SocketProvider>
-                <ChatProvider>
+            <ChatProvider>
+                <SocketProvider>
                     <Suspense
                         fallback={
                             <div className="flex items-center justify-center w-screen h-screen">
@@ -73,8 +73,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                         </App>
                     </Suspense>
                     <ToastContainer bodyClassName="font-primary text-sm"></ToastContainer>
-                </ChatProvider>
-            </SocketProvider>
+                </SocketProvider>
+            </ChatProvider>
         </AuthProvider>
     </Provider>
 );

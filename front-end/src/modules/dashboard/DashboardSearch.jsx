@@ -10,6 +10,7 @@ const DashboardSearch = () => {
         showCreateGroupChat,
         setShowAddFriendModal,
         setShowSearchModal,
+        setSelectedList,
     } = useChat();
     const dispatch = useDispatch();
     return (
@@ -53,6 +54,7 @@ const DashboardSearch = () => {
                                     setShowCreateGroupChat(
                                         !showCreateGroupChat
                                     );
+                                    setSelectedList([]);
                                 }}
                             >
                                 <IconAddGroup />

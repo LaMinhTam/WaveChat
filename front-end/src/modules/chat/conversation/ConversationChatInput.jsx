@@ -22,6 +22,7 @@ const ConversationChatInput = ({
     blockType,
     setBlockType,
 }) => {
+    console.log("blockType:", blockType);
     const [listImage, setListImage] = useState([]);
     const [messageSend, setMessageSend] = useState("");
     const {
@@ -48,70 +49,97 @@ const ConversationChatInput = ({
     };
 
     const handleSendMessage = async () => {
-        if (blockType === 0) {
-            if (!socket) return;
-            if (!conversationId && !isGroupChat) {
-                const res = await axiosPrivate.post("/conversation/create", {
-                    member_id: user_id,
+        if (!isGroupChat) {
+            if (blockType === 0) {
+                if (!socket) return;
+                if (!conversationId) {
+                    const res = await axiosPrivate.post(
+                        "/conversation/create",
+                        {
+                            member_id: user_id,
+                        }
+                    );
+                    setConversationId(res.data.data.conversation_id);
+                    let message = {};
+                    if (replyMessage && replyMessage._id) {
+                        message = {
+                            message: messageSend,
+                            conversation_id: replyMessage.conversation_id,
+                            type: 6,
+                            message_reply_id: replyMessage._id,
+                            created_at: "",
+                        };
+                    } else {
+                        message = {
+                            conversation_id: res.data.data.conversation_id,
+                            message: messageSend,
+                            type: 1,
+                            created_at: "",
+                        };
+                    }
+                    setIsOpenReply(false);
+                    setReplyMessage("");
+                    setMessageSend("");
+                    socket.emit("message", message);
+                } else {
+                    let message = {};
+                    if (replyMessage && replyMessage._id) {
+                        message = {
+                            message: messageSend,
+                            conversation_id: replyMessage.conversation_id,
+                            type: 6,
+                            message_reply_id: replyMessage._id,
+                            created_at: "",
+                        };
+                    } else {
+                        message = {
+                            conversation_id: conversationId,
+                            message: messageSend,
+                            type: 1,
+                            created_at: "",
+                        };
+                    }
+                    setIsOpenReply(false);
+                    setReplyMessage("");
+                    setMessageSend("");
+                    socket.emit("message", message);
+                }
+            } else if (blockType === 1) {
+                alertRemoveBlock({
+                    user_id,
+                    setIsBlocked,
+                    setBlockType,
                 });
-                setConversationId(res.data.data.conversation_id);
-                let message = {};
-                if (replyMessage && replyMessage._id) {
-                    message = {
-                        message: messageSend,
-                        conversation_id: replyMessage.conversation_id,
-                        type: 6,
-                        message_reply_id: replyMessage._id,
-                        created_at: "",
-                    };
-                } else {
-                    message = {
-                        conversation_id: res.data.data.conversation_id,
-                        message: messageSend,
-                        type: 1,
-                        created_at: "",
-                    };
-                }
-                setIsOpenReply(false);
-                setReplyMessage("");
-                setMessageSend("");
-                socket.emit("message", message);
-            } else {
-                let message = {};
-                if (replyMessage && replyMessage._id) {
-                    message = {
-                        message: messageSend,
-                        conversation_id: replyMessage.conversation_id,
-                        type: 6,
-                        message_reply_id: replyMessage._id,
-                        created_at: "",
-                    };
-                } else {
-                    message = {
-                        conversation_id: conversationId,
-                        message: messageSend,
-                        type: 1,
-                        created_at: "",
-                    };
-                }
-                setIsOpenReply(false);
-                setReplyMessage("");
-                setMessageSend("");
-                socket.emit("message", message);
+            } else if (blockType === 2) {
+                Swal.fire({
+                    title: "Thông báo",
+                    text: "Bạn đã bị chặn bởi người này",
+                    icon: "warning",
+                    confirmButtonText: "OK",
+                });
             }
-        } else if (blockType === 1) {
-            alertRemoveBlock({
-                user_id,
-                setIsBlocked,
-                setBlockType,
-            });
-        } else if (blockType === 2) {
-            Swal.fire({
-                title: "Thông báo",
-                text: "Bạn đã bị chặn bởi người này",
-                icon: "warning",
-                confirmButtonText: "OK",
-            });
+        } else {
+            let message = {};
+            if (replyMessage && replyMessage._id) {
+                message = {
+                    message: messageSend,
+                    conversation_id: replyMessage.conversation_id,
+                    type: 6,
+                    message_reply_id: replyMessage._id,
+                    created_at: "",
+                };
+            } else {
+                message = {
+                    conversation_id: conversationId,
+                    message: messageSend,
+                    type: 1,
+                    created_at: "",
+                };
+            }
+            setIsOpenReply(false);
+            setReplyMessage("");
+            setMessageSend("");
+            socket.emit("message", message);
         }
     };
 

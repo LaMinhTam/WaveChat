@@ -2,8 +2,14 @@ import React, { useEffect, useState } from "react";
 import { getToken, getUserId } from "../utils/auth";
 import io from "socket.io-client";
 import { useDispatch } from "react-redux";
-import { setIncomingMessageOfConversation } from "../store/commonSlice";
+import {
+    setIncomingMessageOfConversation,
+    setShowConversation,
+} from "../store/commonSlice";
 import { setId } from "../store/conversationSlice";
+import { axiosPrivate } from "../api/axios";
+import { toast } from "react-toastify";
+import { useChat } from "./chat-context";
 const SocketContext = React.createContext();
 
 export function SocketProvider(props) {
@@ -11,6 +17,7 @@ export function SocketProvider(props) {
     const accessToken = getToken();
     const currentUserId = getUserId();
     const [message, setMessage] = React.useState([]);
+    const { conversationId } = useChat();
     const [unreadCount, setUnreadCount] = useState(0);
     const dispatch = useDispatch();
 
@@ -36,7 +43,26 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("connect", () => {
-            console.log("Connected to WebSocket");
+            async function fetchMessage() {
+                const res = await axiosPrivate.get(
+                    `/message/${conversationId}?limit=100000`
+                );
+                if (res.data.status === 200) {
+                    const data = res.data.data;
+                    if (data) {
+                        data.reverse();
+                        setMessage(data);
+                    } else {
+                        setMessage([]);
+                    }
+                } else if (res.data.status === 400) {
+                    toast.error(res.data.message);
+                    dispatch(setShowConversation(false));
+                    dispatch(setId(Math.random() * 1000));
+                    return;
+                }
+            }
+            if (conversationId) fetchMessage();
         });
 
         newSocket.on("disconnect", () => {
@@ -91,7 +117,7 @@ export function SocketProvider(props) {
                 newSocket.disconnect();
             }
         };
-    }, [accessToken, currentUserId, dispatch, setMessage]);
+    }, [accessToken, conversationId, currentUserId, dispatch, setMessage]);
 
     const contextValues = {
         socket,

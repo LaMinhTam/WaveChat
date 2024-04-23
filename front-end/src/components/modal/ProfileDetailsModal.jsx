@@ -168,7 +168,6 @@ const ProfileDetailsModal = () => {
                 const res = await axiosPrivate.post(
                     `/friend/remove-request?_id=${data?._id}`
                 );
-                console.log("handFriendRequest ~ res:", res);
                 if (res.data.status === 200) {
                     toast.success("Đã thu hồi lời mời kết bạn");
                     dispatch(setRender(Math.random() * 1000));
