@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 
 const accessTokenKey = "wave_access_token";
 const userId = "wave_user_id";
+const userName = "wave_user_name";
 
 const objCookies = {
     expires: 30,
@@ -36,6 +37,20 @@ export const saveUserId = (id) => {
     }
 };
 
+export const saveUserName = (name) => {
+    if (name) {
+        Cookies.set(userName, name, {
+            ...objCookies,
+        });
+    } else {
+        Cookies.remove(userName, {
+            ...objCookies,
+            path: "/",
+            domain: "localhost",
+        });
+    }
+};
+
 export const getToken = () => {
     const access_token = Cookies.get(accessTokenKey);
     return access_token;
@@ -44,4 +59,9 @@ export const getToken = () => {
 export const getUserId = () => {
     const id = Cookies.get(userId);
     return id;
+};
+
+export const getUserName = () => {
+    const name = Cookies.get(userName);
+    return name;
 };

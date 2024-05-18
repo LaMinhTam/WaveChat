@@ -71,6 +71,19 @@ const SearchPerson = ({ type }) => {
             if (isExist) {
                 toast.error("Người dùng đã tồn tại trong nhóm");
                 return;
+            } else {
+                setSelectedList((prevList) => {
+                    const isExist = prevList.some(
+                        (item) => item.user_id === user.user_id
+                    );
+                    if (!isExist) {
+                        return [...prevList, user];
+                    } else {
+                        return prevList.filter(
+                            (item) => item.user_id !== user.user_id
+                        );
+                    }
+                });
             }
         } else
             setSelectedList((prevList) => {

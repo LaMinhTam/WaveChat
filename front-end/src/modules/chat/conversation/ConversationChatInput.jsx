@@ -22,7 +22,6 @@ const ConversationChatInput = ({
     blockType,
     setBlockType,
 }) => {
-    console.log("blockType:", blockType);
     const [listImage, setListImage] = useState([]);
     const [messageSend, setMessageSend] = useState("");
     const {

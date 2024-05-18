@@ -5,7 +5,7 @@ import { IconCamera, IconClose } from "../icons";
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../api/axios";
 import { useDispatch } from "react-redux";
-import { setId, setIsGroupChat } from "../../store/conversationSlice";
+import { setIsGroupChat } from "../../store/conversationSlice";
 import {
     setActiveConversation,
     setShowConversation,
@@ -28,10 +28,13 @@ const CreateGroupChatModal = () => {
                 name: groupChatName,
                 member_ids,
             });
-            setConversationId(res.data.data.conversation_id);
-            dispatch(setId(res.data.data.conversation_id));
+            console.log(
+                "handleCreateGroupChat ~ res:",
+                res.data.data.conversation_id
+            );
             setGroupChatName("");
             setShowCreateGroupChat(false);
+            setConversationId(res.data.data.conversation_id);
             dispatch(setActiveConversation(res.data.data.conversation_id));
             dispatch(setShowConversation(true));
             dispatch(setIsGroupChat(true));

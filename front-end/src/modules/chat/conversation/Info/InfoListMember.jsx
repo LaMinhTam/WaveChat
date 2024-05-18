@@ -189,7 +189,7 @@ const InfoListMember = () => {
                                                 conversationId={conversationId}
                                                 userClicked={member}
                                                 className={`flex flex-col items-start justify-center p-2 
-                                                gap-y-3 absolute z-50 shadow-md min-w-[140px] h-[72px] 
+                                                gap-y-3 absolute z-50 shadow-md min-w-[140px] h-[100px] 
                                                 bg-lite text-sm top-10 right-0`}
                                             />
                                         )}

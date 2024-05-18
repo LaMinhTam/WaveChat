@@ -21,6 +21,8 @@ import MessageFeature from "./message/MessageFeature";
 import ModalChatOption from "../../../components/modal/ModalChatOption";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { Link } from "react-router-dom";
+import handleFormatNotificationMessage from "../../../utils/handleFormatNotificationMessage";
+import { getUserId } from "../../../utils/auth";
 const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [messageFormat, setMessageFormat] = useState("");
@@ -38,6 +40,7 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     );
 
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
+    const currentUserId = getUserId();
 
     const {
         setReplyMessage,
@@ -146,7 +149,10 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
 
     return (
         <>
-            {msg.type !== 15 && (
+            {![
+                7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+                24, 25,
+            ].includes(msg.type) ? (
                 <div ref={nodeRef}>
                     <div className="flex items-center justify-center gap-x-3">
                         {type === "receive" && (
@@ -336,10 +342,9 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                         </div>
                     </div>
                 </div>
-            )}
-            {msg.type === 15 && (
+            ) : (
                 <span className="flex items-center justify-center text-sm text-text7">
-                    {msg.message}
+                    {handleFormatNotificationMessage(msg, currentUserId)}
                 </span>
             )}
             <Viewer

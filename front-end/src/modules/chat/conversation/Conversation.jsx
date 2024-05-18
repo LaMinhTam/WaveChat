@@ -31,7 +31,6 @@ const Conversation = () => {
     const currentUserId = getUserId();
     const { message, socket } = useSocket();
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
-    console.log("Conversation ~ isGroupChat:", isGroupChat);
     const isConfirmNewMember = useSelector(
         (state) => state.conversation.isConfirmNewMember
     );
@@ -50,7 +49,6 @@ const Conversation = () => {
         currentConversation,
         setCurrentConversation,
     } = useChat(); // [0: not block, 1: block, 2: blocked by other user]
-    console.log("Conversation ~ currentConversation:", currentConversation);
 
     useEffect(() => {
         async function fetchConversationDetails() {
@@ -70,9 +68,7 @@ const Conversation = () => {
                 setBlockType(block_type);
             }
         }
-        if (isGroupChat) {
-            fetchConversationDetails();
-        }
+        fetchConversationDetails();
     }, [
         conversationId,
         dispatch,

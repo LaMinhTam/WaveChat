@@ -6,14 +6,11 @@ import { axiosPrivate } from "../../../../api/axios";
 import { useChat } from "../../../../contexts/chat-context";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    setId,
     setIsConfirmNewMember,
     setLinkJoinGroup,
 } from "../../../../store/conversationSlice";
 import { toast } from "react-toastify";
 import {
-    setShowConversation,
-    setShowConversationInfo,
     setShowConversationPermission,
     setShowListMemberInGroup,
 } from "../../../../store/commonSlice";
@@ -65,6 +62,7 @@ const InfoGroupSetting = () => {
             const res = await axiosPrivate.post(
                 `/conversation-group/join-link?conversation_id=${conversationId}`
             );
+            console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
             }
@@ -79,10 +77,6 @@ const InfoGroupSetting = () => {
                 `/conversation-group/disband?conversation_id=${conversationId}`
             );
             if (res.data.status === 200) {
-                dispatch(setShowConversationPermission(false));
-                dispatch(setShowConversation(false));
-                dispatch(setShowConversationInfo(false));
-                dispatch(setId(Math.random() * 1000));
                 toast.success("Đã giải tán nhóm");
             }
         } catch (error) {

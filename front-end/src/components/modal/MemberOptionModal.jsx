@@ -102,6 +102,27 @@ const MemberOptionModal = ({
                     </button>
                     <button
                         className="px-3 hover:bg-text6 w-full h-[36px]"
+                        onClick={async () => {
+                            await handleGrantPermission(
+                                "add",
+                                CONVERSATION_MEMBER_PERMISSION.OWNER,
+                                userClicked.user_id,
+                                userClicked.full_name,
+                                conversationId
+                            );
+                            dispatch(
+                                setTriggerFetchListMember(
+                                    !triggerFetchListMember
+                                )
+                            );
+                            setSubAdminId(userClicked.user_id);
+                            setShowMemberOption(false);
+                        }}
+                    >
+                        Chuyển quyền trưởng nhóm
+                    </button>
+                    <button
+                        className="px-3 hover:bg-text6 w-full h-[36px]"
                         onClick={onRemoveMember}
                     >
                         Xóa khỏi nhóm

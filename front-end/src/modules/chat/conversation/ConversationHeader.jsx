@@ -15,11 +15,14 @@ import {
 import { useChat } from "../../../contexts/chat-context";
 import { useEffect, useState } from "react";
 import fetchUserProfile from "../../../api/fetchUserProfile";
-import { getUserId } from "../../../utils/auth";
+import { getUserId, getUserName } from "../../../utils/auth";
 import { setGuestProfile } from "../../../store/userSlice";
 import { groupAvatarDefault } from "../../../api/constants";
+import { useSocket } from "../../../contexts/socket-context";
+import DailyIframe from "@daily-co/daily-js";
 
 const ConversationHeader = ({ name, avatar, userId }) => {
+    const { socket, setCalledUser, createRoom } = useSocket();
     const [profile, setProfile] = useState({});
     const dispatch = useDispatch();
     const showConversationInfo = useSelector(
@@ -27,6 +30,7 @@ const ConversationHeader = ({ name, avatar, userId }) => {
     );
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const currentUserId = getUserId();
+    const currentUserName = getUserName();
     const {
         setShowCreateGroupChat,
         showCreateGroupChat,
@@ -36,6 +40,55 @@ const ConversationHeader = ({ name, avatar, userId }) => {
         setShowSearchMessageModal,
         setShowModalGroupInfo,
     } = useChat();
+
+    const handleVideoCall = async () => {
+        try {
+            setCalledUser({
+                user_id: profile._id,
+                full_name: profile.full_name,
+                avatar: profile.avatar,
+                cover: profile.cover,
+            });
+
+            const room = await createRoom();
+            const callFrame = DailyIframe.createFrame({
+                showFullscreenButton: true,
+                iframeStyle: {
+                    position: "absolute",
+                    width: "700px",
+                    height: "400px",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                },
+            });
+
+            await callFrame.join({
+                url: room.url,
+                showFullscreenButton: true,
+                showLeaveButton: true,
+                showParticipantsBar: true,
+                userName: currentUserName,
+            });
+
+            socket.emit("send-call-request", {
+                target_user_id: profile._id,
+                signal_data: {
+                    type: "video",
+                    room_id: room.id,
+                    room_url: room.url,
+                },
+                message: "Gọi video",
+            });
+
+            callFrame.on("left-meeting", () => {
+                callFrame.destroy();
+            });
+        } catch (error) {
+            console.error("Error initiating video call:", error);
+            // Xử lý lỗi tạo room hoặc tham gia cuộc gọi
+        }
+    };
     useEffect(() => {
         async function fetchProfileFriendData() {
             try {
@@ -114,7 +167,10 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                 <button className="w-[32px] h-[32px] flex items-center justify-center">
                     <IconPhone />
                 </button>
-                <button className="w-[32px] h-[32px] flex items-center justify-center">
+                <button
+                    className="w-[32px] h-[32px] flex items-center justify-center"
+                    onClick={handleVideoCall}
+                >
                     <IconVideoCall />
                 </button>
                 <button

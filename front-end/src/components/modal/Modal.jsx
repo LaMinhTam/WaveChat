@@ -13,6 +13,10 @@ import AddMemberModal from "./AddMemberModal";
 import ModalPassPermission from "./ModalPassPermission";
 import ModalGroupInfo from "./ModalGroupInfo";
 import ModalChangeGroupName from "./ModalChangeGroupName";
+// import { useSelector } from "react-redux";
+// import VideoCallModal from "./VideoCallModal";
+import VideoCall from "./VideoCall";
+import { useSocket } from "../../contexts/socket-context";
 
 const Modal = () => {
     const {
@@ -30,6 +34,10 @@ const Modal = () => {
         showModalGroupInfo,
         showModalChangeGroupName,
     } = useChat();
+    const { showVideoCallModal } = useSocket();
+    // const showRequestVideoCallModal = useSelector(
+    //     (state) => state.call.showRequestVideoCallModal
+    // );
     return (
         <>
             <ReactModal
@@ -111,6 +119,22 @@ const Modal = () => {
                 className="modal-content w-full max-w-[520px] bg-white rounded outline-none relative"
             >
                 <AddMemberModal />
+            </ReactModal>
+            {/* <ReactModal
+                isOpen={showRequestVideoCallModal}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[700px] bg-white rounded outline-none relative"
+            >
+                <VideoCallModal />
+            </ReactModal> */}
+            <ReactModal
+                isOpen={showVideoCallModal}
+                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
+                flex justify-center items-center"
+                className="modal-content w-full max-w-[700px] bg-white rounded outline-none relative"
+            >
+                <VideoCall />
             </ReactModal>
             <ReactModal
                 isOpen={showPassPermissionModal}

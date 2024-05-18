@@ -25,12 +25,7 @@ const InfoUser = ({ name, avatar, userId }) => {
         setSelectedList,
         setShowAddMemberModal,
         setShowModalChangeGroupName,
-        showModalChangeGroupName,
     } = useChat();
-    console.log(
-        "InfoUser ~ showModalChangeGroupName:",
-        showModalChangeGroupName
-    );
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
     const isAdmin = useSelector((state) => state.conversation.isAdmin);
     useEffect(() => {

@@ -18,7 +18,7 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../utils/firebaseConfig";
 import bcrypt from "bcryptjs";
 import axios from "../api/axios";
-import { saveToken, saveUserId } from "../utils/auth";
+import { saveToken, saveUserId, saveUserName } from "../utils/auth";
 import handleSendOTP from "../utils/handleSendOTP";
 
 const LayoutAuthentication = ({ children, heading = "" }) => {
@@ -89,6 +89,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                             if (res.data.status === 200) {
                                 saveUserId(resLogin.data.data._id);
                                 saveToken(resLogin.data.data.access_token);
+                                saveUserName(resLogin.data.data.full_name);
                                 toast.success("Đăng ký thành công");
                                 setOtpCode("");
                                 setCountdown(60);

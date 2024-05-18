@@ -5,19 +5,30 @@ import { useDispatch } from "react-redux";
 import {
     setIncomingMessageOfConversation,
     setShowConversation,
+    setShowConversationInfo,
+    setShowConversationPermission,
 } from "../store/commonSlice";
 import { setId } from "../store/conversationSlice";
 import { axiosPrivate } from "../api/axios";
 import { toast } from "react-toastify";
 import { useChat } from "./chat-context";
+import axios from "axios";
+// import Peer from "simple-peer";
 const SocketContext = React.createContext();
 
 export function SocketProvider(props) {
     const [socket, setSocket] = React.useState(null);
+    const [showVideoCallModal, setShowVideoCallModal] = useState(false);
+    const [calledUser, setCalledUser] = useState({});
+    const [requestVideoCallData, setRequestVideoCallData] = useState({});
+    const [receiveCalledVideo, setReceiveCalledVideo] = useState(false);
+    const [callAccepted, setCallAccepted] = useState(false);
+    const [callDenied, setCallDenied] = useState(false);
+    const [callEnded, setCallEnded] = useState(false);
     const accessToken = getToken();
     const currentUserId = getUserId();
     const [message, setMessage] = React.useState([]);
-    const { conversationId } = useChat();
+    const { conversationId, currentConversation } = useChat();
     const [unreadCount, setUnreadCount] = useState(0);
     const dispatch = useDispatch();
 
@@ -43,6 +54,7 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("connect", () => {
+            console.log("Connected to WebSocket");
             async function fetchMessage() {
                 const res = await axiosPrivate.get(
                     `/message/${conversationId}?limit=100000`
@@ -62,7 +74,13 @@ export function SocketProvider(props) {
                     return;
                 }
             }
-            if (conversationId) fetchMessage();
+            if (
+                conversationId &&
+                currentConversation.conversation_id !== conversationId
+            ) {
+                console.log("fetching message");
+                fetchMessage();
+            }
         });
 
         newSocket.on("disconnect", () => {
@@ -79,13 +97,6 @@ export function SocketProvider(props) {
             dispatch(
                 setIncomingMessageOfConversation(
                     `${updatedMessage.conversation_id}_${updatedMessage.message}`
-                )
-            );
-            dispatch(
-                setId(
-                    setIncomingMessageOfConversation(
-                        `${updatedMessage.conversation_id}_${updatedMessage.message}`
-                    )
                 )
             );
             if (document.hidden) {
@@ -110,14 +121,112 @@ export function SocketProvider(props) {
             );
         });
 
-        setSocket(newSocket);
+        newSocket.on("new-conversation", (data) => {
+            dispatch(setId(data.data.conversation_id));
+        });
 
+        newSocket.on("disband-group", ({ data }) => {
+            dispatch(setId(data.conversation_id));
+            dispatch(setShowConversationPermission(false));
+            dispatch(setShowConversation(false));
+            dispatch(setShowConversationInfo(false));
+        });
+
+        newSocket.on("request-call-video", (data) => {
+            console.log("newSocket.on ~ data:", data);
+            setReceiveCalledVideo(true);
+            setRequestVideoCallData(data);
+            setCallAccepted(false);
+            setShowVideoCallModal(true);
+        });
+
+        newSocket.on("deny-call-video", (data) => {
+            console.log("deny-call-video", data);
+            setCallDenied(true);
+            setReceiveCalledVideo(false);
+            setCalledUser({});
+            setRequestVideoCallData({});
+            setShowVideoCallModal(false);
+        });
+
+        newSocket.on("answer-call-video", async (signal) => {
+            console.log("socket.on ~ signal:", signal);
+            setCallAccepted(true);
+            setReceiveCalledVideo(false);
+            setCallDenied(false);
+        });
+
+        setSocket(newSocket);
         return () => {
             if (newSocket) {
                 newSocket.disconnect();
             }
         };
-    }, [accessToken, conversationId, currentUserId, dispatch, setMessage]);
+    }, [
+        accessToken,
+        conversationId,
+        currentConversation.conversation_id,
+        currentUserId,
+        dispatch,
+        setMessage,
+    ]);
+
+    async function createRoom() {
+        try {
+            const response = await axios.post(
+                import.meta.env.VITE_DAILY_API_URL,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${
+                            import.meta.env.VITE_DAILY_API_KEY
+                        }`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to create room: ${error.message}`);
+        }
+    }
+
+    async function getRoom(roomId) {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_DAILY_API_URL}/${roomId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${
+                            import.meta.env.VITE_DAILY_API_KEY
+                        }`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            throw new Error(`Failed to get room: ${error.message}`);
+        }
+    }
+
+    async function deleteRoom(roomId) {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_DAILY_API_URL}/${roomId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${
+                            import.meta.env.VITE_DAILY_API_KEY
+                        }`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+        } catch (error) {
+            throw new Error(`Failed to delete room: ${error.message}`);
+        }
+    }
 
     const contextValues = {
         socket,
@@ -125,6 +234,23 @@ export function SocketProvider(props) {
         setMessage,
         unreadCount,
         setUnreadCount,
+        showVideoCallModal,
+        setShowVideoCallModal,
+        calledUser,
+        setCalledUser,
+        requestVideoCallData,
+        setRequestVideoCallData,
+        receiveCalledVideo,
+        setReceiveCalledVideo,
+        callAccepted,
+        setCallAccepted,
+        callDenied,
+        setCallDenied,
+        createRoom,
+        getRoom,
+        deleteRoom,
+        callEnded,
+        setCallEnded,
     };
     return (
         <SocketContext.Provider

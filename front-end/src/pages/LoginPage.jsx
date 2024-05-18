@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import PhoneInput from "react-phone-input-2";
 import { useEffect } from "react";
 import { useAuth } from "../contexts/auth-context";
-import { getToken, saveToken, saveUserId } from "../utils/auth";
+import { getToken, saveToken, saveUserId, saveUserName } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
 import axios from "../api/axios";
 
@@ -62,9 +62,11 @@ const LoginPage = () => {
             phone: newPhone,
             password: values.password,
         });
+        console.log("handleSignIn ~ res:", res);
         if (res.data.status === 200) {
             saveUserId(res.data.data?._id);
             saveToken(res.data.data?.access_token);
+            saveUserName(res.data.data?.full_name);
             toast.success("Đăng nhập thành công");
             navigate("/");
         } else {

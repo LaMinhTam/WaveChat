@@ -23,7 +23,7 @@ const ConversationContent = ({ message, socket }) => {
     useEffect(() => {
         const chatContent = document.getElementById("chat-content");
         setTimeout(() => {
-            chatContent.scrollTop = chatContent.scrollHeight;
+            if (chatContent) chatContent.scrollTop = chatContent.scrollHeight;
         }, 100);
     }, [message]);
 
