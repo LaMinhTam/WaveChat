@@ -2,7 +2,12 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import io from 'socket.io-client';
 import HOST_IP from '../apis/host';
 import {useUserData} from './auth-context';
-import {getConversations} from '../apis/conversation';
+import {
+  getConversationDetail,
+  getConversations,
+  getListMember,
+  getMessage,
+} from '../apis/conversation';
 import {useNavigation} from '@react-navigation/native';
 
 import firestore from '@react-native-firebase/firestore';
@@ -70,7 +75,6 @@ export const SocketProvider = ({children}) => {
     newSocket.on('message', incomingMessage => {
       const {message} = incomingMessage;
       console.log('incomingMessage', message);
-      console.log(currentConversation._id, '\n', message.conversation_id);
       if (
         currentConversation._id === message.conversation_id ||
         currentConversation._id
@@ -92,6 +96,56 @@ export const SocketProvider = ({children}) => {
         });
         return updatedMessages;
       });
+    });
+
+    newSocket.on('new-conversation', data => {
+      handleNewConversation();
+    });
+
+    const handleNewConversation = async () => {
+      const conversation = await getConversations(accessTokens);
+      setConversations(conversation.data);
+    };
+
+    const fetchConversations = async () => {
+      try {
+        const conversation = await getConversations(accessTokens);
+        setConversations(conversation.data);
+      } catch (error) {
+        console.error('Error fetching conversations:', error);
+      }
+    };
+
+    newSocket.on('leave-group', data => {
+      handleNewConversation();
+      console.log('leave', data.data);
+      if (
+        currentConversation !== undefined ||
+        currentConversation._id === data.data.conversation_id
+      ) {
+        currentConversation.members = currentConversation.members.filter(
+          member => member._id !== data.data.user_id,
+        );
+        currentConversation.virtual_members =
+          currentConversation.virtual_members.filter(
+            member => member._id !== data.data.user_id,
+          );
+        setCurrentConversation(currentConversation);
+      } else {
+        fetchConversations();
+      }
+    });
+
+    newSocket.on('add-member', data => {
+      fetchConversations();
+    });
+
+    newSocket.on('remove-member', data => {
+      fetchConversations();
+    });
+
+    newSocket.on('disband-group', data => {
+      fetchConversations();
     });
 
     newSocket.on('request-call-video', incomingRequestCallVideo => {

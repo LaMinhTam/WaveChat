@@ -128,7 +128,7 @@ const ChatTextInput = ({
     console.log(message);
     socket.emit('message', message);
 
-    notifyMessageToOtherMembers(message, currentConversation, userInfo);
+    // notifyMessageToOtherMembers(message, currentConversation, userInfo);
   };
 
   const handleReplyMessage = (

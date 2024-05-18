@@ -118,7 +118,7 @@ const ChatScreen = ({navigation, route}) => {
         return !message.user_deleted.includes(userInfo._id);
       });
       setMessages(filteredMessages);
-    } else if (newMessages.status) {
+    } else if (newMessages.status && currentConversation.type !== 2) {
       Alert.alert(
         'Thông báo',
         'Cuộc trò chuyện này đã bị giải tán hoặc không tồn tại',
@@ -260,16 +260,36 @@ const ChatScreen = ({navigation, route}) => {
         ref={flatListRef}
         data={messages}
         keyExtractor={item => item._id}
-        renderItem={({item}) => (
-          <MessageItem
-            item={item}
-            searchKeyword={searchKeyword}
-            userInfo={userInfo}
-            handleOptionSelect={handleOptionSelect}
-            handleReactToMessage={handleReactToMessage}
-            scrollById={scrollById}
-          />
-        )}
+        renderItem={({item}) => {
+          if ([10, 11, 13].includes(item.type)) {
+            return (
+              <Text
+                style={{
+                  flex: 1,
+                  padding: 10,
+                  textAlign: 'center',
+                  color: '#000',
+                  backgroundColor: '#fff',
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  marginVertical: 5,
+                }}>
+                {item.user.full_name + ' ' + item.message}
+              </Text>
+            );
+          } else {
+            return (
+              <MessageItem
+                item={item}
+                searchKeyword={searchKeyword}
+                userInfo={userInfo}
+                handleOptionSelect={handleOptionSelect}
+                handleReactToMessage={handleReactToMessage}
+                scrollById={scrollById}
+              />
+            );
+          }
+        }}
         inverted
         style={{padding: 5}}
       />

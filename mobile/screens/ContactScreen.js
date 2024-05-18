@@ -13,18 +13,20 @@ import {MAIN_COLOR} from '../styles';
 import {useUserData} from '../contexts/auth-context';
 import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {useSocket} from '../contexts/SocketProvider';
+import {current} from '@reduxjs/toolkit';
 
 const Separator = () => <View style={styles.separator} />;
 
 const FriendScreen = ({navigation}) => {
   const {setMessages} = useSocket();
   const {userInfo, friends} = useUserData();
-  const {setCurrentConversation, conversations} = useSocket();
+  const {currentConversation, setCurrentConversation, conversations} =
+    useSocket();
 
   // useEffect on foccus
 
   const handlePressFriend = friend => {
-    const existingConversation = conversations.find(conversation => {
+    let existingConversation = conversations.find(conversation => {
       if (conversation.type === 2) {
         return conversation.members.some(member => member === friend.user_id);
       }
@@ -48,10 +50,11 @@ const FriendScreen = ({navigation}) => {
         },
       ],
       members: [userInfo._id, friend.user_id],
-      type: 2,
     };
     setMessages([]);
     setCurrentConversation(existingConversation || newConversation);
+    //update block_type:0 and type 2
+    setCurrentConversation({...currentConversation, block_type: 0, type: 2});
     navigation.navigate('ChatScreen');
   };
 

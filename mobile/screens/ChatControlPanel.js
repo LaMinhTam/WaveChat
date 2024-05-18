@@ -34,7 +34,7 @@ const ChatControlPanel = ({navigation}) => {
     messages,
     setConversations,
   } = useSocket();
-
+  console.log(currentConversation._id);
   const [mediaMessage, setMediaMessage] = useState(
     messages
       ?.filter(message => message.type === 2 || message.type === 3)
@@ -403,6 +403,7 @@ const ChatControlPanel = ({navigation}) => {
                             currentConversation._id,
                             accessTokens,
                           );
+                          console.log(data);
                           setCurrentConversation({
                             ...currentConversation,
                             is_join_with_link: 1,

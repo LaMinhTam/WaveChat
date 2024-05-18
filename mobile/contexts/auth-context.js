@@ -72,7 +72,7 @@ export function UserDataProvider(props) {
 
     setUserInfo(user);
     fetchFriends(user.access_token);
-    addNewFCMToken(user);
+    // addNewFCMToken(user);
     setAccessTokens(user.access_token);
     await AsyncStorage.setItem('accessToken', user.access_token);
   };
@@ -80,6 +80,7 @@ export function UserDataProvider(props) {
   const handleSignIn = async (phone, password) => {
     const data = await Login(phone, password);
     if (data.status === 200) {
+      console.log(data.data.access_token);
       await handleLoginSuccess(data.data);
       await AsyncStorage.setItem('phone', phone);
       await AsyncStorage.setItem('password', password);

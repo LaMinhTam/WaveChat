@@ -80,7 +80,7 @@ const UserSettingListScreen = ({navigation}) => {
           .catch(error => {});
         break;
       case 4:
-        removeFCMToken(userInfo);
+        // removeFCMToken(userInfo);
         removeAccessToken();
         break;
       case 5:

@@ -14,7 +14,12 @@ import {FILE_TYPE} from '../constants';
 import {getBlockList} from '../apis/user';
 
 const HomeScreen = ({navigation}) => {
-  const {conversations, setConversations, setCurrentConversation} = useSocket();
+  const {
+    conversations,
+    setConversations,
+    setCurrentConversation,
+    currentConversation,
+  } = useSocket();
   const {accessTokens, userInfo} = useUserData();
   const [blockUser, setBlockUser] = useState([]);
 
@@ -22,7 +27,7 @@ const HomeScreen = ({navigation}) => {
     const type = lastMessage.type;
     if (type == 15) {
       return 'Nhóm mới được tạo';
-    } else if (type != 1 && type != 14 && type != 16) {
+    } else if (![1, 10, 11, 14, 13, 16, 20].includes(type)) {
       if (type === 2) {
         return `[${FILE_TYPE[type]}]`;
       } else {
@@ -49,7 +54,8 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     const fetchConversations = async () => {
       try {
-        const conversation = await getConversations(accessTokens);
+        let conversation = await getConversations(accessTokens);
+        conversation = await getConversations(accessTokens);
         setConversations(conversation.data);
       } catch (error) {
         console.error('Error fetching conversations:', error);
@@ -76,7 +82,7 @@ const HomeScreen = ({navigation}) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {conversations
-        .sort((a, b) => new Date(b.last_activity) - new Date(a.last_activity))
+        ?.sort((a, b) => new Date(b.last_activity) - new Date(a.last_activity))
         .map(conversation => (
           <TouchableOpacity
             key={conversation._id}
