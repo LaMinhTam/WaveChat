@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
   Alert,
+  ScrollView,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import ImageCropPicker from 'react-native-image-crop-picker';
@@ -201,300 +202,329 @@ const ChatControlPanel = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.avatarContainer}>
-        <Image
-          source={{
-            uri:
-              currentConversation.avatar ||
-              'https://wavechat.s3.ap-southeast-1.amazonaws.com/default-group-icon-dark.webp',
-          }}
-          style={styles.avatar}
-        />
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 20,
-        }}>
-        <Text style={styles.conversationName}>{currentConversation.name}</Text>
-        {currentConversation.type === 1 && (
-          <TouchableOpacity onPress={() => setIsModalRenameVisible(true)}>
-            <FeatherIcon
-              style={{backgroundColor: '#eee', borderRadius: 20, padding: 5}}
-              name="edit-3"
-              size={20}
-              color={'#000'}></FeatherIcon>
-          </TouchableOpacity>
-        )}
-        <EditGroupNameModal
-          visible={isModalRenameVisible}
-          onClose={() => setIsModalRenameVisible(false)}
-          onSave={handleSaveNewName}
-        />
-      </View>
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate('ChatScreen', {isSearch: true});
+    <ScrollView style={{backgroundColor: '#fff', flex: 1}}>
+      <View style={styles.container}>
+        <View style={styles.avatarContainer}>
+          <Image
+            source={{
+              uri:
+                currentConversation.avatar ||
+                'https://wavechat.s3.ap-southeast-1.amazonaws.com/default-group-icon-dark.webp',
+            }}
+            style={styles.avatar}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 20,
           }}>
-          <View style={styles.iconContainer}>
-            <FeatherIcon name="search" size={24} color="#000" />
-          </View>
-          <Text style={styles.buttonText}>Tìm tin nhắn</Text>
-        </TouchableOpacity>
-        {currentConversation.type === 2 ? (
+          <Text style={styles.conversationName}>
+            {currentConversation.name}
+          </Text>
+          {currentConversation.type === 1 && (
+            <TouchableOpacity onPress={() => setIsModalRenameVisible(true)}>
+              <FeatherIcon
+                style={{backgroundColor: '#eee', borderRadius: 20, padding: 5}}
+                name="edit-3"
+                size={20}
+                color={'#000'}></FeatherIcon>
+            </TouchableOpacity>
+          )}
+          <EditGroupNameModal
+            visible={isModalRenameVisible}
+            onClose={() => setIsModalRenameVisible(false)}
+            onSave={handleSaveNewName}
+          />
+        </View>
+        <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => viewUserPage()}>
+            onPress={() => {
+              navigation.navigate('ChatScreen', {isSearch: true});
+            }}>
             <View style={styles.iconContainer}>
-              <FeatherIcon name="user" size={24} color="#000" />
+              <FeatherIcon name="search" size={24} color="#000" />
             </View>
-            <Text style={styles.buttonText}>Trang cá nhân</Text>
+            <Text style={styles.buttonText}>Tìm tin nhắn</Text>
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={() => addMember()}>
+          {currentConversation.type === 2 ? (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => viewUserPage()}>
+              <View style={styles.iconContainer}>
+                <FeatherIcon name="user" size={24} color="#000" />
+              </View>
+              <Text style={styles.buttonText}>Trang cá nhân</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={() => addMember()}>
+              <View style={styles.iconContainer}>
+                <FeatherIcon name="user-plus" size={24} color="#000" />
+              </View>
+              <Text style={styles.buttonText}>Thêm thành viên</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              ImageCropPicker.openPicker({
+                multiple: false,
+                cropping: true,
+              }).then(image => {
+                console.log(image);
+              });
+            }}>
             <View style={styles.iconContainer}>
-              <FeatherIcon name="user-plus" size={24} color="#000" />
+              <FeatherIcon name="image" size={24} color="#000" />
             </View>
-            <Text style={styles.buttonText}>Thêm thành viên</Text>
+            <Text style={styles.buttonText}>Đổi hình nền</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              handleToggleNotification();
+            }}>
+            <View style={styles.iconContainer}>
+              <FeatherIcon name="bell-off" size={24} color="#000" />
+            </View>
+            <Text style={styles.buttonText}>Tắt thông báo</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.memberSection}
+          onPress={() => setIsMemberCollapsed(!isMemberCollapsed)}>
+          <Text style={styles.sectionName}>
+            Thành viên ({currentConversation.virtual_members.length})
+          </Text>
+          <FeatherIcon
+            name={isMemberCollapsed ? 'chevron-down' : 'chevron-up'}
+            size={20}
+            color={PRIMARY_TEXT_COLOR}
+          />
+        </TouchableOpacity>
+        {!isMemberCollapsed && (
+          <View style={styles.memberList}>
+            {currentConversation.virtual_members.map(member => (
+              <TouchableOpacity
+                key={member._id}
+                onPress={() => console.log(member)}
+                onLongPress={() => handleLongPressMember(member)}
+                style={styles.memberItem}>
+                <Image
+                  source={{uri: member.avatar}}
+                  style={styles.memberAvatar}
+                />
+                <Text style={{color: '#000'}}>{member.full_name}</Text>
+                <Text style={{marginLeft: 'auto', color: '#aaa'}}>
+                  {member.permission === 1 ? 'Phó nhóm' : ''}
+                  {member.permission === 2 ? 'Trưởng nhóm' : ''}
+                </Text>
+              </TouchableOpacity>
+            ))}
+            <MemberOptionsModal
+              visible={isModalVisible}
+              onClose={handleCloseModal}
+              selectedMember={selectedMember}
+              setCurrentConversation={setCurrentConversation}
+              currentConversation={currentConversation}
+              accessTokens={accessTokens}
+              navigation={navigation}
+              setConversations={setConversations}
+              userId={userInfo._id}
+            />
+          </View>
+        )}
+        {mediaMessage.length > 0 && (
+          <TouchableOpacity
+            style={styles.imageSection}
+            onPress={() =>
+              navigation.navigate('ImagesScreen', {mediaMessageForSection})
+            }>
+            <Text style={styles.sectionName}>Ảnh</Text>
+            <FlatList
+              data={mediaMessage.slice(0, 3)}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderImageItem}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              ListFooterComponent={renderRightArrow}
+              contentContainerStyle={styles.imageList}
+            />
           </TouchableOpacity>
         )}
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            ImageCropPicker.openPicker({multiple: false, cropping: true}).then(
-              image => {
-                console.log(image);
-              },
-            );
-          }}>
-          <View style={styles.iconContainer}>
-            <FeatherIcon name="image" size={24} color="#000" />
-          </View>
-          <Text style={styles.buttonText}>Đổi hình nền</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            handleToggleNotification();
-          }}>
-          <View style={styles.iconContainer}>
-            <FeatherIcon name="bell-off" size={24} color="#000" />
-          </View>
-          <Text style={styles.buttonText}>Tắt thông báo</Text>
-        </TouchableOpacity>
-      </View>
-      <TouchableOpacity
-        style={styles.memberSection}
-        onPress={() => setIsMemberCollapsed(!isMemberCollapsed)}>
-        <Text style={styles.sectionName}>
-          Thành viên ({currentConversation.virtual_members.length})
-        </Text>
-        <FeatherIcon
-          name={isMemberCollapsed ? 'chevron-down' : 'chevron-up'}
-          size={20}
-          color={PRIMARY_TEXT_COLOR}
-        />
-      </TouchableOpacity>
-      {!isMemberCollapsed && (
-        <View style={styles.memberList}>
-          {currentConversation.virtual_members.map(member => (
+        {currentConversation.type === 1 && (
+          <View style={{width: '100%'}}>
+            {currentConversation.my_permission !== 0 && (
+              <TouchableOpacity
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  backgroundColor: '#f0f0f0',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                }}
+                onPress={() => {
+                  navigation.navigate('MemberApproval');
+                }}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    {color: '#000', fontSize: 18, fontWeight: 700},
+                  ]}>
+                  Duyệt thành viên
+                </Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
-              key={member._id}
-              onPress={() => console.log(member)}
-              onLongPress={() => handleLongPressMember(member)}
-              style={styles.memberItem}>
-              <Image
-                source={{uri: member.avatar}}
-                style={styles.memberAvatar}
-              />
-              <Text style={{color: '#000'}}>{member.full_name}</Text>
-              <Text style={{marginLeft: 'auto', color: '#aaa'}}>
-                {member.permission === 1 ? 'Phó nhóm' : ''}
-                {member.permission === 2 ? 'Trưởng nhóm' : ''}
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                backgroundColor: '#f0f0f0',
+                padding: 10,
+                borderRadius: 8,
+                marginTop: 10,
+              }}
+              onPress={() => {
+                if (currentConversation.is_join_with_link === 0) {
+                  Alert.alert(
+                    'Chưa kích hoạt tham gia bằng liên kết',
+                    'Bạn có muốn kích hoạt tính năng tham gia bằng liên kết không?',
+                    [
+                      {
+                        text: 'Có',
+                        onPress: async () => {
+                          const data = await acceptJoinByLink(
+                            currentConversation._id,
+                            accessTokens,
+                          );
+                          setCurrentConversation({
+                            ...currentConversation,
+                            is_join_with_link: 1,
+                            link_join: data.data.link_join,
+                          });
+                          navigation.navigate('JoinByLink');
+                        },
+                      },
+                      {
+                        text: 'Không',
+                        style: 'cancel',
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                } else {
+                  navigation.navigate('JoinByLink');
+                }
+              }}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {color: '#000', fontSize: 18, fontWeight: 700},
+                ]}>
+                Link tham gia nhóm
               </Text>
             </TouchableOpacity>
-          ))}
-          <MemberOptionsModal
-            visible={isModalVisible}
-            onClose={handleCloseModal}
-            selectedMember={selectedMember}
-            setCurrentConversation={setCurrentConversation}
-            currentConversation={currentConversation}
-            accessTokens={accessTokens}
-            navigation={navigation}
-            setConversations={setConversations}
-            userId={userInfo._id}
-          />
-        </View>
-      )}
-      {mediaMessage.length > 0 && (
-        <TouchableOpacity
-          style={styles.imageSection}
-          onPress={() =>
-            navigation.navigate('ImagesScreen', {mediaMessageForSection})
-          }>
-          <Text style={styles.sectionName}>Ảnh</Text>
-          <FlatList
-            data={mediaMessage.slice(0, 3)}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderImageItem}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            ListFooterComponent={renderRightArrow}
-            contentContainerStyle={styles.imageList}
-          />
-        </TouchableOpacity>
-      )}
-      {currentConversation.type === 1 && (
-        <View style={{width: '100%'}}>
-          <TouchableOpacity
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              backgroundColor: '#f0f0f0',
-              padding: 10,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-            onPress={() => {
-              if (currentConversation.is_join_with_link === 0) {
-                Alert.alert(
-                  'Chưa kích hoạt tham gia bằng liên kết',
-                  'Bạn có muốn kích hoạt tính năng tham gia bằng liên kết không?',
-                  [
-                    {
-                      text: 'Có',
-                      onPress: async () => {
-                        const data = await acceptJoinByLink(
-                          currentConversation._id,
-                          accessTokens,
-                        );
-                        setCurrentConversation({
-                          ...currentConversation,
-                          is_join_with_link: 1,
-                          link_join: data.data.link_join,
-                        });
-                        navigation.navigate('JoinByLink');
-                      },
-                    },
-                    {
-                      text: 'Không',
-                      style: 'cancel',
-                    },
-                  ],
-                  {cancelable: false},
-                );
-              } else {
-                navigation.navigate('JoinByLink');
-              }
-            }}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: '#000', fontSize: 18, fontWeight: 700},
-              ]}>
-              Link tham gia nhóm
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#f0f0f0',
-              padding: 10,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-            onPress={() => {
-              handleLeaveGroup();
-            }}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: 'red', fontSize: 18, fontWeight: 700},
-              ]}>
-              Rời nhóm
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#f0f0f0',
-              padding: 10,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-            onPress={() => {
-              handleDisbandConversation();
-            }}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: 'red', fontSize: 18, fontWeight: 700},
-              ]}>
-              Giải tán nhóm
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      {currentConversation.type === 2 && (
-        <View style={{width: '100%'}}>
-          <TouchableOpacity
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#f0f0f0',
-              padding: 10,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-            onPress={() => {
-              handleBlockUser();
-            }}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: 'red', fontSize: 18, fontWeight: 700},
-              ]}>
-              {isBlockUser ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#f0f0f0',
+                padding: 10,
+                borderRadius: 8,
+                marginTop: 10,
+              }}
+              onPress={() => {
+                handleLeaveGroup();
+              }}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {color: 'red', fontSize: 18, fontWeight: 700},
+                ]}>
+                Rời nhóm
+              </Text>
+            </TouchableOpacity>
+            {currentConversation.my_permission === 2 && (
+              <TouchableOpacity
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: '#f0f0f0',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginTop: 10,
+                }}
+                onPress={() => {
+                  handleDisbandConversation();
+                }}>
+                <Text
+                  style={[
+                    styles.buttonText,
+                    {color: 'red', fontSize: 18, fontWeight: 700},
+                  ]}>
+                  Giải tán nhóm
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        {currentConversation.type === 2 && (
+          <View style={{width: '100%'}}>
+            <TouchableOpacity
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#f0f0f0',
+                padding: 10,
+                borderRadius: 8,
+                marginTop: 10,
+              }}
+              onPress={() => {
+                handleBlockUser();
+              }}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {color: 'red', fontSize: 18, fontWeight: 700},
+                ]}>
+                {isBlockUser ? 'Bỏ chặn người dùng' : 'Chặn người dùng'}
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#f0f0f0',
-              padding: 10,
-              borderRadius: 8,
-              marginTop: 10,
-            }}
-            onPress={() => {
-              handleDeleteConversation();
-            }}>
-            <Text
-              style={[
-                styles.buttonText,
-                {color: 'red', fontSize: 18, fontWeight: 700},
-              ]}>
-              Xóa cuộc trò chuyện
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+            <TouchableOpacity
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#f0f0f0',
+                padding: 10,
+                borderRadius: 8,
+                marginTop: 10,
+              }}
+              onPress={() => {
+                handleDeleteConversation();
+              }}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  {color: 'red', fontSize: 18, fontWeight: 700},
+                ]}>
+                Xóa cuộc trò chuyện
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 

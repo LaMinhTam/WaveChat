@@ -13,6 +13,7 @@ import {
   createGroupConversation,
   getConversationDetail,
   getConversations,
+  getListMember,
 } from '../apis/conversation';
 import {useSocket} from '../contexts/SocketProvider';
 import FriendListChosen from '../components/FriendListChosen';
@@ -35,7 +36,16 @@ const CreateGroupScreen = ({navigation}) => {
       accessTokens,
     );
     console.log('new currentConversation', currentConversation);
-    setCurrentConversation(currentConversation.data);
+    virtual_members = await getListMember(
+      currentConversation.data.conversation_id,
+      accessTokens,
+    );
+    setCurrentConversation({
+      ...currentConversation.data,
+      _id: currentConversation.data.conversation_id,
+      virtual_members: virtual_members.data,
+    });
+
     const conversation = await getConversations(accessTokens);
     setConversations(conversation.data);
     navigation.pop();
@@ -50,8 +60,10 @@ const CreateGroupScreen = ({navigation}) => {
           borderColor: '#ccc',
           padding: 10,
           marginBottom: 10,
+          color: '#333',
         }}
         placeholder="Đặt tên nhóm"
+        placeholderTextColor={'gray'}
         value={groupName}
         onChangeText={setGroupName}
       />

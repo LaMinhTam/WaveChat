@@ -39,6 +39,7 @@ const FriendListChosen = ({friends, selectedFriends, setSelectedFriends}) => {
           backgroundColor: BACKGROUND_COLOR,
         }}
         placeholder="Tìm tên"
+        placeholderTextColor={'gray'}
         value={searchText}
         onChangeText={setSearchText}
       />
@@ -62,7 +63,7 @@ const FriendListChosen = ({friends, selectedFriends, setSelectedFriends}) => {
                 marginRight: 10,
               }}
             />
-            <Text>{item.full_name}</Text>
+            <Text style={{color: '#333'}}>{item.full_name}</Text>
             {selectedFriends.some(
               selectedFriend => selectedFriend.user_id === item.user_id,
             ) ? (

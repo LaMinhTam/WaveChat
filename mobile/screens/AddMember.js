@@ -10,7 +10,7 @@ import FriendListChosen from '../components/FriendListChosen';
 import {useUserData} from '../contexts/auth-context';
 import {useSocket} from '../contexts/SocketProvider';
 import {MAIN_COLOR, PRIMARY_TEXT_COLOR} from '../styles/styles';
-import {addMember} from '../apis/conversation';
+import {addMember, getListMember, getMembers} from '../apis/conversation';
 
 const AddMember = ({navigation}) => {
   const {accessTokens, friends} = useUserData();
@@ -19,10 +19,17 @@ const AddMember = ({navigation}) => {
   const [friendForAddToConversation, setFriendForAddToConversation] = useState(
     [],
   );
+
   useEffect(() => {
     const newFriendsMember = friends.filter(friend => {
-      return !currentConversation.members.includes(friend.user_id);
+      return (
+        !currentConversation.members.includes(friend.user_id) &&
+        !currentConversation.virtual_members.some(
+          vm => vm.user_id === friend.user_id,
+        )
+      );
     });
+
     setFriendForAddToConversation(newFriendsMember);
   }, []);
 
@@ -33,35 +40,22 @@ const AddMember = ({navigation}) => {
       userIds,
       accessTokens,
     );
-    //thêm trường hợp is_confirm_new_member
+
+    const virtual_members = await getListMember(
+      currentConversation._id,
+      accessTokens,
+    );
+    setCurrentConversation({
+      ...currentConversation,
+      virtual_members: virtual_members.data,
+    });
+
     console.log(data);
     navigation.navigate('ChatControlPanel');
   };
 
   return (
     <View style={{flex: 1, padding: 10, backgroundColor: '#fff'}}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 10,
-        }}>
-        <Text>Chế độ phê duyệt thành viên mới</Text>
-        <TouchableOpacity
-          onPress={() => {
-            setCurrentConversation({
-              ...currentConversation,
-              is_confirm_new_member:
-                currentConversation.is_confirm_new_member === 0 ? 1 : 0,
-            });
-          }}
-          style={{backgroundColor: '#0d6efd', padding: 10, borderRadius: 10}}>
-          <Text style={{color: '#fff'}}>
-            {currentConversation.is_confirm_new_member === 0 ? 'Tắt' : 'Bật'}
-          </Text>
-        </TouchableOpacity>
-      </View>
       <FriendListChosen
         friends={friendForAddToConversation}
         selectedFriends={selectedFriends}

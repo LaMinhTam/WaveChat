@@ -25,11 +25,19 @@ const MemberOptionsModal = ({
 
   useEffect(() => {
     if (currentConversation.my_permission == 2) {
-      setContextMenuOptions([
-        'Xóa khỏi nhóm',
-        'Thêm phó nhóm',
-        'Chuyển quyền trưởng nhóm',
-      ]);
+      if (selectedMember?.permission == 1) {
+        setContextMenuOptions([
+          'Xóa khỏi nhóm',
+          'Thu hồi quyền phó nhóm',
+          'Chuyển quyền trưởng nhóm',
+        ]);
+      } else {
+        setContextMenuOptions([
+          'Xóa khỏi nhóm',
+          'Thêm phó nhóm',
+          'Chuyển quyền trưởng nhóm',
+        ]);
+      }
     } else if (currentConversation.my_permission == 1) {
       setContextMenuOptions(['Xóa khỏi nhóm']);
     } else if (currentConversation.my_permission == 0) {
@@ -48,12 +56,14 @@ const MemberOptionsModal = ({
     if (option === 'Xóa khỏi nhóm') {
       handleRemoveMember();
     } else if (option === 'Thêm phó nhóm') {
-      handleGrantDeputy();
+      handleDeputy(1);
     } else if (option === 'Chuyển quyền trưởng nhóm') {
       handleGrantAdmin();
     } else if (option === 'Xem trang cá nhân') {
       const userIds = selectedMember.user_id;
       navigation.navigate('UserInfomation', {userIds: [userIds]});
+    } else if (option === 'Thu hồi quyền phó nhóm') {
+      handleDeputy(0);
     }
     onClose();
   };
@@ -64,6 +74,7 @@ const MemberOptionsModal = ({
       selectedMember.user_id,
       accessTokens,
     );
+    console.log('xóa khỏi nhóm', data);
     if (data.status === 200) {
       setCurrentConversation({
         ...currentConversation,
@@ -71,22 +82,36 @@ const MemberOptionsModal = ({
           member => member._id !== selectedMember._id,
         ),
       });
+      setConversations(prevState =>
+        prevState.map(conversation =>
+          conversation._id === currentConversation._id
+            ? {
+                ...conversation,
+                members: conversation.members.filter(
+                  member => member !== selectedMember.user_id,
+                ),
+              }
+            : conversation,
+        ),
+      );
     } else {
       Alert.alert('Lỗi', data.message);
     }
   };
 
-  const handleGrantDeputy = async () => {
+  const handleDeputy = async type => {
     const data = await updatePermission(
       currentConversation._id,
       selectedMember.user_id,
-      1,
+      type,
       accessTokens,
     );
     setCurrentConversation({
       ...currentConversation,
       virtual_members: currentConversation.virtual_members.map(member =>
-        member._id === selectedMember._id ? {...member, permission: 1} : member,
+        member._id === selectedMember._id
+          ? {...member, permission: type}
+          : member,
       ),
     });
     console.log(data);
@@ -182,6 +207,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
+    color: '#333',
   },
   cancelButton: {
     paddingVertical: 10,

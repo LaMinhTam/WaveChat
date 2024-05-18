@@ -1,1 +1,1 @@
-export default HOST_IP = '172.29.225.72';
+export default HOST_IP = '192.168.124.162';

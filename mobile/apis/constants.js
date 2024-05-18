@@ -54,6 +54,12 @@ export const waveChatApi = {
     `${waveChatEndpoint}/conversation-group/member?conversation_id=${id}`,
   updateName: id =>
     `${waveChatEndpoint}/conversation/update-name?conversation_id=${id}`,
+  getWaitingMember: id =>
+    `${waveChatEndpoint}/conversation-group/waiting-member?conversation_id=${id}`,
+  MemberApprovalToggle: id =>
+    `${waveChatEndpoint}/conversation/is_confirm_member?conversation_id=${id}`,
+  memberWaitingBehavior: conversation_id =>
+    `${waveChatEndpoint}/conversation-group/confirm-member?conversation_id=${conversation_id}`,
 };
 
 const AVATAR_USER_URL_DEFAULT =

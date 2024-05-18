@@ -2,7 +2,8 @@ import axios from 'axios';
 import {waveChatApi} from './constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function getConversations(token) {
+export async function getConversations() {
+  const token = await AsyncStorage.getItem('accessToken');
   const res = await axios.get(waveChatApi.getConversations(), {
     headers: {
       'Content-Type': 'application/json',
@@ -12,7 +13,8 @@ export async function getConversations(token) {
   return res.data;
 }
 
-export async function getConversationDetail(id, token) {
+export async function getConversationDetail(id) {
+  const token = await AsyncStorage.getItem('accessToken');
   const res = await axios.get(waveChatApi.getConversationDetail(id), {
     headers: {
       'Content-Type': 'application/json',
@@ -22,7 +24,8 @@ export async function getConversationDetail(id, token) {
   return res.data;
 }
 
-export async function getListMember(id, token) {
+export async function getListMember(id) {
+  const token = await AsyncStorage.getItem('accessToken');
   const res = await axios.get(waveChatApi.getListMember(id), {
     headers: {
       'Content-Type': 'application/json',
@@ -262,7 +265,8 @@ export async function acceptJoinByLink(groupID, token) {
   return res.data;
 }
 
-export async function joinByScanLink(link, token) {
+export async function joinByScanLink(link) {
+  const token = await AsyncStorage.getItem('accessToken');
   const res = await axios.post(
     waveChatApi.joinByScanLink(link),
     {},
@@ -281,6 +285,53 @@ export async function updateName(conversation_id, name, token) {
     waveChatApi.updateName(conversation_id),
     {
       name: name,
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function getWaitingMember(conversation_id, token) {
+  const res = await axios.get(waveChatApi.getWaitingMember(conversation_id), {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+}
+
+export async function MemberApprovalToggle(conversation_id, token) {
+  const res = await axios.post(
+    waveChatApi.MemberApprovalToggle(conversation_id),
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+}
+
+export async function memberWaitingBehavior(
+  conversation_id,
+  member,
+  type,
+  token,
+) {
+  console.log(conversation_id, member, type, token);
+  const res = await axios.post(
+    waveChatApi.memberWaitingBehavior(conversation_id),
+    {
+      members: member,
+      type: type,
     },
     {
       headers: {

@@ -15,6 +15,7 @@ import AddMember from '../screens/AddMember';
 import ForwardMessage from '../screens/ForwardMessage';
 import JoinByLinkScreen from '../screens/JoinByLinkScreen';
 import QRScanner from '../screens/QRScanner';
+import MemberApproval from '../screens/MemberApproval';
 
 const Stack = createStackNavigator();
 
@@ -38,7 +39,11 @@ const ConversationStackNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen name="CallPhoneScreen" component={CallPhoneScreen} />
-      <Stack.Screen name="GroupCreate" component={CreateGroupScreen} />
+      <Stack.Screen
+        name="GroupCreate"
+        component={CreateGroupScreen}
+        options={{headerTitle: 'Tạo nhóm'}}
+      />
       <Stack.Screen
         name="ChatControlPanel"
         component={ChatControlPanel}
@@ -64,6 +69,10 @@ const ConversationStackNavigator = () => {
         name="JoinByLink"
         component={JoinByLinkScreen}
         options={{title: 'Mời vào nhóm bằng link'}}></Stack.Screen>
+      <Stack.Screen
+        name="MemberApproval"
+        component={MemberApproval}
+        options={{title: 'Duyệt thành viên'}}></Stack.Screen>
     </Stack.Navigator>
   );
 };

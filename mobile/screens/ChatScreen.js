@@ -1,7 +1,12 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, FlatList, Text, TouchableOpacity, View} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {deleteMessage, getMessage, reactToMessage} from '../apis/conversation';
+import {
+  deleteMessage,
+  getConversations,
+  getMessage,
+  reactToMessage,
+} from '../apis/conversation';
 import ChatTextInput from '../components/ChatTextInput';
 import {useSocket} from '../contexts/SocketProvider';
 import {useUserData} from '../contexts/auth-context';
@@ -104,11 +109,24 @@ const ChatScreen = ({navigation, route}) => {
 
   const loadMessages = async () => {
     let newMessages = await getMessage(currentConversation._id, accessTokens);
+    if (currentConversation.type === 1) {
+      newMessages?.data?.pop();
+    }
+
     if (newMessages.status === 200) {
       const filteredMessages = newMessages.data.filter(message => {
         return !message.user_deleted.includes(userInfo._id);
       });
       setMessages(filteredMessages);
+    } else if (newMessages.status) {
+      Alert.alert(
+        'Thông báo',
+        'Cuộc trò chuyện này đã bị giải tán hoặc không tồn tại',
+      );
+
+      const conversation = await getConversations(accessTokens);
+      setConversations(conversation.data);
+      navigation.pop();
     } else {
       setMessages([]);
     }

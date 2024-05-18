@@ -20,6 +20,7 @@ const EditGroupNameModal = ({visible, onClose, onSave}) => {
             value={newName}
             onChangeText={text => setNewName(text)}
             placeholder="Nhập tên mới cho nhóm"
+            placeholderTextColor={'#ccc'}
           />
           <View style={styles.buttonContainer}>
             <Button title="Huỷ" onPress={onClose} />
@@ -52,6 +53,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
+    color: '#000',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,

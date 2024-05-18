@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import {useSocket} from '../contexts/SocketProvider';
+import Clipboard from '@react-native-clipboard/clipboard';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const JoinByLinkScreen = () => {
   const {currentConversation} = useSocket();
@@ -32,6 +34,24 @@ const JoinByLinkScreen = () => {
             Chỉ chia sẻ với những người mà bạn tin tưởng.
           </Text>
         </View>
+      </View>
+      <View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#6161ff',
+            padding: 10,
+            borderRadius: 5,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
+          onPress={() =>
+            Clipboard.setString(
+              `https://wavechat.me/g/conversation/${currentConversation._id}?link_join=${currentConversation.link_join}`,
+            )
+          }>
+          <Text style={{color: '#fff'}}>{currentConversation.link_join}</Text>
+          <FeatherIcon name="copy" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
     </View>
   );

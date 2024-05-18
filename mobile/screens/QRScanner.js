@@ -11,14 +11,21 @@ import {
 import {getConversations, joinByScanLink} from '../apis/conversation';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {useUserData} from '../contexts/auth-context';
+import {useSocket} from '../contexts/SocketProvider';
 
 const QRScanner = () => {
-  const {accessTokens} = useUserData();
-
+  const {setConversations} = useSocket();
+  const joinByLink = async link => {
+    const data = await joinByScanLink(link);
+    Alert.alert('Thông báo', data.message);
+    console.log(data);
+    const conversation = await getConversations();
+    setConversations(conversation.data);
+  };
   return (
     <QRCodeScanner
       onRead={({data}) => {
-        joinByScanLink(data, accessTokens);
+        joinByLink(data);
       }}
       reactivate={true}
       reactivateTimeout={500}
