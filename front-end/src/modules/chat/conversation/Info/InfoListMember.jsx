@@ -30,6 +30,10 @@ const InfoListMember = () => {
     const listMemberOfConversation = useSelector(
         (state) => state.conversation.listMemberOfConversation
     );
+    console.log(
+        "InfoListMember ~ listMemberOfConversation:",
+        listMemberOfConversation
+    );
     const { value: checkedAll, handleToggleValue: handleToggleCheckedAll } =
         useToggleValue();
     const { value: checkedSingle, handleToggleValue: handleCheckedSingle } =
@@ -67,7 +71,6 @@ const InfoListMember = () => {
                 );
                 dispatch(setListMemberOfConversation(newListMember));
                 setShowMemberOption(false);
-                dispatch(setId(Math.random() * 1000));
                 toast.success("Xóa thành viên thành công");
             } else {
                 toast.error(res.data.message);

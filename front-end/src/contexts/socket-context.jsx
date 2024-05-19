@@ -3,6 +3,7 @@ import { getToken, getUserId } from "../utils/auth";
 import io from "socket.io-client";
 import { useDispatch } from "react-redux";
 import {
+    setActiveConversation,
     setIncomingMessageOfConversation,
     setShowConversation,
     setShowConversationInfo,
@@ -74,11 +75,7 @@ export function SocketProvider(props) {
                     return;
                 }
             }
-            if (
-                conversationId &&
-                currentConversation.conversation_id !== conversationId
-            ) {
-                console.log("fetching message");
+            if (conversationId) {
                 fetchMessage();
             }
         });
@@ -88,6 +85,7 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("message", (incomingMessage) => {
+            console.log("newSocket.on ~ incomingMessage:", incomingMessage);
             const updatedMessage = incomingMessage.message;
             setMessage((prev) =>
                 Array.isArray(prev)
@@ -130,6 +128,25 @@ export function SocketProvider(props) {
             dispatch(setShowConversationPermission(false));
             dispatch(setShowConversation(false));
             dispatch(setShowConversationInfo(false));
+        });
+
+        newSocket.on("add-member", (response) => {
+            dispatch(setId(response.data.last_message.message_id));
+        });
+
+        newSocket.on("remove-member", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                dispatch(setActiveConversation(""));
+                dispatch(setShowConversationPermission(false));
+                dispatch(setShowConversation(false));
+                dispatch(setShowConversationInfo(false));
+            }
+            dispatch(setId(response.data.last_message.message_id));
+        });
+
+        newSocket.on("leave-group", (response) => {
+            console.log("leave-group", response);
+            dispatch(setId(response.data.last_message.message_id));
         });
 
         newSocket.on("request-call-video", (data) => {

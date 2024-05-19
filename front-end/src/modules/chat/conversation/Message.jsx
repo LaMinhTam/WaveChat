@@ -21,8 +21,6 @@ import MessageFeature from "./message/MessageFeature";
 import ModalChatOption from "../../../components/modal/ModalChatOption";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { Link } from "react-router-dom";
-import handleFormatNotificationMessage from "../../../utils/handleFormatNotificationMessage";
-import { getUserId } from "../../../utils/auth";
 const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [messageFormat, setMessageFormat] = useState("");
@@ -40,7 +38,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     );
 
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
-    const currentUserId = getUserId();
 
     const {
         setReplyMessage,
@@ -149,172 +146,38 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
 
     return (
         <>
-            {![
-                7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-                24, 25,
-            ].includes(msg.type) ? (
-                <div ref={nodeRef}>
-                    <div className="flex items-center justify-center gap-x-3">
-                        {type === "receive" && (
-                            <>
-                                <div className="w-10 h-10 rounded-full">
-                                    <img
-                                        src={s3ImageUrl(msg.user?.avatar)}
-                                        alt=""
-                                        className="object-cover w-full h-full rounded-full"
-                                    />
-                                </div>
-                            </>
-                        )}
-                        <div className="flex items-center justify-center ml-auto">
-                            {type === "send" && (
-                                <div className="flex items-center justify-center gap-x-3">
-                                    {showChatOptionModal &&
-                                        msg._id === messageShowOption && (
-                                            <ModalChatOption
-                                                onRecallMessage={
-                                                    handleRecallMessage
-                                                }
-                                                onDeleteMessage={
-                                                    onDeleteMessage
-                                                }
-                                                onCopyToClipboard={
-                                                    handleCopyToClipboard
-                                                }
-                                                className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
-                                            />
-                                        )}
-                                    {type === "send" &&
-                                        hovered &&
-                                        msg?.type !== 14 && (
-                                            <MessageFeature
-                                                msg={msg}
-                                                handleReplyMessage={
-                                                    handleReplyMessage
-                                                }
-                                            />
-                                        )}
-                                </div>
-                            )}
-                            <div className="flex flex-col p-3 bg-opacity-50 rounded-md gap-y-2 bg-tertiary custom-message__block">
-                                {isGroupChat && type === "receive" && (
-                                    <span className="text-xs text-text3">
-                                        {msg.user?.full_name}
-                                    </span>
-                                )}
-                                <MessageReply
-                                    msg={msg}
-                                    messageRefs={messageRefs}
+            <div ref={nodeRef}>
+                <div className="flex items-center justify-center gap-x-3">
+                    {type === "receive" && (
+                        <>
+                            <div className="w-10 h-10 rounded-full">
+                                <img
+                                    src={s3ImageUrl(msg.user?.avatar)}
+                                    alt=""
+                                    className="object-cover w-full h-full rounded-full"
                                 />
-                                <div>
-                                    {parse(messageFormat, {
-                                        replace: (domNode) => {
-                                            if (
-                                                domNode.attribs &&
-                                                domNode.attribs.href
-                                            ) {
-                                                return (
-                                                    <Link
-                                                        to={
-                                                            domNode.attribs.href
-                                                        }
-                                                        target="_blank"
-                                                        className="underline text-secondary"
-                                                    >
-                                                        {domToReact(
-                                                            domNode.children
-                                                        )}
-                                                    </Link>
-                                                );
-                                            }
-                                        },
-                                    })}
-                                </div>
-                                {msg.type === 5 &&
-                                    msg?.media?.length > 0 &&
-                                    msg.media.map((media) => (
-                                        <MessageFile
-                                            key={uuidv4()}
-                                            media={media}
-                                            progress={progress}
-                                            currentFileName={currentFileName}
-                                            conversation_id={
-                                                msg.conversation_id
-                                            }
-                                        />
-                                    ))}
-                                {msg.type === 3 &&
-                                    msg?.media?.length > 0 &&
-                                    msg.media.map((media) => (
-                                        <MessageVideo
-                                            key={uuidv4()}
-                                            media={media}
-                                            conversation_id={
-                                                msg.conversation_id
-                                            }
-                                            progress={progress}
-                                            currentFileName={currentFileName}
-                                        />
-                                    ))}
-                                {msg.type === 2 && msg?.media?.length > 0 && (
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {msg.media.map((media) => (
-                                            <MessageImage
-                                                key={uuidv4()}
-                                                media={media}
-                                                conversation_id={
-                                                    msg.conversation_id
-                                                }
-                                                setIsOpenImage={setIsOpenImage}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                                <span className="text-sm text-text3">
-                                    {formatDate(msg.created_at)}
-                                </span>
-
-                                {msg.type !== 14 && (
-                                    <>
-                                        <button
-                                            ref={nodeRefReaction}
-                                            className={`absolute bottom-[-20px] ${
-                                                type === "send"
-                                                    ? "right-0"
-                                                    : "left-0"
-                                            }`}
-                                        >
-                                            {hoveredReaction &&
-                                                !reactionEmoji && (
-                                                    <Picker
-                                                        reactionsDefaultOpen={
-                                                            true
-                                                        }
-                                                        onReactionClick={
-                                                            handleReaction
-                                                        }
-                                                        className="z-50"
-                                                    />
-                                                )}
-                                            {reactionEmoji ? (
-                                                <span
-                                                    className="text-[24px]"
-                                                    onClick={
-                                                        handleDeleteReaction
-                                                    }
-                                                >
-                                                    {reactionEmoji}
-                                                </span>
-                                            ) : (
-                                                <IconLike />
-                                            )}
-                                        </button>
-                                    </>
-                                )}
                             </div>
-                            {type === "receive" && (
-                                <div className="flex items-center justify-center gap-x-3">
-                                    {hovered && msg?.type !== 14 && (
+                        </>
+                    )}
+                    <div className="flex items-center justify-center ml-auto">
+                        {type === "send" && (
+                            <div className="flex items-center justify-center gap-x-3">
+                                {showChatOptionModal &&
+                                    msg._id === messageShowOption && (
+                                        <ModalChatOption
+                                            onRecallMessage={
+                                                handleRecallMessage
+                                            }
+                                            onDeleteMessage={onDeleteMessage}
+                                            onCopyToClipboard={
+                                                handleCopyToClipboard
+                                            }
+                                            className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
+                                        />
+                                    )}
+                                {type === "send" &&
+                                    hovered &&
+                                    msg?.type !== 14 && (
                                         <MessageFeature
                                             msg={msg}
                                             handleReplyMessage={
@@ -322,31 +185,134 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                             }
                                         />
                                     )}
-                                    {showChatOptionModal &&
-                                        msg._id === messageShowOption && (
-                                            <ModalChatOption
-                                                onRecallMessage={
-                                                    handleRecallMessage
-                                                }
-                                                onDeleteMessage={
-                                                    onDeleteMessage
-                                                }
-                                                onCopyToClipboard={
-                                                    handleCopyToClipboard
-                                                }
-                                                className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
-                                            />
-                                        )}
+                            </div>
+                        )}
+                        <div className="flex flex-col p-3 bg-opacity-50 rounded-md gap-y-2 bg-tertiary custom-message__block">
+                            {isGroupChat && type === "receive" && (
+                                <span className="text-xs text-text3">
+                                    {msg.user?.full_name}
+                                </span>
+                            )}
+                            <MessageReply msg={msg} messageRefs={messageRefs} />
+                            <div>
+                                {parse(messageFormat, {
+                                    replace: (domNode) => {
+                                        if (
+                                            domNode.attribs &&
+                                            domNode.attribs.href
+                                        ) {
+                                            return (
+                                                <Link
+                                                    to={domNode.attribs.href}
+                                                    target="_blank"
+                                                    className="underline text-secondary"
+                                                >
+                                                    {domToReact(
+                                                        domNode.children
+                                                    )}
+                                                </Link>
+                                            );
+                                        }
+                                    },
+                                })}
+                            </div>
+                            {msg.type === 5 &&
+                                msg?.media?.length > 0 &&
+                                msg.media.map((media) => (
+                                    <MessageFile
+                                        key={uuidv4()}
+                                        media={media}
+                                        progress={progress}
+                                        currentFileName={currentFileName}
+                                        conversation_id={msg.conversation_id}
+                                    />
+                                ))}
+                            {msg.type === 3 &&
+                                msg?.media?.length > 0 &&
+                                msg.media.map((media) => (
+                                    <MessageVideo
+                                        key={uuidv4()}
+                                        media={media}
+                                        conversation_id={msg.conversation_id}
+                                        progress={progress}
+                                        currentFileName={currentFileName}
+                                    />
+                                ))}
+                            {msg.type === 2 && msg?.media?.length > 0 && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    {msg.media.map((media) => (
+                                        <MessageImage
+                                            key={uuidv4()}
+                                            media={media}
+                                            conversation_id={
+                                                msg.conversation_id
+                                            }
+                                            setIsOpenImage={setIsOpenImage}
+                                        />
+                                    ))}
                                 </div>
                             )}
+                            <span className="text-sm text-text3">
+                                {formatDate(msg.created_at)}
+                            </span>
+
+                            {msg.type !== 14 && (
+                                <>
+                                    <button
+                                        ref={nodeRefReaction}
+                                        className={`absolute bottom-[-20px] ${
+                                            type === "send"
+                                                ? "right-0"
+                                                : "left-0"
+                                        }`}
+                                    >
+                                        {hoveredReaction && !reactionEmoji && (
+                                            <Picker
+                                                reactionsDefaultOpen={true}
+                                                onReactionClick={handleReaction}
+                                                className="z-50"
+                                            />
+                                        )}
+                                        {reactionEmoji ? (
+                                            <span
+                                                className="text-[24px]"
+                                                onClick={handleDeleteReaction}
+                                            >
+                                                {reactionEmoji}
+                                            </span>
+                                        ) : (
+                                            <IconLike />
+                                        )}
+                                    </button>
+                                </>
+                            )}
                         </div>
+                        {type === "receive" && (
+                            <div className="flex items-center justify-center gap-x-3">
+                                {hovered && msg?.type !== 14 && (
+                                    <MessageFeature
+                                        msg={msg}
+                                        handleReplyMessage={handleReplyMessage}
+                                    />
+                                )}
+                                {showChatOptionModal &&
+                                    msg._id === messageShowOption && (
+                                        <ModalChatOption
+                                            onRecallMessage={
+                                                handleRecallMessage
+                                            }
+                                            onDeleteMessage={onDeleteMessage}
+                                            onCopyToClipboard={
+                                                handleCopyToClipboard
+                                            }
+                                            className={`w-[200px] h-[200px] bg-lite text-sm ml-[120px] mb-10 z-50`}
+                                        />
+                                    )}
+                            </div>
+                        )}
                     </div>
                 </div>
-            ) : (
-                <span className="flex items-center justify-center text-sm text-text7">
-                    {handleFormatNotificationMessage(msg, currentUserId)}
-                </span>
-            )}
+            </div>
             <Viewer
                 visible={isOpenImage}
                 onClose={() => {

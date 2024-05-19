@@ -1,6 +1,7 @@
 import { getUserId } from "../../../utils/auth";
 import groupMessages from "../../../utils/groupMessage";
 import Message from "./Message";
+import Notification from "./Notification";
 import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
@@ -76,37 +77,56 @@ const ConversationContent = ({ message, socket }) => {
     return (
         <>
             <div
-                className="flex-1 w-full h-full max-h-[570px] overflow-y-auto overflow-x-hidden custom-scrollbar bg-strock p-2 relative"
+                className="flex-1 w-full h-full max-h-[570px] overflow-y-auto 
+                overflow-x-hidden custom-scrollbar bg-strock p-2 relative"
                 id="chat-content"
             >
                 {groupedMessages.map((group) => (
                     <div key={uuidv4()} className="flex flex-col items-center">
+                        <span className="mb-2 text-sm text-text3">
+                            {group.formattedTime}
+                        </span>
                         {group?.data.map((msg) => {
                             if (msg.conversation_id === conversationId) {
-                                return (
-                                    <div
-                                        ref={messageRefs[msg._id]}
-                                        key={uuidv4()}
-                                        className={`max-w-[75%] relative w-full h-full m-3 ${
-                                            msg?.user?._id === currentUserId
-                                                ? "ml-auto"
-                                                : "flex items-start gap-x-2 mr-auto"
-                                        }`}
-                                    >
-                                        <Message
-                                            msg={msg}
-                                            type={
+                                const check = [
+                                    7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19,
+                                    20, 21, 22, 23, 24, 25,
+                                ].includes(msg.type);
+                                if (!check) {
+                                    return (
+                                        <div
+                                            ref={messageRefs[msg._id]}
+                                            key={uuidv4()}
+                                            className={`max-w-[75%] relative w-full h-full m-3 ${
                                                 msg?.user?._id === currentUserId
-                                                    ? "send"
-                                                    : "receive"
-                                            }
-                                            socket={socket}
-                                            onDeleteMessage={() =>
-                                                handleDeleteMessage(msg._id)
-                                            }
+                                                    ? "ml-auto"
+                                                    : "flex items-start gap-x-2 mr-auto"
+                                            }`}
+                                        >
+                                            <Message
+                                                msg={msg}
+                                                type={
+                                                    msg?.user?._id ===
+                                                    currentUserId
+                                                        ? "send"
+                                                        : "receive"
+                                                }
+                                                socket={socket}
+                                                onDeleteMessage={() =>
+                                                    handleDeleteMessage(msg._id)
+                                                }
+                                            />
+                                        </div>
+                                    );
+                                } else {
+                                    return (
+                                        <Notification
+                                            key={uuidv4()}
+                                            msg={msg}
+                                            currentUserId={currentUserId}
                                         />
-                                    </div>
-                                );
+                                    );
+                                }
                             }
                         })}
                     </div>

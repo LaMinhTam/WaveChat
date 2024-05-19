@@ -148,6 +148,7 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
                             <button
                                 onClick={() =>
                                     handleLeaveGroup(
+                                        dispatch,
                                         conversationId,
                                         setShowPassPermissionModal,
                                         isAdmin

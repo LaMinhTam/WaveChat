@@ -1,8 +1,15 @@
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../api/axios";
 import Swal from "sweetalert2";
+import {
+    setActiveConversation,
+    setShowConversation,
+    setShowConversationInfo,
+} from "../store/commonSlice";
+import { setId } from "../store/conversationSlice";
 
 const handleLeaveGroup = async (
+    dispatch,
     conversationId,
     setShowPassPermissionModal,
     isAdmin
@@ -14,6 +21,10 @@ const handleLeaveGroup = async (
             );
             if (res.data.status === 200) {
                 toast.success(`Bạn đã rời nhóm`);
+                dispatch(setShowConversation(false));
+                dispatch(setActiveConversation(""));
+                dispatch(setShowConversationInfo(false));
+                dispatch(setId(Math.random() * 1000));
             }
         } else {
             Swal.fire({

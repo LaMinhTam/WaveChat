@@ -16,7 +16,11 @@ export default function handleFormatNotificationMessage(msg, currentUserId) {
                     ?.map((user) => user?.full_name)
                     .join(", ");
                 message = `Bạn đã thêm ${users} vào nhóm.`;
-            } else if (msg?.user_target?._id === currentUserId) {
+            } else if (
+                msg?.user_target?.some(
+                    (user) => user?.user_id === currentUserId
+                )
+            ) {
                 message = `${msg?.user?.full_name} đã thêm bạn vào nhóm.`;
             } else {
                 let users = msg?.user_target
