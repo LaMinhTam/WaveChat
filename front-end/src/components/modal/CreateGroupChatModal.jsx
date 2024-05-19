@@ -28,10 +28,6 @@ const CreateGroupChatModal = () => {
                 name: groupChatName,
                 member_ids,
             });
-            console.log(
-                "handleCreateGroupChat ~ res:",
-                res.data.data.conversation_id
-            );
             setGroupChatName("");
             setShowCreateGroupChat(false);
             setConversationId(res.data.data.conversation_id);

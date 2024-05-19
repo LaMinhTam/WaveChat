@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getToken, getUserId } from "../utils/auth";
 import io from "socket.io-client";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
-    setActiveConversation,
     setIncomingMessageOfConversation,
     setShowConversation,
     setShowConversationInfo,
     setShowConversationPermission,
+    setTriggerFetchListMember,
 } from "../store/commonSlice";
 import { setId } from "../store/conversationSlice";
 import { axiosPrivate } from "../api/axios";
@@ -32,6 +32,9 @@ export function SocketProvider(props) {
     const { conversationId, currentConversation } = useChat();
     const [unreadCount, setUnreadCount] = useState(0);
     const dispatch = useDispatch();
+    const triggerFetchListMember = useSelector(
+        (state) => state.common.triggerFetchListMember
+    );
 
     useEffect(() => {
         const resetTitle = () => {
@@ -131,22 +134,106 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("add-member", (response) => {
-            dispatch(setId(response.data.last_message.message_id));
+            console.log("newSocket.on ~ response:", response);
+            const isExist = response.data.last_message.user_target.some(
+                (member) => {
+                    return member.user_id === currentUserId;
+                }
+            );
+            if (!isExist) {
+                if (conversationId !== response.data.conversation_id) {
+                    dispatch(setId(response.data.conversation_id));
+                } else {
+                    const newMessage = {
+                        ...response.data.last_message,
+                        conversation_id: response.data.conversation_id,
+                        _id: response.data.last_message.message_id,
+                        user: {
+                            _id: response.data.last_message.user_id,
+                            full_name: response.data.last_message.full_name,
+                            avatar: response.data.last_message.avatar,
+                        },
+                        created_at: response.data.last_message.created_at,
+                        updated_at: response.data.last_message.created_at,
+                    };
+                    setMessage((prev) =>
+                        Array.isArray(prev)
+                            ? [...prev, newMessage]
+                            : [newMessage]
+                    );
+                    dispatch(
+                        setTriggerFetchListMember(!triggerFetchListMember)
+                    );
+                }
+            } else {
+                dispatch(setId(response.data.last_message.message_id));
+            }
         });
 
         newSocket.on("remove-member", (response) => {
-            if (conversationId === response.data.conversation_id) {
-                dispatch(setActiveConversation(""));
-                dispatch(setShowConversationPermission(false));
-                dispatch(setShowConversation(false));
-                dispatch(setShowConversationInfo(false));
+            if (conversationId !== response.data.conversation_id) {
+                dispatch(setId(response.data.last_message.message_id));
+            } else {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+                dispatch(setTriggerFetchListMember(!triggerFetchListMember));
             }
-            dispatch(setId(response.data.last_message.message_id));
         });
 
         newSocket.on("leave-group", (response) => {
-            console.log("leave-group", response);
-            dispatch(setId(response.data.last_message.message_id));
+            if (conversationId !== response.data.conversation_id) {
+                dispatch(setId(response.data.last_message.message_id));
+            } else {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+                dispatch(setTriggerFetchListMember(!triggerFetchListMember));
+            }
+        });
+
+        newSocket.on("update-join-with-link", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+            }
         });
 
         newSocket.on("request-call-video", (data) => {
@@ -186,6 +273,7 @@ export function SocketProvider(props) {
         currentUserId,
         dispatch,
         setMessage,
+        triggerFetchListMember,
     ]);
 
     async function createRoom() {
