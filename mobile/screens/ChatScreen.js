@@ -261,7 +261,51 @@ const ChatScreen = ({navigation, route}) => {
         data={messages}
         keyExtractor={item => item._id}
         renderItem={({item}) => {
-          if ([10, 11, 13].includes(item.type)) {
+          if ([10, 13, 20].includes(item.type)) {
+            return (
+              <Text
+                style={{
+                  flex: 1,
+                  padding: 10,
+                  textAlign: 'center',
+                  color: '#000',
+                  backgroundColor: '#fff',
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  marginVertical: 5,
+                }}>
+                {item.user.full_name +
+                  ' ' +
+                  item.message +
+                  ' ' +
+                  (item.user_target.full_name
+                    ? item.user_target.full_name
+                    : '')}
+              </Text>
+            );
+          } else if (item.type === 11) {
+            return (
+              <Text
+                style={{
+                  flex: 1,
+                  padding: 10,
+                  textAlign: 'center',
+                  color: '#000',
+                  backgroundColor: '#fff',
+                  alignSelf: 'center',
+                  borderRadius: 5,
+                  marginVertical: 5,
+                }}>
+                {item.user.full_name +
+                  ' ' +
+                  item.message +
+                  ' ' +
+                  (item.user_target[0].full_name
+                    ? item.user_target[0].full_name
+                    : '')}
+              </Text>
+            );
+          } else if (item.type === 15) {
             return (
               <Text
                 style={{

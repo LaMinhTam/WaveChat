@@ -14,7 +14,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 
 const JoinByLinkScreen = () => {
   const {currentConversation} = useSocket();
-
+  console.log(currentConversation.link_join);
   return (
     <View style={{flex: 1, padding: 10, backgroundColor: '#fff'}}>
       <View
@@ -25,7 +25,7 @@ const JoinByLinkScreen = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <QRCode value={currentConversation.link_join} color="#000" size={250} />
+        {/* <QRCode value={currentConversation.link_join} color="#000" size={250} /> */}
         <View style={{marginTop: 50}}>
           <Text style={{color: '#000'}}>
             Bất kỳ ai có link này đề có thể tham gia nhóm.
