@@ -41,7 +41,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
     const resendOTP = async () => {
         const confirmationResult = await handleSendOTP(
             values.phone,
-            "recaptcha-id"
+            "my-recaptcha-container"
         );
         setConfirmationResult(confirmationResult);
         toast.success("Đã gửi lại mã OTP!");
@@ -181,7 +181,7 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                         </span>
                     )}
                 </p>
-                <div id="recaptcha-id" className="my-2"></div>
+                <div id="my-recaptcha-container" className="my-2"></div>
                 <Button
                     kind="primary"
                     className="w-[100px] mx-auto mt-5"
@@ -192,13 +192,13 @@ const LayoutAuthentication = ({ children, heading = "" }) => {
                 </Button>
             </ReactModal>
             <Overlay></Overlay>
-            <div className="relative w-full min-h-screen p-10 bg-lite dark:bg-darkBG isolate">
+            <div className="relative w-full h-full p-2 bg-lite dark:bg-darkBG isolate">
                 <img
                     src="/background.png"
                     alt="background"
                     className="hidden lg:block w-full pointer-events-none absolute top-0 bottom-0 left-0 right-0 z-[-1]"
                 />
-                <h1 className="mb-5 text-5xl font-extrabold text-center text-thirdly">
+                <h1 className="text-5xl font-extrabold text-justify text-thirdly">
                     Wave Chat
                 </h1>
                 <div className="w-full max-w-[556px] bg-white dark:bg-darkSecondary rounded-xl px-5 py-8 lg:px-12 lg:py-16 mx-auto">
