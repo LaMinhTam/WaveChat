@@ -5,3 +5,13 @@
 - giải tán nhóm: disband-group
 - user rời nhóm: leave-group
 - tham gia bằng link: join-with-link
+- Cập nhật quyền thành viên: update-permission
+- Cập nhật phê duyệt thành viên khi vào nhóm: is-confirm-member
+- cập nhật background: update-background
+- cập nhật tên nhóm: update-name-group
+
+
+-service user: 3001
+
+- node connection 2: 3002
+- node connection 3: 3003

@@ -8,10 +8,10 @@ export const waveChatApi = {
   updateProfile: () => `${waveChatEndpoint}/user/update`,
   removeAccount: () => `${waveChatEndpoint}/user/remove-account`,
   getFriends: type => `${waveChatEndpoint}/friend?type=${type}`,
-  getConversations: () => `${waveChatEndpoint}/conversation`,
+  getConversations: () => `${waveChatEndpoint}/conversation/list`,
   getConversationDetail: id =>
     `${waveChatEndpoint}/conversation/detail?conversation_id=${id}`,
-  getMessages: id => `${waveChatEndpoint}/message/${id}?limit=100000`,
+  getMessages: id => `${waveChatEndpoint}/message/list/${id}?limit=100000`,
   deleteMessage: id => `${waveChatEndpoint}/message/delete/${id}`,
   getMembers: id =>
     `${waveChatEndpoint}/conversation-group/member?conversation_id=${id}`,
@@ -38,7 +38,7 @@ export const waveChatApi = {
     `${waveChatEndpoint}/conversation-group/disband?conversation_id=${id}`,
   updatePermission: conversation_id =>
     `${waveChatEndpoint}/conversation-group/update-permission?conversation_id=${conversation_id}`,
-  resetPassowrd: () => `${waveChatEndpoint}/auth/reset-password`,
+  resetPassword: () => `${waveChatEndpoint}/auth/reset-password`,
   blockUser: id => `${waveChatEndpoint}/user/block-user/${id}`,
   removeBlock: id => `${waveChatEndpoint}/user/remove-block-user/${id}`,
   getBlockList: () => `${waveChatEndpoint}/user/list-block-user`,

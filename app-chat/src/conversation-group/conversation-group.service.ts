@@ -33,6 +33,7 @@ import {
 } from './dto/add-member-conversation.dto';
 import { CreateGroupConversationDto } from './dto/create-group-conversation.dto';
 import { UpdatePermissionConversation } from './dto/update-permission.dto';
+import { RedisSubService } from 'src/redis/redis-sub.service';
 
 @Injectable()
 export class ConversationGroupService {
@@ -54,12 +55,14 @@ export class ConversationGroupService {
 
     @InjectModel(Friend.name)
     private readonly friendModel: Model<Friend>,
+
+    private readonly redisSubService: RedisSubService,
   ) {}
 
   async updatePermissionConversation(
     conversation_id: string,
     body: UpdatePermissionConversation,
-    user_id: string,
+    user: any,
   ) {
     try {
       const member_id = body.user_id;
@@ -88,20 +91,20 @@ export class ConversationGroupService {
       }
 
       if (
-        !conversation?.members?.includes(user_id) ||
+        !conversation?.members?.includes(user._id) ||
         !conversation?.members?.includes(member_id)
       ) {
         throw new ExceptionResponse(404, 'Có user không hợp lệ!');
       }
 
-      if (conversation.owner_id !== user_id) {
+      if (conversation.owner_id !== user._id) {
         throw new ExceptionResponse(400, 'Bạn không có quyền sử dụng!');
       }
 
       if (permission == CONVERSATION_MEMBER_PERMISSION.OWNER) {
         await this.conversationMemberModel.updateOne(
           {
-            user_id: user_id,
+            user_id: user._id,
             conversation_id: conversation_id,
           },
           {
@@ -124,6 +127,43 @@ export class ConversationGroupService {
           permission: permission,
         },
       );
+
+      const message = await this.messageModel.create({
+        user_id: user._id,
+        conversation_id: conversation_id,
+        message: 'Đã cập nhật quyền thành viên',
+        type: MESSAGE_TYPE.CHANGE_PERMISSION_USER,
+        user_target: {
+          user_id: member_id,
+          full_name: member.full_name,
+          avatar: member.avatar,
+        },
+        created_at: +moment(),
+        updated_at: +moment(),
+      });
+
+      global['io'].to(conversation.members).emit('update-permission', {
+        event: 'update-permission',
+        message: 'Cập nhật quyền thành viên',
+        data: {
+          conversation_id: conversation_id,
+          name: conversation.name,
+          members: conversation.members,
+          owner_id: conversation.owner_id,
+
+          last_message: {
+            message_id: message._id.toString(),
+            message: message.message,
+            user: {
+              user_id: user._id.toString(),
+              full_name: user.full_name,
+              avatar: user.avatar,
+            },
+            type: message.type,
+            created_at: formatUnixTimestamp(message.created_at),
+          },
+        },
+      });
 
       return new BaseResponse(200, 'OK', { name: conversation.name });
     } catch (error) {
@@ -218,6 +258,33 @@ export class ConversationGroupService {
         },
       });
 
+      // this.redisSubService.emitMessageToUser(
+      //   newConversation.members,
+      //   'new-conversation',
+      //   {
+      //     event: 'new-conversation',
+      //     message: 'Tạo cuộc trò chuyện mới',
+      //     data: {
+      //       conversation_id: newConversation._id.toString(),
+      //       name: newConversation.name,
+      //       members: newConversation.members,
+      //       owner_id: newConversation.owner_id,
+
+      //       last_message: {
+      //         message_id: firstMessage._id.toString(),
+      //         message: firstMessage.message,
+      //         user: {
+      //           user_id: user._id.toString(),
+      //           full_name: user.full_name,
+      //           avatar: user.avatar,
+      //         },
+      //         type: firstMessage.type,
+      //         created_at: formatUnixTimestamp(firstMessage.created_at),
+      //       },
+      //     },
+      //   },
+      // );
+
       return new BaseResponse(201, 'OK', {
         conversation_id: newConversation._id,
       });
@@ -245,10 +312,8 @@ export class ConversationGroupService {
 
       let new_link_join: string = '';
 
-      if (conversation.is_join_with_link == BOOLEAN.FALSE) new_link_join = '';
+      if (is_join_with_link == BOOLEAN.FALSE) new_link_join = '';
       else new_link_join = generateRandomString(10);
-
-      // conversation.save();
 
       // tạo tin nhắn chào mừng - hiện tại chưa được tạo bừa cái message text
       const messageSetting = await this.messageModel.create({
@@ -295,7 +360,34 @@ export class ConversationGroupService {
         },
       });
 
-      return new BaseResponse(200, 'OK', { link_join: conversation.link_join });
+      // this.redisSubService.emitMessageToUser(
+      //   conversation.members,
+      //   'update-join-with-link',
+      //   {
+      //     event: 'update-join-with-link',
+      //     message: 'Thay đổi cài đặt tham gia link',
+      //     data: {
+      //       conversation_id: conversation._id.toString(),
+      //       name: conversation.name,
+      //       members: conversation.members,
+      //       owner_id: conversation.owner_id,
+
+      //       last_message: {
+      //         message_id: messageSetting._id.toString(),
+      //         message: messageSetting.message,
+      //         user: {
+      //           user_id: user._id.toString(),
+      //           full_name: user.full_name,
+      //           avatar: user.avatar,
+      //         },
+      //         type: messageSetting.type,
+      //         created_at: formatUnixTimestamp(messageSetting.created_at),
+      //       },
+      //     },
+      //   },
+      // );
+
+      return new BaseResponse(200, 'OK', { link_join: new_link_join });
     } catch (error) {
       console.log('ConversationGroupService ~ isJoinWithLink ~ error:', error);
       return new ExceptionResponse(400, error.message);
@@ -501,6 +593,33 @@ export class ConversationGroupService {
         },
       });
 
+      // this.redisSubService.emitMessageToUser(
+      //   conversation.members,
+      //   'remove-member',
+      //   {
+      //     event: 'remove-member',
+      //     message: 'Xóa thành viên',
+      //     data: {
+      //       conversation_id: conversation._id.toString(),
+      //       name: conversation.name,
+      //       members: conversation.members,
+      //       owner_id: conversation.owner_id,
+
+      //       last_message: {
+      //         message_id: newMessage._id.toString(),
+      //         message: newMessage.message,
+      //         user: {
+      //           user_id: user._id,
+      //           full_name: user.full_name,
+      //           avatar: user.avatar,
+      //         },
+      //         type: newMessage.type,
+      //         created_at: formatUnixTimestamp(newMessage.created_at),
+      //       },
+      //     },
+      //   },
+      // );
+
       return new BaseResponse(200, 'OK');
     } catch (error) {
       console.log(
@@ -670,6 +789,34 @@ export class ConversationGroupService {
         },
       });
 
+      // this.redisSubService.emitMessageToUser(
+      //   conversation.members,
+      //   'add-member',
+      //   {
+      //     event: 'add-member',
+      //     message: 'Thêm thành viên',
+      //     data: {
+      //       conversation_id: conversation._id.toString(),
+      //       name: conversation.name,
+      //       members: conversation.members,
+      //       owner_id: conversation.owner_id,
+
+      //       last_message: {
+      //         message_id: newMessage._id.toString(),
+      //         message: newMessage.message,
+      //         user: {
+      //           user_id: user._id,
+      //           full_name: user.full_name,
+      //           avatar: user.avatar,
+      //         },
+      //         user_target: newMessage.user_target,
+      //         type: newMessage.type,
+      //         created_at: formatUnixTimestamp(newMessage.created_at),
+      //       },
+      //     },
+      //   },
+      // );
+
       return new BaseResponse(200, 'OK');
     } catch (error) {
       console.log(
@@ -741,6 +888,21 @@ export class ConversationGroupService {
           owner_id: conversation.owner_id,
         },
       });
+
+      // this.redisSubService.emitMessageToUser(
+      //   conversation.members,
+      //   'disband-group',
+      //   {
+      //     event: 'disband-group',
+      //     message: 'Giải tán nhóm',
+      //     data: {
+      //       conversation_id: conversation._id.toString(),
+      //       name: conversation.name,
+      //       members: conversation.members,
+      //       owner_id: conversation.owner_id,
+      //     },
+      //   },
+      // );
 
       return new BaseResponse(200, 'OK');
     } catch (error) {
@@ -822,6 +984,32 @@ export class ConversationGroupService {
           },
         },
       });
+
+      // this.redisSubService.emitMessageToUser(
+      //   conversation.members,
+      //   'leave-group',
+      //   {
+      //     event: 'leave-group',
+      //     message: 'Rời nhóm',
+      //     data: {
+      //       conversation_id: conversation._id.toString(),
+      //       name: conversation.name,
+      //       members: conversation.members,
+
+      //       last_message: {
+      //         message_id: newMessage._id.toString(),
+      //         message: newMessage.message,
+      //         user: {
+      //           user_id: user._id,
+      //           full_name: user.full_name,
+      //           avatar: user.avatar,
+      //         },
+      //         type: newMessage.type,
+      //         created_at: formatUnixTimestamp(newMessage.created_at),
+      //       },
+      //     },
+      //   },
+      // );
 
       return new BaseResponse(200, 'OK');
     } catch (error) {
@@ -914,6 +1102,34 @@ export class ConversationGroupService {
           },
         });
 
+        // this.redisSubService.emitMessageToUser(
+        //   conversation.members,
+        //   'add-member',
+        //   {
+        //     event: 'add-member',
+        //     message: 'Thêm thành viên',
+        //     data: {
+        //       conversation_id: conversation._id.toString(),
+        //       name: conversation.name,
+        //       members: conversation.members,
+        //       owner_id: conversation.owner_id,
+
+        //       last_message: {
+        //         message_id: newMessage._id.toString(),
+        //         message: newMessage.message,
+        //         user: {
+        //           user_id: user._id,
+        //           full_name: user.full_name,
+        //           avatar: user.avatar,
+        //         },
+        //         user_target: newMessage?.user_target || [],
+        //         type: newMessage.type,
+        //         created_at: formatUnixTimestamp(newMessage.created_at),
+        //       },
+        //     },
+        //   },
+        // );
+
         return new BaseResponse(
           200,
           'Bạn cần chờ phê duyệt để tham gia nhóm!',
@@ -987,6 +1203,34 @@ export class ConversationGroupService {
             },
           },
         });
+
+        // this.redisSubService.emitMessageToUser(
+        //   conversation.members,
+        //   'add-member',
+        //   {
+        //     event: 'join-with-link',
+        //     message: 'Tham gia nhóm bằng link',
+        //     data: {
+        //       conversation_id: conversation._id.toString(),
+        //       name: conversation.name,
+        //       members: conversation.members,
+        //       owner_id: conversation.owner_id,
+
+        //       last_message: {
+        //         message_id: newMessage._id.toString(),
+        //         message: newMessage.message,
+        //         user: {
+        //           user_id: user._id,
+        //           full_name: user.full_name,
+        //           avatar: user.avatar,
+        //         },
+        //         user_target: newMessage?.user_target || [],
+        //         type: newMessage.type,
+        //         created_at: formatUnixTimestamp(newMessage.created_at),
+        //       },
+        //     },
+        //   },
+        // );
 
         return new BaseResponse(200, 'Tham gia nhóm thành công!', {
           conversation_id: conversation._id,

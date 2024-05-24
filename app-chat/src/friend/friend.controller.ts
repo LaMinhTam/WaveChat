@@ -18,10 +18,25 @@ import { FriendResponse } from './response/friend.response';
 export class FriendController {
   constructor(private readonly friendService: FriendService) {}
 
+  @Get('')
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách bạn bè',
+    type: FriendResponse,
+  })
+  @ApiOperation({ summary: 'Lấy danh sách bạn bè' })
+  async getFriend1(
+    @Request() req: RequestWithUser,
+    @Query() query: FriendWithQueryDto,
+  ) {
+    const data = await this.friendService.getFriend(req.user._id, query);
+    return data;
+  }
+
   /**
    * Bạn bè
    */
-  @Get()
+  @Get('get-friend')
   @ApiResponse({
     status: 200,
     description: 'Danh sách bạn bè',

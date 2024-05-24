@@ -55,6 +55,7 @@ const Message = ({
   };
 
   const handleContextMenu = () => {
+    console.log('message', item);
     setContextMenuOptions(['Trả lời tin nhắn', 'Xóa']);
     if (item.type != 14) {
       setContextMenuOptions(prevState => [...prevState, 'Chuyển tiếp']);

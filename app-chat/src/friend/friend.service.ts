@@ -9,6 +9,7 @@ import { Friend } from 'src/shared/friend.entity';
 import { FriendWithQueryDto } from './dto/friend-with-query.dto';
 import { ContactResponse, SyncFriendDto } from './dto/sync-friend.dto';
 import { FriendResponse } from './response/friend.response';
+import { checkMongoId } from 'src/util';
 
 @Injectable()
 export class FriendService {
@@ -77,6 +78,13 @@ export class FriendService {
   ) {}
 
   async sendFriendRequest(user_id: string, target_id: string) {
+    console.log('FriendService ~ sendFriendRequest ~ target_id:', target_id);
+
+    const valid = checkMongoId(target_id);
+    if (!valid) {
+      throw new ExceptionResponse(HttpStatus.BAD_REQUEST, 'Id không hợp lệ');
+    }
+
     if (user_id == target_id)
       throw new ExceptionResponse(
         HttpStatus.BAD_REQUEST,

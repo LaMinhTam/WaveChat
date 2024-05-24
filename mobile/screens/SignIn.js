@@ -10,7 +10,7 @@ import {addNewFCMToken} from '../utils/firestoreManage';
 import {TextInput} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 
-const SignIn = () => {
+const SignIn = ({navigation}) => {
   const [phone, setPhone] = useState('0886700046');
   const [password, setPassword] = useState('Tam123456789@');
   const [errorMessage, setErrorMessage] = useState('');
@@ -33,6 +33,11 @@ const SignIn = () => {
         style={styles.button}
         onPress={() => handleSignIn(phone, password)}>
         <Text style={styles.buttonText}>Xác nhận</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+        <Text style={styles.buttonText}>Quên mật khẩu?</Text>
       </TouchableOpacity>
       {errorMessage !== '' && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>

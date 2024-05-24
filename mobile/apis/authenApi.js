@@ -44,3 +44,24 @@ export async function authSignUp(name, phone, password) {
     console.error('Login error:', error);
   }
 }
+
+export async function resetPassowrd(phone, password) {
+  try {
+    const res = await axios.post(
+      waveChatApi.resetPassword(),
+      {
+        phone: phone,
+        password: password,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      },
+    );
+    return res.data;
+  } catch (error) {
+    console.error('Login error:', error);
+  }
+}

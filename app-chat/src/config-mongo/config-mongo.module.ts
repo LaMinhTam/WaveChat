@@ -28,6 +28,10 @@ import {
   UserTokenSchema,
 } from 'src/shared';
 
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
+import { redisServerOptions } from 'src/redis-server.options';
+
 @Module({
   imports: [
     ConfigNest.forRoot({ isGlobal: true }),
@@ -58,6 +62,22 @@ import {
     //   autoLoadEntities: true,
     //   synchronize: true,
     // }),
+
+    CacheModule.registerAsync({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      useFactory: async () => {
+        console.log('123', +process.env.CONFIG_REDIS_DB);
+
+        return {
+          store: await redisStore.redisStore({
+            url: `redis://${process.env.CONFIG_REDIS_USER}:${process.env.CONFIG_REDIS_PASSWORD}@${process.env.CONFIG_REDIS_HOST}:${process.env.CONFIG_REDIS_PORT}`,
+          }),
+        };
+      },
+
+      isGlobal: true,
+    }),
 
     MongooseModule.forFeature([
       {

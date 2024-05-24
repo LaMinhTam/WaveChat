@@ -90,7 +90,7 @@ export class ConversationGroupController {
       await this.conversationGroupService.updatePermissionConversation(
         param.conversation_id,
         body,
-        req.user._id,
+        req.user,
       );
     return data;
   }

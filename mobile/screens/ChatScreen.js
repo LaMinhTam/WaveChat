@@ -13,6 +13,7 @@ import {useUserData} from '../contexts/auth-context';
 import SearchMessages from '../components/SearchMessages';
 import MessageItem from '../components/MessageItem';
 import {updateUnreadTrack} from '../utils/firestoreManage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ChatScreen = ({navigation, route}) => {
   const {userInfo, accessTokens} = useUserData();
@@ -68,27 +69,27 @@ const ChatScreen = ({navigation, route}) => {
       ),
     });
     loadMessages();
-    resetUnreadCount();
+    // resetUnreadCount();
   }, []);
 
   useEffect(() => {
     scrollToMessage(searchKeyword);
   }, [searchKeyword]);
 
-  const resetUnreadCount = () => {
-    setConversations(prevConversations => {
-      return prevConversations.map(conversation => {
-        if (conversation._id === currentConversation._id) {
-          updateUnreadTrack(userInfo._id, conversation._id, 0);
-          return {
-            ...conversation,
-            unread_count: 0,
-          };
-        }
-        return conversation;
-      });
-    });
-  };
+  // const resetUnreadCount = () => {
+  //   setConversations(prevConversations => {
+  //     return prevConversations.map(conversation => {
+  //       if (conversation._id === currentConversation._id) {
+  //         updateUnreadTrack(userInfo._id, conversation._id, 0);
+  //         return {
+  //           ...conversation,
+  //           unread_count: 0,
+  //         };
+  //       }
+  //       return conversation;
+  //     });
+  //   });
+  // };
   const handleCall = () => {
     if (currentConversation.type == 2) {
       const data = {
@@ -261,7 +262,7 @@ const ChatScreen = ({navigation, route}) => {
         data={messages}
         keyExtractor={item => item._id}
         renderItem={({item}) => {
-          if ([10, 13, 20].includes(item.type)) {
+          if ([10, 13, 20, 25, 12].includes(item.type)) {
             return (
               <Text
                 style={{

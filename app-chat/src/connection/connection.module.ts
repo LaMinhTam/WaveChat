@@ -14,15 +14,19 @@ import {
   UserSchema,
 } from 'src/shared';
 import { Block, BlockSchema } from 'src/shared/block.entity';
+import { RedisModule } from 'src/redis/redis.module';
+import { RedisSubService } from 'src/redis/redis-sub.service';
 
 @Module({
-  providers: [ConnectionGateway, ConnectionService],
+  providers: [ConnectionGateway, ConnectionService, RedisSubService],
   imports: [
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '7d' },
     }),
+
+    RedisModule,
 
     MongooseModule.forFeature([
       {

@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import firestore from '@react-native-firebase/firestore';
 import {updateUnreadTrack} from '../utils/firestoreManage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SocketContext = createContext();
 /**
  * 
@@ -72,13 +73,12 @@ export const SocketProvider = ({children}) => {
       console.log('Disconnected from WebSocket. Reason:', reason);
     });
 
-    newSocket.on('message', incomingMessage => {
+    newSocket.on('message', async incomingMessage => {
       const {message} = incomingMessage;
       console.log('incomingMessage', message);
-      if (
-        currentConversation._id === message.conversation_id ||
-        currentConversation._id
-      ) {
+      const value = await AsyncStorage.getItem('conversation_id');
+
+      if (value === message.conversation_id || value) {
         setMessages(prevMessages => [message, ...prevMessages]);
       }
       handleConversationOnIncomingMessage(message);
@@ -107,6 +107,12 @@ export const SocketProvider = ({children}) => {
       setConversations(conversation.data);
     };
 
+    const fetchMessages = async conversationId => {
+      const value = await AsyncStorage.getItem('conversation_id');
+      const newMessages = await getMessage(value, accessTokens);
+      setMessages(newMessages.data);
+    };
+
     const fetchConversations = async () => {
       try {
         const conversation = await getConversations(accessTokens);
@@ -116,13 +122,10 @@ export const SocketProvider = ({children}) => {
       }
     };
 
-    newSocket.on('leave-group', data => {
+    newSocket.on('leave-group', async data => {
       handleNewConversation();
-      console.log('leave', data.data);
-      if (
-        currentConversation !== undefined ||
-        currentConversation._id === data.data.conversation_id
-      ) {
+      const value = await AsyncStorage.getItem('conversation_id');
+      if (value === data.data.conversation_id) {
         currentConversation.members = currentConversation.members.filter(
           member => member._id !== data.data.user_id,
         );
@@ -131,20 +134,23 @@ export const SocketProvider = ({children}) => {
             member => member._id !== data.data.user_id,
           );
         setCurrentConversation(currentConversation);
-      } else {
-        fetchConversations();
       }
+      fetchConversations();
+      fetchMessages();
     });
 
     newSocket.on('add-member', data => {
       fetchConversations();
+      fetchMessages();
     });
 
     newSocket.on('remove-member', data => {
       fetchConversations();
+      fetchMessages();
     });
 
     newSocket.on('disband-group', data => {
+      fetchMessages();
       fetchConversations();
     });
 

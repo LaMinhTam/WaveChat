@@ -51,7 +51,7 @@ export class ConversationController {
     return data;
   }
 
-  @Get('')
+  @Get('list')
   @ApiOperation({ summary: 'Danh sách cuộc trò chuyện' })
   async getListConversation1(
     @Request() req: RequestWithUser,
@@ -168,7 +168,7 @@ export class ConversationController {
     const data =
       await this.conversationService.settingConfirmMemberConversation(
         param.conversation_id,
-        req.user._id,
+        req.user,
       );
     return data;
   }
@@ -187,7 +187,7 @@ export class ConversationController {
     const data: any = await this.conversationService.updateNameConversation(
       param.conversation_id,
       name,
-      req.user._id,
+      req.user,
     );
     return data;
   }
@@ -207,7 +207,7 @@ export class ConversationController {
       await this.conversationService.updateBackgroundConversation(
         param.conversation_id,
         back_ground,
-        req.user._id,
+        req.user,
       );
     return data;
   }

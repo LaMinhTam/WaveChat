@@ -15,11 +15,14 @@ import {
   MessageSchema,
 } from 'src/shared';
 import { Friend, FriendSchema } from 'src/shared/friend.entity';
+import { RedisModule } from 'src/redis/redis.module';
+import { RedisSubService } from 'src/redis/redis-sub.service';
 
 @Module({
   controllers: [ConversationGroupController],
-  providers: [ConversationGroupService],
+  providers: [ConversationGroupService, RedisSubService],
   imports: [
+    RedisModule,
     MongooseModule.forFeature([
       {
         name: User.name,

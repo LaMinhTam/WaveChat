@@ -7,10 +7,10 @@ import { Model, Types } from 'mongoose';
 import { USER_STATUS } from 'src/enum';
 import { ExceptionResponse, User, UserToken } from 'src/shared';
 import { BaseResponse } from 'src/shared/base-response.response';
-import { UserProfileResponse } from 'src/user/response/user-profile.response';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { LoginDto } from './dto/user-sign-in.dto';
 import { SignUpDto } from './dto/user-sign-up.dto';
+import { UserProfileResponse } from './response/user-profile.response';
 
 @Injectable()
 export class AuthService {

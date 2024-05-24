@@ -12,6 +12,7 @@ import {PRIMARY_TEXT_COLOR} from '../styles/styles';
 import {formatTimeLastActivity} from '../utils/format-time-message.util';
 import {FILE_TYPE} from '../constants';
 import {getBlockList} from '../apis/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
   const {
@@ -27,7 +28,7 @@ const HomeScreen = ({navigation}) => {
     const type = lastMessage.type;
     if (type == 15) {
       return 'Nhóm mới được tạo';
-    } else if (![1, 10, 11, 14, 13, 16, 20].includes(type)) {
+    } else if (![1, 10, 11, 14, 13, 16, 20, 25].includes(type)) {
       if (type === 2) {
         return `[${FILE_TYPE[type]}]`;
       } else {
@@ -96,6 +97,8 @@ const HomeScreen = ({navigation}) => {
                 conversation._id,
                 accessTokens,
               );
+              await AsyncStorage.setItem('conversation_id', conversation._id);
+
               setCurrentConversation({
                 ...conversation,
                 block_type: data.data.block_type,

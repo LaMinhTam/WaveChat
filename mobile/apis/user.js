@@ -63,7 +63,7 @@ export async function removeAccount(accessToken) {
 }
 
 export async function resetPassword(phoneNumber, password) {
-  const res = await axios.post(waveChatApi.resetPassowrd(), {
+  const res = await axios.post(waveChatApi.resetPassword(), {
     phone: phoneNumber,
     password: password,
   });

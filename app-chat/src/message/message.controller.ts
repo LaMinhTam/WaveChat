@@ -71,7 +71,7 @@ export class MessageController {
   }
 
   @ApiOperation({ summary: 'Lấy danh sách tin nhắn' })
-  @Get(':id')
+  @Get('list/:id')
   async getMessageList(
     @Request() req: RequestWithUser,
     @Param() param: ConversationParamsDto,

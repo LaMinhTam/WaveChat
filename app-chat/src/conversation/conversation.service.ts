@@ -6,6 +6,7 @@ import {
   CONVERSATION_MEMBER_PERMISSION,
   CONVERSATION_STATUS,
   CONVERSATION_TYPE,
+  MESSAGE_TYPE,
   USER_STATUS,
 } from 'src/enum';
 import {
@@ -740,20 +741,51 @@ export class ConversationService {
   async updateBackgroundConversation(
     conversation_id: string,
     back_ground: string,
-    user_id: string,
+    user: any,
   ) {
     try {
       if (!back_ground)
         throw new ExceptionResponse(400, 'Không thể đặt tên trống');
       const conversation = await this.getOneConversation(conversation_id);
 
-      if (!conversation?.members?.includes(user_id)) {
+      if (!conversation?.members?.includes(user._id)) {
         throw new ExceptionResponse(404, 'Không tìm thấy cuộc trò chuyện');
       }
 
       conversation.background = back_ground;
 
       conversation.save();
+      const message = await this.messageModel.create({
+        conversation_id: conversation_id,
+        message: back_ground,
+        user_id: user._id,
+        type: MESSAGE_TYPE.UPDATE_BACKGROUND,
+        created_at: +moment(),
+        updated_at: +moment(),
+      });
+
+      global['io'].to(conversation.members).emit('update-background', {
+        event: 'update-background',
+        message: 'Cập nhật ảnh back ground nhóm',
+        data: {
+          conversation_id: conversation_id,
+          name: conversation.name,
+          members: conversation.members,
+          owner_id: conversation.owner_id,
+
+          last_message: {
+            message_id: message._id.toString(),
+            message: message.message,
+            user: {
+              user_id: user._id.toString(),
+              full_name: user.full_name,
+              avatar: user.avatar,
+            },
+            type: message.type,
+            created_at: formatUnixTimestamp(message.created_at),
+          },
+        },
+      });
 
       return new BaseResponse(200, 'OK', {
         back_ground: conversation.background,
@@ -767,16 +799,13 @@ export class ConversationService {
     }
   }
 
-  async settingConfirmMemberConversation(
-    conversation_id: string,
-    user_id: string,
-  ) {
+  async settingConfirmMemberConversation(conversation_id: string, user: any) {
     try {
       const conversation = await this.getOneConversation(conversation_id);
 
       if (
-        !conversation?.members?.includes(user_id) ||
-        conversation.owner_id !== user_id
+        !conversation?.members?.includes(user._id) ||
+        conversation.owner_id !== user._id
       ) {
         throw new ExceptionResponse(400, 'Không tìm thấy cuộc trò chuyện');
       }
@@ -784,6 +813,38 @@ export class ConversationService {
       conversation.is_confirm_new_member = +!conversation.is_confirm_new_member;
 
       conversation.save();
+
+      const message = await this.messageModel.create({
+        conversation_id: conversation_id,
+        message: 'Đã bật/tắt chức năng phê duyệt thành viên',
+        user_id: user._id,
+        type: MESSAGE_TYPE.UPDATE_IS_CONFIRM_NEW_MEMBER,
+        created_at: +moment(),
+        updated_at: +moment(),
+      });
+
+      global['io'].to(conversation.members).emit('is-confirm-member', {
+        event: 'is-confirm-member',
+        message: 'Đã bật/tắt chức năng phê duyệt thành viên',
+        data: {
+          conversation_id: conversation_id,
+          name: conversation.name,
+          members: conversation.members,
+          owner_id: conversation.owner_id,
+
+          last_message: {
+            message_id: message._id.toString(),
+            message: message.message,
+            user: {
+              user_id: user._id.toString(),
+              full_name: user.full_name,
+              avatar: user.avatar,
+            },
+            type: message.type,
+            created_at: formatUnixTimestamp(message.created_at),
+          },
+        },
+      });
 
       return new BaseResponse(200, 'OK');
     } catch (error) {
@@ -798,14 +859,14 @@ export class ConversationService {
   async updateNameConversation(
     conversation_id: string,
     name: string,
-    user_id: string,
+    user: any,
   ) {
     try {
       if (!name) throw new ExceptionResponse(400, 'Không thể đặt tên trống');
       const conversation = await this.getOneConversation(conversation_id);
 
       if (
-        !conversation?.members?.includes(user_id) ||
+        !conversation?.members?.includes(user._id) ||
         conversation.type !== CONVERSATION_TYPE.GROUP
       ) {
         throw new ExceptionResponse(404, 'Không tìm thấy cuộc trò chuyện');
@@ -814,6 +875,38 @@ export class ConversationService {
       conversation.name = name;
 
       conversation.save();
+
+      const message = await this.messageModel.create({
+        conversation_id: conversation_id,
+        message: name,
+        user_id: user._id,
+        type: MESSAGE_TYPE.UPDATE_BACKGROUND,
+        created_at: +moment(),
+        updated_at: +moment(),
+      });
+
+      global['io'].to(conversation.members).emit('update-name-group', {
+        event: 'update-name-group',
+        message: 'Cập nhật tên nhóm',
+        data: {
+          conversation_id: conversation_id,
+          name: conversation.name,
+          members: conversation.members,
+          owner_id: conversation.owner_id,
+
+          last_message: {
+            message_id: message._id.toString(),
+            message: message.message,
+            user: {
+              user_id: user._id.toString(),
+              full_name: user.full_name,
+              avatar: user.avatar,
+            },
+            type: message.type,
+            created_at: formatUnixTimestamp(message.created_at),
+          },
+        },
+      });
 
       return new BaseResponse(200, 'OK', { name: conversation.name });
     } catch (error) {

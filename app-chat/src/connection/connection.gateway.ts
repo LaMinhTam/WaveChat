@@ -24,7 +24,11 @@ import { JoinRoomDto } from './dto/join-room.dto';
 import { MessageDto } from './dto/message-text.dto';
 import { SendCallRequestDto } from './dto/send-call-request.dto';
 import { UserMessageResponse } from './response/user-message.response';
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject } from '@nestjs/common';
+import { Cache } from 'cache-manager';
+import { RedisSubService } from 'src/redis/redis-sub.service';
+//Number(process.env.SOCKET_PORT),
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -39,11 +43,19 @@ export class ConnectionGateway
   constructor(
     private readonly connectionService: ConnectionService,
     private jwtService: JwtService,
+
+    private readonly redisSubService: RedisSubService,
+
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
-  afterInit() {
+  async afterInit() {
     // this.logger = new Logger('AppGateway');
 
     global['io'] = this.server;
+    await this.cacheManager.set(
+      `SOCKET_SERVER:SIZE:${process.env.PORT}`,
+      (await this.server.fetchSockets()).length,
+    );
   }
 
   async handleConnection(client: Socket) {
@@ -72,18 +84,35 @@ export class ConnectionGateway
       client['user'] = payload;
 
       client.join(payload._id.toString());
+
+      await this.cacheManager.set(
+        `SOCKET_SERVER:SIZE:${process.env.PORT}`,
+        (await this.server.fetchSockets()).length,
+      );
     } catch (error) {
       client.disconnect();
       console.log('handleConnection ~ error:', error);
+      await this.cacheManager.set(
+        `SOCKET_SERVER:SIZE:${process.env.PORT}`,
+        (await this.server.fetchSockets()).length,
+      );
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     try {
       console.log('disconnect,,,,,,,,,,,,');
+      await this.cacheManager.set(
+        `SOCKET_SERVER:SIZE:${process.env.PORT}`,
+        (await this.server.fetchSockets()).length,
+      );
     } catch (error) {
       console.log('handleDisconnect ~ error:', error);
       client.disconnect();
+      await this.cacheManager.set(
+        `SOCKET_SERVER:SIZE:${process.env.PORT}`,
+        (await this.server.fetchSockets()).length,
+      );
     }
   }
 
@@ -163,7 +192,15 @@ export class ConnectionGateway
   ) {
     try {
       const room = data.conversation_id.toString();
-      this.server.to(room).emit('typing-on', {
+      // this.server.to(room).emit('typing-on', {
+      //   event: 'typing-on',
+      //   message: '',
+      //   data: {
+      //     user_id: client.user._id.toString(),
+      //     conversation_id: room,
+      //   },
+      // });
+      this.redisSubService.emitMessageToUser([room], 'typing-on', {
         event: 'typing-on',
         message: '',
         data: {
@@ -189,15 +226,30 @@ export class ConnectionGateway
         user: client.user,
         conversation_id: room,
       });
+      this.redisSubService.emitMessageToUser([room], 'typing-off', {
+        event: 'typing-off',
+        user: client.user,
+        conversation_id: room,
+      });
     } catch (error) {
       console.log('handleTypingOff ~ error:', error);
 
-      this.emitSocketError(
-        client.user._id.toString(),
+      // this.emitSocketError(
+      //   client.user._id.toString(),
+      //   'typing-off',
+      //   'Bạn không có quyền truy cập cuộc trò chuyện này!!',
+      //   {
+      //     user_id: client.user._id.toString(),
+      //     conversation_id: data.conversation_id,
+      //   },
+      // );
+
+      this.redisSubService.emitMessageToUser(
+        [client.user._id.toString()],
         'typing-off',
-        'Bạn không có quyền truy cập cuộc trò chuyện này!!',
         {
-          user_id: client.user._id.toString(),
+          event: 'typing-off',
+          user: client.user,
           conversation_id: data.conversation_id,
         },
       );
@@ -418,6 +470,49 @@ export class ConnectionGateway
         error,
       );
     }
+  }
+
+  /** SUB FUNCTION */
+
+  async emitSocketError(
+    user_id: string,
+    event_error: string,
+    message: string,
+    error: any,
+  ) {
+    // this.server.to(user_id).emit(event_error, {
+    //   event: event_error,
+    //   message: message,
+    //   data: error,
+    // });
+
+    this.redisSubService.emitMessageToUser([user_id], event_error, {
+      event: event_error,
+      message: message,
+      data: error,
+    });
+  }
+
+  async emitSocketMessage(
+    user: UserResponse,
+    new_message: any,
+    conversation: Conversation,
+    emit_socket: string,
+  ) {
+    const to = conversation.members.map(String);
+
+    new_message.updated_at = formatUnixTimestamp(new_message.updated_at);
+    new_message.created_at = formatUnixTimestamp(new_message.created_at);
+    new_message.user = new UserMessageResponse(user);
+    new_message.conversation = conversation;
+
+    // this.server.to(to).emit(emit_socket, {
+    //   message: new_message,
+    // });
+
+    this.redisSubService.emitMessageToUser(to, emit_socket, {
+      message: new_message,
+    });
   }
 
   // @SubscribeMessage('reaction-message')
@@ -674,36 +769,4 @@ export class ConnectionGateway
   //     );
   //   }
   // }
-
-  /** SUB FUNCTION */
-
-  async emitSocketError(
-    user_id: string,
-    event_error: string,
-    message: string,
-    error: any,
-  ) {
-    this.server.to(user_id).emit(event_error, {
-      event: event_error,
-      message: message,
-      data: error,
-    });
-  }
-  async emitSocketMessage(
-    user: UserResponse,
-    new_message: any,
-    conversation: Conversation,
-    emit_socket: string,
-  ) {
-    const to = conversation.members.map(String);
-
-    new_message.updated_at = formatUnixTimestamp(new_message.updated_at);
-    new_message.created_at = formatUnixTimestamp(new_message.created_at);
-    new_message.user = new UserMessageResponse(user);
-    new_message.conversation = conversation;
-
-    this.server.to(to).emit(emit_socket, {
-      message: new_message,
-    });
-  }
 }
