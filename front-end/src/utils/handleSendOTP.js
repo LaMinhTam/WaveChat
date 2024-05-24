@@ -8,7 +8,7 @@ export default async function handleSendOTP(
     let verify = new RecaptchaVerifier(
         recaptcha,
         {
-            size: "invisible",
+            size: "visible",
         },
         auth
     );
