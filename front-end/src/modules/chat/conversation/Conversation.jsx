@@ -208,7 +208,7 @@ const Conversation = () => {
 
     return (
         <div className="flex items-center justify-center">
-            <div className="relative flex flex-col w-full h-full min-h-screen">
+            <div className="relative flex flex-col w-full h-screen">
                 <ConversationHeader
                     name={
                         isGroupChat
@@ -226,7 +226,9 @@ const Conversation = () => {
                             : friendInfo._id
                     }
                 />
-                <ConversationContent message={message} socket={socket} />
+                <div className="w-full h-full">
+                    <ConversationContent message={message} socket={socket} />
+                </div>
                 <div className="absolute bottom-0 left-0 right-0 flex-shrink-0 mt-auto shadow-md">
                     <ConversationToolbar
                         user_id={friendInfo._id}

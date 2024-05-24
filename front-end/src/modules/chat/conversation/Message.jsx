@@ -7,7 +7,7 @@ import { IconLike } from "../../../components/icons";
 import Viewer from "react-viewer";
 import { useEffect, useState } from "react";
 import s3ConversationUrl from "../../../utils/s3ConversationUrl";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useHover from "../../../hooks/useHover";
 import { toast } from "react-toastify";
 import { useChat } from "../../../contexts/chat-context";
@@ -22,6 +22,8 @@ import ModalChatOption from "../../../components/modal/ModalChatOption";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { Link } from "react-router-dom";
 import { WAVE_CHAT_API } from "../../../api/constants";
+import { getUserId } from "../../../utils/auth";
+import { setProfileType } from "../../../store/commonSlice";
 const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [messageFormat, setMessageFormat] = useState("");
@@ -34,18 +36,21 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         (state) => state.common.currentFileName
     );
 
+    const currentUserId = getUserId();
+
     const messageShowOption = useSelector(
         (state) => state.common.messageShowOption
     );
 
     const isGroupChat = useSelector((state) => state.conversation.isGroupChat);
-
+    const dispatch = useDispatch();
     const {
         setReplyMessage,
         setIsOpenReply,
         messageRefs,
         setShowChatOptionModal,
         showChatOptionModal,
+        setShowProfileDetails,
     } = useChat();
 
     const handleReplyMessage = () => {
@@ -111,6 +116,23 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
         });
     };
 
+    const handleClickFriendAvatar = async (e) => {
+        try {
+            const response = await axiosPrivate.get(
+                WAVE_CHAT_API.userProfile(msg.user._id)
+            );
+            if (response.data.status === 200) {
+                e.stopPropagation();
+                if (response._id !== currentUserId) {
+                    dispatch(setProfileType("guest"));
+                }
+                setShowProfileDetails(true);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         const regex = /((http|https):\/\/[^\s]+)/g;
         if (msg.message.match(regex)) {
@@ -157,7 +179,10 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                 <div className="flex items-center justify-center gap-x-3">
                     {type === "receive" && (
                         <>
-                            <div className="w-10 h-10 rounded-full">
+                            <div
+                                className="w-10 h-10 rounded-full cursor-pointer"
+                                onClick={handleClickFriendAvatar}
+                            >
                                 <img
                                     src={s3ImageUrl(msg.user?.avatar)}
                                     alt=""

@@ -22,7 +22,7 @@ import { useSocket } from "../../../contexts/socket-context";
 import DailyIframe from "@daily-co/daily-js";
 
 const ConversationHeader = ({ name, avatar, userId }) => {
-    const { socket, setCalledUser, createRoom } = useSocket();
+    const { socket, setCalledUser, createRoom, deleteRoom } = useSocket();
     const [profile, setProfile] = useState({});
     const dispatch = useDispatch();
     const showConversationInfo = useSelector(
@@ -81,8 +81,18 @@ const ConversationHeader = ({ name, avatar, userId }) => {
                 message: "Gọi video",
             });
 
-            callFrame.on("left-meeting", () => {
+            callFrame.on("left-meeting", async () => {
                 callFrame.destroy();
+            });
+
+            callFrame.on("participant-left", async () => {
+                callFrame.destroy();
+                // Delete the room on daily.co
+                try {
+                    await deleteRoom(room.id);
+                } catch (error) {
+                    console.error(`Failed to delete room: ${error.message}`);
+                }
             });
         } catch (error) {
             console.error("Error initiating video call:", error);

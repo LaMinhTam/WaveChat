@@ -1,5 +1,4 @@
 import Cookies from "js-cookie";
-import { COOKIE_DOMAIN } from "../constants/global";
 
 const accessTokenKey = "wave_access_token";
 const userId = "wave_user_id";
@@ -7,7 +6,7 @@ const userName = "wave_user_name";
 
 const objCookies = {
     expires: 30,
-    domain: COOKIE_DOMAIN,
+    domain: window.location.hostname,
 };
 
 export const saveToken = (access_token) => {
@@ -19,7 +18,7 @@ export const saveToken = (access_token) => {
         Cookies.remove(accessTokenKey, {
             ...objCookies,
             path: "/",
-            domain: COOKIE_DOMAIN,
+            domain: window.location.hostname,
         });
     }
 };
@@ -33,7 +32,7 @@ export const saveUserId = (id) => {
         Cookies.remove(userId, {
             ...objCookies,
             path: "/",
-            domain: COOKIE_DOMAIN,
+            domain: window.location.hostname,
         });
     }
 };
@@ -47,7 +46,7 @@ export const saveUserName = (name) => {
         Cookies.remove(userName, {
             ...objCookies,
             path: "/",
-            domain: COOKIE_DOMAIN,
+            domain: window.location.hostname,
         });
     }
 };

@@ -23,17 +23,19 @@ const SearchModal = () => {
         debounce(async (phone) => {
             const data = await fetchUserByPhone(phone);
             dispatch(setGuestProfile(data));
-        }, 500),
+        }, 1000),
         [dispatch]
     );
 
     useEffect(() => {
-        debouncedFetchUserByPhone(searchUserValue);
+        if (searchUserValue) {
+            debouncedFetchUserByPhone(searchUserValue);
+        }
     }, [debouncedFetchUserByPhone, searchUserValue]);
 
     return (
         <div ref={searchModalRef}>
-            {guestProfile && (
+            {guestProfile?._id && (
                 <div
                     className="cursor-pointer w-full h-[60px] flex items-center gap-x-2 hover:bg-text6"
                     onClick={(e) => {
