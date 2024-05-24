@@ -63,6 +63,7 @@ const InfoGroupSetting = () => {
             const res = await axiosPrivate.post(
                 WAVE_CHAT_API.updateIsJoinWithLink(conversationId)
             );
+            console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
             }

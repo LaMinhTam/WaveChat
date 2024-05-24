@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "196838161202",
+    "project_id": "wave-chat-56d7c",
+    "storage_bucket": "wave-chat-56d7c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196838161202:android:2c5e015a9421ae9e20752b",
+        "android_client_info": {
+          "package_name": "com.wavechat_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "196838161202-pr74c57niu95l9581gqhta93o7k5qref.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrdStqhDdwRgKw2o0Cog2jnywwxah_vto"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "196838161202-pr74c57niu95l9581gqhta93o7k5qref.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

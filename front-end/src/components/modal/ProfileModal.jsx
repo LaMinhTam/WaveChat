@@ -4,16 +4,7 @@ import { useChat } from "../../contexts/chat-context";
 import { saveToken, saveUserId } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { setProfileType, setShowConversation } from "../../store/commonSlice";
-import {
-    setConversations,
-    setListMemberOfConversation,
-} from "../../store/conversationSlice";
-import { setListBlockUser, setListFriend } from "../../store/userSlice";
-import {
-    setListFriendRequest,
-    setListFriendSendRequest,
-} from "../../store/friendSlice";
+import { setProfileType } from "../../store/commonSlice";
 
 const ProfileModal = () => {
     const { nodeRef, setShowProfileDetails, setShow } = useChat();
@@ -24,14 +15,8 @@ const ProfileModal = () => {
     const handleLogout = () => {
         setUserInfo(null);
         saveToken();
+        setShow(false);
         saveUserId();
-        dispatch(setShowConversation(false));
-        dispatch(setConversations([]));
-        dispatch(setListMemberOfConversation([]));
-        dispatch(setListFriend([]));
-        dispatch(setListBlockUser([]));
-        dispatch(setListFriendRequest([]));
-        dispatch(setListFriendSendRequest([]));
         toast.success("Đăng xuất thành công");
         navigate("/login");
     };

@@ -1,0 +1,7 @@
+- tạo cuộc trò chuyện: new-conversation
+- update cho phép tham gia bằng link: update-join-with-link
+- xóa thành viên khỏi nhóm: remove-member
+- thêm thành viên vào nhóm: add-member
+- giải tán nhóm: disband-group
+- user rời nhóm: leave-group
+- tham gia bằng link: join-with-link

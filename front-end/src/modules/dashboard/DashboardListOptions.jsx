@@ -16,6 +16,7 @@ const DashboardListOptions = () => {
     const currentUserId = getUserId();
     const id = useSelector((state) => state.conversation.id);
     useEffect(() => {
+        console.log("running");
         const temp = [];
         if (currentTab === "Chat") {
             if (conversations && conversations.length > 0) {

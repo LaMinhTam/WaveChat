@@ -15,10 +15,8 @@ const JoinGroupPage = () => {
     const { conversationId } = useParams();
     const [searchParams] = useSearchParams();
     const linkJoin = searchParams.get("link_join");
-    console.log("JoinGroupPage ~ linkJoin:", linkJoin);
     const dispatch = useDispatch();
     const [details, setDetails] = useState({});
-    console.log("JoinGroupPage ~ details:", details);
     const [isJoin, setIsJoin] = useState(false);
     const [isConfirm, setIsConfirm] = useState(false);
     const currentUserId = getUserId();
@@ -50,7 +48,6 @@ const JoinGroupPage = () => {
             const res = await axiosPrivate.post(
                 WAVE_CHAT_API.joinGroupWithLink(linkJoin)
             );
-            console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {
                 if (details?.is_confirm_new_member === 0) {
                     dispatch(setId(conversationId));
