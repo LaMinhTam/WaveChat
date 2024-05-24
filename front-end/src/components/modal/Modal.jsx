@@ -13,8 +13,6 @@ import AddMemberModal from "./AddMemberModal";
 import ModalPassPermission from "./ModalPassPermission";
 import ModalGroupInfo from "./ModalGroupInfo";
 import ModalChangeGroupName from "./ModalChangeGroupName";
-// import { useSelector } from "react-redux";
-// import VideoCallModal from "./VideoCallModal";
 import VideoCall from "./VideoCall";
 import { useSocket } from "../../contexts/socket-context";
 
@@ -35,9 +33,6 @@ const Modal = () => {
         showModalChangeGroupName,
     } = useChat();
     const { showVideoCallModal } = useSocket();
-    // const showRequestVideoCallModal = useSelector(
-    //     (state) => state.call.showRequestVideoCallModal
-    // );
     return (
         <>
             <ReactModal
@@ -67,8 +62,8 @@ const Modal = () => {
             <ReactModal
                 isOpen={showSettingModal}
                 overlayClassName="modal-overlay fixed inset-0 z-50 ml-16 mt-[520px] bg-lite shadow-lg p-2
-                flex justify-center items-center w-full max-w-[280px] h-full max-h-[157px]"
-                className="modal-content w-full max-w-[280px] bg-white rounded outline-none p-2 relative max-h-[157px]"
+                flex justify-center items-center w-full max-w-[280px] h-full max-h-[200px]"
+                className="modal-content w-full max-w-[280px] bg-white rounded outline-none p-2 relative max-h-[200px]"
             >
                 <SettingModal />
             </ReactModal>
@@ -120,14 +115,6 @@ const Modal = () => {
             >
                 <AddMemberModal />
             </ReactModal>
-            {/* <ReactModal
-                isOpen={showRequestVideoCallModal}
-                overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50
-                flex justify-center items-center"
-                className="modal-content w-full max-w-[700px] bg-white rounded outline-none relative"
-            >
-                <VideoCallModal />
-            </ReactModal> */}
             <ReactModal
                 isOpen={showVideoCallModal}
                 overlayClassName="modal-overlay fixed inset-0 bg-black bg-opacity-40 z-50

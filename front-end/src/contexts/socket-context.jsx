@@ -70,7 +70,6 @@ export function SocketProvider(props) {
                     const data = res.data.data;
                     if (data) {
                         data.reverse();
-                        console.log("fetchMessage ~ data:", data);
                         setMessage(data);
                     } else {
                         setMessage([]);
@@ -92,7 +91,6 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("message", (incomingMessage) => {
-            console.log("newSocket.on ~ incomingMessage:", incomingMessage);
             const updatedMessage = incomingMessage.message;
             setMessage((prev) =>
                 Array.isArray(prev)
@@ -139,7 +137,6 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("add-member", (response) => {
-            console.log("newSocket.on ~ response:", response);
             const isExist = response.data.last_message.user_target.some(
                 (member) => {
                     return member.user_id === currentUserId;
@@ -359,7 +356,6 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("request-call-video", (data) => {
-            console.log("newSocket.on ~ data:", data);
             setReceiveCalledVideo(true);
             setRequestVideoCallData(data);
             setCallAccepted(false);

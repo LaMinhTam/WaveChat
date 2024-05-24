@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const commonSlice = createSlice({
     name: "common",
     initialState: {
+        forgotPasswordPhone: "",
         openModal: false,
         otpCode: "",
         showUpdateProfile: false,
@@ -28,6 +29,10 @@ const commonSlice = createSlice({
         futureOwner: {},
     },
     reducers: {
+        setForgotPasswordPhone: (state, action) => ({
+            ...state,
+            forgotPasswordPhone: action.payload,
+        }),
         setOpenModal: (state, action) => ({
             ...state,
             openModal: action.payload,
@@ -127,6 +132,7 @@ const commonSlice = createSlice({
     },
 });
 export const {
+    setForgotPasswordPhone,
     setOpenModal,
     setOtpCode,
     setShowUpdateProfile,

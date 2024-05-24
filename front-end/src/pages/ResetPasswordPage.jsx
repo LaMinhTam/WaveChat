@@ -7,7 +7,7 @@ import PhoneInput from "react-phone-input-2";
 import { Button } from "../components/button";
 import { toast } from "react-toastify";
 import { useAuth } from "../contexts/auth-context";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setOpenModal, setOtpCode } from "../store/commonSlice";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,6 +26,9 @@ const ResetPasswordPage = () => {
         formState: { isSubmitting },
     } = useForm({ resolver: yupResolver(schema) });
     const dispatch = useDispatch();
+    const forgotPasswordPhone = useSelector(
+        (state) => state.common.forgotPasswordPhone
+    );
     const { setConfirmationResult, setValues } = useAuth();
     const handleResetPassword = async (values) => {
         if (!values.phone) return;
@@ -63,6 +66,7 @@ const ResetPasswordPage = () => {
                 <FormGroup>
                     <Label htmlFor="phone">Số điện thoại *</Label>
                     <Controller
+                        defaultValue={forgotPasswordPhone ?? ""}
                         name="phone"
                         control={control}
                         rules={{ required: "Vui lòng nhập số điện thoại" }}

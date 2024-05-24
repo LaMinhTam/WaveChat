@@ -14,6 +14,7 @@ const VideoCall = () => {
         setRequestVideoCallData,
         setShowVideoCallModal,
         setCallDenied,
+        deleteRoom,
     } = useSocket();
     const handleAnswerCall = async () => {
         try {
@@ -40,6 +41,16 @@ const VideoCall = () => {
 
             callFrame.on("left-meeting", () => {
                 callFrame.destroy();
+            });
+
+            callFrame.on("participant-left", async () => {
+                callFrame.destroy();
+                // Delete the room on daily.co
+                try {
+                    await deleteRoom(requestVideoCallData.signal_data.room_id);
+                } catch (error) {
+                    console.error(`Failed to delete room: ${error.message}`);
+                }
             });
 
             socket.emit("answer-call-request", {

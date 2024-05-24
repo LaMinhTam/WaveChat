@@ -16,6 +16,8 @@ import { useAuth } from "../contexts/auth-context";
 import { getToken, saveToken, saveUserId, saveUserName } from "../utils/auth";
 import { isTokenExpire } from "../utils/isTokenExpire";
 import axios from "../api/axios";
+import { useDispatch } from "react-redux";
+import { setForgotPasswordPhone } from "../store/commonSlice";
 
 const schema = yup.object({
     phone: yup.string().required("Vui lòng nhập số điện thoại"),
@@ -42,6 +44,8 @@ const LoginPage = () => {
     const { userInfo, loading } = useAuth();
     const token = getToken();
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
         if (token) {
             if (!loading && !isTokenExpire(token)) {
@@ -62,7 +66,6 @@ const LoginPage = () => {
             phone: newPhone,
             password: values.password,
         });
-        console.log("handleSignIn ~ res:", res);
         if (res.data.status === 200) {
             saveUserId(res.data.data?._id);
             saveToken(res.data.data?.access_token);
@@ -70,6 +73,7 @@ const LoginPage = () => {
             toast.success("Đăng nhập thành công");
             navigate("/");
         } else {
+            dispatch(setForgotPasswordPhone(values?.phone));
             toast.error("Mật khẩu hoặc số điện thoại không chính xác");
         }
     };
