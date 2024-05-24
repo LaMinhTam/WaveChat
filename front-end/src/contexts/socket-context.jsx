@@ -14,6 +14,7 @@ import { axiosPrivate } from "../api/axios";
 import { toast } from "react-toastify";
 import { useChat } from "./chat-context";
 import axios from "axios";
+import { WAVE_CHAT_SOCKET_URL } from "../constants/global";
 // import Peer from "simple-peer";
 const SocketContext = React.createContext();
 
@@ -47,7 +48,7 @@ export function SocketProvider(props) {
 
     useEffect(() => {
         // Connect to the WebSocket server
-        const newSocket = io("ws://localhost:3000", {
+        const newSocket = io(WAVE_CHAT_SOCKET_URL, {
             extraHeaders: {
                 Authorization: accessToken,
             },
@@ -58,7 +59,7 @@ export function SocketProvider(props) {
             console.log("Connected to WebSocket");
             async function fetchMessage() {
                 const res = await axiosPrivate.get(
-                    `/message/${conversationId}?limit=100000`
+                    `/message/list/${conversationId}?limit=100000`
                 );
                 if (res.data.status === 200) {
                     const data = res.data.data;
