@@ -65,35 +65,37 @@ const SearchMessageModal = () => {
                     <button className="text-secondary">Xem tất cả</button>
                 </div>
 
-                {result.length > 0 &&
-                    result.map((item) => (
-                        <div
-                            className="flex items-center justify-between mt-4 cursor-pointer"
-                            key={item._id}
-                            onClick={() => handleClickMessage(item._id)}
-                        >
-                            <div className="flex items-center gap-x-2">
-                                <div className="w-12 h-12 rounded-full">
-                                    <img
-                                        src={s3ImageUrl(item.user.avatar)}
-                                        alt={item.user.full_name}
-                                        className="object-cover w-full h-full rounded-full"
-                                    />
+                <div className="w-full h-[500px] overflow-y-auto overflow-x-hidden">
+                    {result.length > 0 &&
+                        result.map((item) => (
+                            <div
+                                className="flex items-center justify-between mt-4 cursor-pointer"
+                                key={item._id}
+                                onClick={() => handleClickMessage(item._id)}
+                            >
+                                <div className="flex items-center gap-x-2">
+                                    <div className="w-12 h-12 rounded-full">
+                                        <img
+                                            src={s3ImageUrl(item.user.avatar)}
+                                            alt={item.user.full_name}
+                                            className="object-cover w-full h-full rounded-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-semibold">
+                                            {item.user.full_name}
+                                        </h3>
+                                        <span className="text-text3">
+                                            {item.message}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold">
-                                        {item.user.full_name}
-                                    </h3>
-                                    <span className="text-text3">
-                                        {item.message}
-                                    </span>
-                                </div>
+                                <span className="text-text3">
+                                    {formatDate(item.created_at)}
+                                </span>
                             </div>
-                            <span className="text-text3">
-                                {formatDate(item.created_at)}
-                            </span>
-                        </div>
-                    ))}
+                        ))}
+                </div>
             </div>
         </div>
     );

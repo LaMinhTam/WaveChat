@@ -11,6 +11,7 @@ import { useChat } from "../../contexts/chat-context";
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../api/axios";
 import { saveToken } from "../../utils/auth";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const schema = yup.object({
     oldPassword: yup
@@ -56,10 +57,13 @@ const ChangePasswordModal = () => {
                 toast.error("Mật khẩu mới không được trùng với mật khẩu cũ");
                 return;
             } else {
-                const res = await axiosPrivate.post("/auth/change-password", {
-                    old_password: oldPassword,
-                    new_password: password,
-                });
+                const res = await axiosPrivate.post(
+                    WAVE_CHAT_API.changePassword(),
+                    {
+                        old_password: oldPassword,
+                        new_password: password,
+                    }
+                );
                 if (res.data.status === 200) {
                     toast.success("Đổi mật khẩu thành công!");
                     setShowChangePasswordModal(false);

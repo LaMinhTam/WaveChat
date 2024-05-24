@@ -15,6 +15,7 @@ import MessageFile from "./message/MessageFile";
 import { v4 as uuidv4 } from "uuid";
 import alertRemoveBlock from "../../../utils/alertRemoveBlock";
 import { useSelector } from "react-redux";
+import { WAVE_CHAT_API } from "../../../api/constants";
 
 const ConversationChatInput = ({
     user_id,
@@ -53,7 +54,7 @@ const ConversationChatInput = ({
                 if (!socket) return;
                 if (!conversationId) {
                     const res = await axiosPrivate.post(
-                        "/conversation/create",
+                        WAVE_CHAT_API.createConversation(),
                         {
                             member_id: user_id,
                         }

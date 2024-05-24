@@ -19,7 +19,11 @@ import {
     setIsGroupChat,
     setLinkJoinGroup,
 } from "../../store/conversationSlice";
-import { CONVERSATION_TYPE, groupAvatarDefault } from "../../api/constants";
+import {
+    CONVERSATION_TYPE,
+    WAVE_CHAT_API,
+    groupAvatarDefault,
+} from "../../api/constants";
 
 const Member = ({ user }) => {
     const [isHover, setIsHover] = useState(false);
@@ -63,7 +67,7 @@ const Member = ({ user }) => {
         async function fetchBlockType() {
             try {
                 const resDetails = await axiosPrivate.get(
-                    `/conversation/detail?conversation_id=${user._id}`
+                    WAVE_CHAT_API.conversationDetail(user._id)
                 );
                 if (resDetails.data.status === 200) {
                     let block_type = resDetails.data.data.block_type;

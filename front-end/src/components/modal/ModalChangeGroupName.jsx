@@ -3,9 +3,8 @@ import { useChat } from "../../contexts/chat-context";
 import { IconClose } from "../icons";
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../api/axios";
-import { useDispatch } from "react-redux";
-import { setId } from "../../store/conversationSlice";
 import { setShowConversationInfo } from "../../store/commonSlice";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const ModalChangeGroupName = () => {
     const [newName, setNewName] = useState("");
@@ -14,7 +13,6 @@ const ModalChangeGroupName = () => {
         modalChangeGroupNameRef,
         conversationId,
     } = useChat();
-    const dispatch = useDispatch();
 
     const onEnter = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -26,13 +24,12 @@ const ModalChangeGroupName = () => {
     const handleChangeConversationName = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation/update-name?conversation_id=${conversationId}`,
+                WAVE_CHAT_API.changeGroupName(conversationId),
                 {
                     name: newName,
                 }
             );
             if (res.data.status === 200) {
-                dispatch(setId(Math.random() * 1000));
                 toast.success("Đổi tên thành công");
                 setShowModalChangeGroupName(false);
                 setShowConversationInfo(false);

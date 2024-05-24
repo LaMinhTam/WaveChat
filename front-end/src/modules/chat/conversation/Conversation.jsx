@@ -20,7 +20,10 @@ import {
     setWaitingList,
 } from "../../../store/conversationSlice";
 import { getUserId } from "../../../utils/auth";
-import { CONVERSATION_MEMBER_PERMISSION } from "../../../api/constants";
+import {
+    CONVERSATION_MEMBER_PERMISSION,
+    WAVE_CHAT_API,
+} from "../../../api/constants";
 
 const Conversation = () => {
     const dispatch = useDispatch();
@@ -53,7 +56,7 @@ const Conversation = () => {
     useEffect(() => {
         async function fetchConversationDetails() {
             const resDetails = await axiosPrivate.get(
-                `/conversation/detail?conversation_id=${conversationId}`
+                WAVE_CHAT_API.conversationDetail(conversationId)
             );
             if (resDetails.data.status === 200) {
                 let is_confirm_new_member =
@@ -80,7 +83,7 @@ const Conversation = () => {
     useEffect(() => {
         async function fetchWaitingList() {
             const res = await axiosPrivate.get(
-                `/conversation-group/waiting-member?conversation_id=${conversationId}`
+                WAVE_CHAT_API.groupWaitingList(conversationId)
             );
             if (res.data.status === 200) {
                 dispatch(setWaitingList(res.data.data));
@@ -94,7 +97,7 @@ const Conversation = () => {
     useEffect(() => {
         async function fetchMemberInConversation() {
             const res = await axiosPrivate.get(
-                `/conversation-group/member?conversation_id=${conversationId}`
+                WAVE_CHAT_API.groupListMember(conversationId)
             );
             if (res.data.status === 200) {
                 const listMember = res.data.data;

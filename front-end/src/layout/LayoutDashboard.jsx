@@ -13,6 +13,7 @@ import {
     setListFriendRequest,
     setListFriendSendRequest,
 } from "../store/friendSlice";
+import { WAVE_CHAT_API } from "../api/constants";
 const LayoutDashboard = () => {
     const currentUserId = getUserId();
     const dispatch = useDispatch();
@@ -34,7 +35,9 @@ const LayoutDashboard = () => {
     useEffect(() => {
         async function fetchFriendRequest() {
             try {
-                const res = await axiosPrivate.get("/friend?type=2");
+                const res = await axiosPrivate.get(
+                    WAVE_CHAT_API.listFriendRequest()
+                );
                 if (res.data.status === 200) {
                     dispatch(setListFriendRequest(res.data.data));
                 }
@@ -47,7 +50,9 @@ const LayoutDashboard = () => {
     useEffect(() => {
         async function fetchFriendSendRequest() {
             try {
-                const res = await axiosPrivate.get("/friend?type=3");
+                const res = await axiosPrivate.get(
+                    WAVE_CHAT_API.listSentRequest()
+                );
                 if (res.data.status === 200) {
                     dispatch(setListFriendSendRequest(res.data.data));
                 }
@@ -60,7 +65,9 @@ const LayoutDashboard = () => {
     useEffect(() => {
         async function fetchListBlockUser() {
             try {
-                const res = await axiosPrivate.get("/user/list-block-user");
+                const res = await axiosPrivate.get(
+                    WAVE_CHAT_API.listBlockUser()
+                );
                 if (res.data.status === 200) {
                     dispatch(setListBlockUser(res.data.data));
                 }

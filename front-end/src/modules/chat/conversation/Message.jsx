@@ -21,6 +21,7 @@ import MessageFeature from "./message/MessageFeature";
 import ModalChatOption from "../../../components/modal/ModalChatOption";
 import s3ImageUrl from "../../../utils/s3ImageUrl";
 import { Link } from "react-router-dom";
+import { WAVE_CHAT_API } from "../../../api/constants";
 const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const [isOpenImage, setIsOpenImage] = useState(false);
     const [messageFormat, setMessageFormat] = useState("");
@@ -55,10 +56,13 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const handleDeleteReaction = async () => {
         try {
             const type = reactionToType(reactionEmoji);
-            const res = await axiosPrivate.post("/message/react", {
-                message_id: msg._id,
-                type: type,
-            });
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.reactionMessage(),
+                {
+                    message_id: msg._id,
+                    type: type,
+                }
+            );
             if (res.data.status === 200) {
                 setReactionEmoji("");
             }
@@ -70,10 +74,13 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     const handleReaction = async (reaction) => {
         try {
             const type = reactionToType(reaction?.emoji);
-            const res = await axiosPrivate.post("/message/react", {
-                message_id: msg._id,
-                type: type,
-            });
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.reactionMessage(),
+                {
+                    message_id: msg._id,
+                    type: type,
+                }
+            );
             if (res.data.status === 200) {
                 let emojiReaction = typeToReaction(type);
                 setReactionEmoji(emojiReaction);

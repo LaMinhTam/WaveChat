@@ -1,7 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getUserId } from "../../utils/auth";
 import s3ImageUrl from "../../utils/s3ImageUrl";
-import { CONVERSATION_MEMBER_PERMISSION } from "../../api/constants";
+import {
+    CONVERSATION_MEMBER_PERMISSION,
+    WAVE_CHAT_API,
+} from "../../api/constants";
 import { IconClose } from "../icons";
 import { useChat } from "../../contexts/chat-context";
 import { toast } from "react-toastify";
@@ -32,7 +35,7 @@ const ModalPassPermission = () => {
             conversationId
         );
         const res = await axiosPrivate.post(
-            `/conversation-group/leave?conversation_id=${conversationId}`
+            WAVE_CHAT_API.leaveGroup(conversationId)
         );
         if (res.data.status === 200) {
             toast.success(`Bạn đã rời nhóm`);

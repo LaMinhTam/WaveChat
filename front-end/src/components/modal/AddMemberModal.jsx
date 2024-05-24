@@ -4,7 +4,10 @@ import SearchPerson from "../../modules/chat/group/create/SearchPerson";
 import { IconClose } from "../icons";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { CONVERSATION_MEMBER_PERMISSION } from "../../api/constants";
+import {
+    CONVERSATION_MEMBER_PERMISSION,
+    WAVE_CHAT_API,
+} from "../../api/constants";
 import { setListMemberOfConversation } from "../../store/conversationSlice";
 import { useEffect, useState } from "react";
 
@@ -40,7 +43,7 @@ const AddMemberModal = () => {
         try {
             let members = selectedList.map((member) => member.user_id);
             const res = await axiosPrivate.post(
-                `/conversation-group/add-member?conversation_id=${conversationId}`,
+                WAVE_CHAT_API.addMember(conversationId),
                 {
                     members,
                 }

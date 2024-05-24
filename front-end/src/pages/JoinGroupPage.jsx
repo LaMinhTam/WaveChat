@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import s3ImageUrl from "../utils/s3ImageUrl";
 import { getUserId } from "../utils/auth";
+import { WAVE_CHAT_API } from "../api/constants";
 
 const JoinGroupPage = () => {
     const { conversationId } = useParams();
@@ -24,7 +25,7 @@ const JoinGroupPage = () => {
     useEffect(() => {
         async function fetchConversation() {
             const res = await axiosPrivate.get(
-                `/conversation/detail?conversation_id=${conversationId}`
+                WAVE_CHAT_API.conversationDetail(conversationId)
             );
             if (res.data.status === 200) {
                 setDetails(res.data.data);
@@ -47,7 +48,7 @@ const JoinGroupPage = () => {
     const handleJoinGroupWithLink = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation-group/join-with-link?link_join=${linkJoin}`
+                WAVE_CHAT_API.joinGroupWithLink(linkJoin)
             );
             console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {

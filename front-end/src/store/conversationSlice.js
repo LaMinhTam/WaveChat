@@ -3,6 +3,7 @@ const conversationSlice = createSlice({
     name: "conversation",
     initialState: {
         conversations: [],
+        lastMessage: null,
         id: null,
         isGroupChat: false,
         listMemberOfConversation: [],
@@ -15,6 +16,9 @@ const conversationSlice = createSlice({
     reducers: {
         setConversations: (state, action) => {
             state.conversations = action.payload;
+        },
+        setLastMessage: (state, action) => {
+            state.lastMessage = action.payload;
         },
         setId: (state, action) => {
             state.id = action.payload;
@@ -52,5 +56,6 @@ export const {
     setLinkJoinGroup,
     setIsConfirmNewMember,
     setWaitingList,
+    setLastMessage,
 } = conversationSlice.actions;
 export default conversationSlice.reducer;

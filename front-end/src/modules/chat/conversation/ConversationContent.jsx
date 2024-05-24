@@ -10,6 +10,7 @@ import { axiosPrivate } from "../../../api/axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setId } from "../../../store/conversationSlice";
+import { WAVE_CHAT_API } from "../../../api/constants";
 
 const ConversationContent = ({ message, socket }) => {
     const {
@@ -52,7 +53,9 @@ const ConversationContent = ({ message, socket }) => {
 
     const handleDeleteMessage = async (id) => {
         try {
-            const res = await axiosPrivate.post(`/message/delete/${id}`);
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.deleteMessage(id)
+            );
             if (res.data.status === 200) {
                 const newGroup = groupedMessages
                     ?.map((group) => {
@@ -89,8 +92,8 @@ const ConversationContent = ({ message, socket }) => {
                         {group?.data.map((msg) => {
                             if (msg.conversation_id === conversationId) {
                                 const check = [
-                                    7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19,
-                                    20, 21, 22, 23, 24, 25,
+                                    7, 8, 9, 10, 11, 12, 13, 15, 17, 18, 19, 20,
+                                    21, 22, 23, 24, 25,
                                 ].includes(msg.type);
                                 if (!check) {
                                     return (

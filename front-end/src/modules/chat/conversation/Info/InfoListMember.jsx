@@ -5,7 +5,10 @@ import {
 } from "../../../../components/icons";
 import { useSelector } from "react-redux";
 import s3ImageUrl from "../../../../utils/s3ImageUrl";
-import { CONVERSATION_MEMBER_PERMISSION } from "../../../../api/constants";
+import {
+    CONVERSATION_MEMBER_PERMISSION,
+    WAVE_CHAT_API,
+} from "../../../../api/constants";
 import { axiosPrivate } from "../../../../api/axios";
 import { useChat } from "../../../../contexts/chat-context";
 import { toast } from "react-toastify";
@@ -58,13 +61,15 @@ const InfoListMember = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const handleRemoveMember = async (id) => {
+        console.log("handleRemoveMember ~ id:", id);
         try {
             const res = await axiosPrivate.post(
-                `/conversation-group/remove-member?conversation_id=${conversationId}`,
+                WAVE_CHAT_API.removeMemberFromGroup(conversationId),
                 {
                     user_id: id,
                 }
             );
+            console.log("handleRemoveMember ~ res:", res);
             if (res.data.status === 200) {
                 let newListMember = listMemberOfConversation.filter(
                     (member) => member.user_id !== id
@@ -84,12 +89,13 @@ const InfoListMember = () => {
     const handleApprovalMember = async (type) => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation-group/confirm-member?conversation_id=${conversationId}`,
+                WAVE_CHAT_API.approvalMember(conversationId),
                 {
                     members: checkedList,
                     type,
                 }
             );
+            console.log("handleApprovalMember ~ res:", res);
             if (res.data.status === 200) {
                 if (type === 1) {
                     let listNewMember = waitingList.filter((member) =>

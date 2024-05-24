@@ -10,6 +10,7 @@ import {
     setActiveConversation,
     setShowConversation,
 } from "../../store/commonSlice";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const CreateGroupChatModal = () => {
     const { setShowCreateGroupChat, groupChatRef } = useChat();
@@ -24,10 +25,13 @@ const CreateGroupChatModal = () => {
         else {
             // Create group chat
             const member_ids = selectedList.map((person) => person.user_id);
-            const res = await axiosPrivate.post("/conversation-group/create", {
-                name: groupChatName,
-                member_ids,
-            });
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.createGroupChat(),
+                {
+                    name: groupChatName,
+                    member_ids,
+                }
+            );
             setGroupChatName("");
             setShowCreateGroupChat(false);
             setConversationId(res.data.data.conversation_id);

@@ -4,6 +4,7 @@ import { IconClose } from "../icons";
 import { toast } from "react-toastify";
 import { axiosPrivate } from "../../api/axios";
 import { useEffect, useState } from "react";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const ForwardModal = () => {
     const {
@@ -21,7 +22,7 @@ const ForwardModal = () => {
                 let listConversationId = [];
                 await selectedList.forEach(async (element) => {
                     const resConversation = await axiosPrivate.post(
-                        "/conversation/create",
+                        WAVE_CHAT_API.createConversation(),
                         {
                             member_id: element.user_id,
                         }
@@ -42,7 +43,7 @@ const ForwardModal = () => {
 
     const handleShareMessage = async () => {
         try {
-            const res = await axiosPrivate.post("/message/share-message", {
+            const res = await axiosPrivate.post(WAVE_CHAT_API.shareMessage(), {
                 message_id: forwardMessage._id,
                 conversation_ids: listConversationId,
             });

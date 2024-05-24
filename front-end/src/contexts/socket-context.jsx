@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useChat } from "./chat-context";
 import axios from "axios";
 import { WAVE_CHAT_SOCKET_URL } from "../constants/global";
+import { WAVE_CHAT_API } from "../api/constants";
 // import Peer from "simple-peer";
 const SocketContext = React.createContext();
 
@@ -30,7 +31,8 @@ export function SocketProvider(props) {
     const accessToken = getToken();
     const currentUserId = getUserId();
     const [message, setMessage] = React.useState([]);
-    const { conversationId, currentConversation } = useChat();
+    const { conversationId, currentConversation, setCurrentConversation } =
+        useChat();
     const [unreadCount, setUnreadCount] = useState(0);
     const dispatch = useDispatch();
     const triggerFetchListMember = useSelector(
@@ -62,12 +64,13 @@ export function SocketProvider(props) {
             console.log("Connected to WebSocket");
             async function fetchMessage() {
                 const res = await axiosPrivate.get(
-                    `/message/list/${conversationId}?limit=100000`
+                    WAVE_CHAT_API.listMessage(conversationId, 10000)
                 );
                 if (res.data.status === 200) {
                     const data = res.data.data;
                     if (data) {
                         data.reverse();
+                        console.log("fetchMessage ~ data:", data);
                         setMessage(data);
                     } else {
                         setMessage([]);
@@ -96,6 +99,7 @@ export function SocketProvider(props) {
                     ? [...prev, updatedMessage]
                     : [updatedMessage]
             );
+            dispatch(setId(Math.random() * 1000));
             dispatch(
                 setIncomingMessageOfConversation(
                     `${updatedMessage.conversation_id}_${updatedMessage.message}`
@@ -217,7 +221,124 @@ export function SocketProvider(props) {
             }
         });
 
+        newSocket.on("is-confirm-member", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+            }
+        });
+
         newSocket.on("update-join-with-link", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+            }
+        });
+
+        newSocket.on("join-with-link", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+                if (currentUserId !== response.data.owner_id) {
+                    dispatch(
+                        setTriggerFetchListMember(!triggerFetchListMember)
+                    );
+                }
+            }
+        });
+
+        newSocket.on("update-permission", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+                if (currentUserId !== response.data.owner_id) {
+                    dispatch(
+                        setTriggerFetchListMember(!triggerFetchListMember)
+                    );
+                }
+            }
+        });
+
+        newSocket.on("update-name-group", (response) => {
+            if (conversationId === response.data.conversation_id) {
+                const newMessage = {
+                    ...response.data.last_message,
+                    conversation_id: response.data.conversation_id,
+                    _id: response.data.last_message.message_id,
+                    user: {
+                        _id: response.data.last_message.user_id,
+                        full_name: response.data.last_message.full_name,
+                        avatar: response.data.last_message.avatar,
+                    },
+                    created_at: response.data.last_message.created_at,
+                    updated_at: response.data.last_message.created_at,
+                };
+                setMessage((prev) =>
+                    Array.isArray(prev) ? [...prev, newMessage] : [newMessage]
+                );
+                dispatch(setId(Math.random() * 1000));
+                setCurrentConversation({
+                    ...currentConversation,
+                    name: response.data.name,
+                });
+            } else {
+                dispatch(setId(Math.random() * 1000));
+            }
+        });
+
+        newSocket.on("update-background", (response) => {
             if (conversationId === response.data.conversation_id) {
                 const newMessage = {
                     ...response.data.last_message,
@@ -270,9 +391,11 @@ export function SocketProvider(props) {
     }, [
         accessToken,
         conversationId,
+        currentConversation,
         currentConversation.conversation_id,
         currentUserId,
         dispatch,
+        setCurrentConversation,
         setMessage,
         triggerFetchListMember,
     ]);

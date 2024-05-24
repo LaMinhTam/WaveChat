@@ -8,8 +8,7 @@ const MessageReply = ({ msg, messageRefs }) => {
         if (messageElement && containerElement) {
             // Scroll the container to the top of the selected message
             const topPos =
-                messageElement.getBoundingClientRect().top -
-                containerElement.getBoundingClientRect().top;
+                messageElement.offsetTop - containerElement.offsetTop;
             containerElement.scrollTop = topPos;
         }
     };

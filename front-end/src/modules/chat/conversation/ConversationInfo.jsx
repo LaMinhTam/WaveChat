@@ -20,6 +20,7 @@ import { setId } from "../../../store/conversationSlice";
 import InfoGroupSetting from "./Info/InfoGroupSetting";
 import InfoListMember from "./Info/InfoListMember";
 import handleLeaveGroup from "../../../utils/handleLeaveGroup";
+import { WAVE_CHAT_API } from "../../../api/constants";
 
 const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const showStorage = useSelector((state) => state.common.showStorage);
@@ -36,7 +37,7 @@ const ConversationInfo = ({ name, images, files, avatar, userId }) => {
     const handleDeleteConversation = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation/delete?conversation_id=${conversationId}`
+                WAVE_CHAT_API.deleteConversation(conversationId)
             );
             if (res.data.status === 200) {
                 dispatch(setShowConversation(false));

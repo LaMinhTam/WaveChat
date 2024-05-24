@@ -33,3 +33,55 @@ export const MESSAGE_SYSTEM_TYPE = {
 
 export const groupAvatarDefault =
     "https://wavechat.s3.ap-southeast-1.amazonaws.com/default-group-icon-dark.webp";
+
+export const WAVE_CHAT_API = {
+    listMessage: (conversationId, limit) =>
+        `/message/list/${conversationId}?limit=${limit}`,
+    addMember: (conversationId) =>
+        `/conversation-group/add-member?conversation_id=${conversationId}`,
+    updateProfile: () => "/user/update",
+    changePassword: () => "/auth/change-password",
+    createGroupChat: () => "/conversation-group/create",
+    createConversation: () => "/conversation/create",
+    shareMessage: () => "/message/share-message",
+    changeGroupName: (conversationId) =>
+        `/conversation/update-name?conversation_id=${conversationId}`,
+    leaveGroup: (conversationId) =>
+        `/conversation-group/leave?conversation_id=${conversationId}`,
+    removeFriend: (friendId) => `/friend/remove-friend?_id=${friendId}`,
+    blockUser: (userId) => `/user/block-user/${userId}`,
+    removeBlockUser: (userId) => `/user/remove-block-user/${userId}`,
+    sendFriendRequest: (userId) => `/friend/send?_id=${userId}`,
+    recallSentRequest: (userId) => `/friend/remove-request?_id=${userId}`,
+    acceptFriendRequest: (userId) => `/friend/accept?_id=${userId}`,
+    deleteAccount: () => "/user/remove-account",
+    listFriendRequest: () => "/friend?type=2",
+    listSentRequest: () => "/friend?type=3",
+    listBlockUser: () => "/user/list-block-user",
+    conversationDetail: (id) => `/conversation/detail?conversation_id=${id}`,
+    groupWaitingList: (conversationId) =>
+        `/conversation-group/waiting-member?conversation_id=${conversationId}`,
+    groupListMember: (conversationId) =>
+        `/conversation-group/member?conversation_id=${conversationId}`,
+    deleteMessage: (id) => `/message/delete/${id}`,
+    deleteConversation: (id) => `/conversation/delete?conversation_id=${id}`,
+    reactionMessage: () => "/message/react",
+    updateConfirmNewMember: (id) =>
+        `/conversation/is_confirm_member?conversation_id=${id}`,
+    updateIsJoinWithLink: (id) =>
+        `/conversation-group/join-link?conversation_id=${id}`,
+    disbandGroup: (id) => `/conversation-group/disband?conversation_id=${id}`,
+    removeMemberFromGroup: (conversationId) =>
+        `/conversation-group/remove-member?conversation_id=${conversationId}`,
+    approvalMember: (id) =>
+        `/conversation-group/confirm-member?conversation_id=${id}`,
+    findUserByPhone: (value) => `/user/find-phone?phone=${value}`,
+    rejectFriendRequest: (id) => `/friend/remove-friend?_id=${id}`,
+    joinGroupWithLink: (link) =>
+        `/conversation-group/join-with-link?link_join=${link}`,
+    updatePermission: (conversationId) =>
+        `/conversation-group/update-permission?conversation_id=${conversationId}`,
+    listConversations: () => "/conversation/list",
+    listFriend: () => "/friend?type=4",
+    userProfile: (id) => `user/profile?_id=${id}`,
+};

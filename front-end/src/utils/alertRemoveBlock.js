@@ -1,5 +1,6 @@
 import { axiosPrivate } from "../api/axios";
 import Swal from "sweetalert2";
+import { WAVE_CHAT_API } from "../api/constants";
 
 export default function alertRemoveBlock({
     user_id,
@@ -18,7 +19,7 @@ export default function alertRemoveBlock({
     }).then(async (result) => {
         if (result.isConfirmed) {
             const res = await axiosPrivate.post(
-                `/user/remove-block-user/${user_id}`
+                WAVE_CHAT_API.removeBlockUser(user_id)
             );
             if (res.data.status === 200) {
                 Swal.fire(

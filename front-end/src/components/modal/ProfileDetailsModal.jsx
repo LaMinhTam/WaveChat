@@ -18,6 +18,7 @@ import { axiosPrivate } from "../../api/axios";
 import { toast } from "react-toastify";
 import { setRender } from "../../store/friendSlice";
 import { setId } from "../../store/conversationSlice";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const ProfileDetailsModal = () => {
     // 0 - Nhắn tin | 1 - Kết bạn | 2 - Thu hồi | 3 - Chấp nhận
@@ -103,7 +104,7 @@ const ProfileDetailsModal = () => {
     const handleRemoveFriend = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/friend/remove-friend?_id=${data?._id}`
+                WAVE_CHAT_API.removeFriend(data?._id)
             );
             if (res.data.status === 200) {
                 dispatch(setRender(Math.random() * 1000));
@@ -119,7 +120,7 @@ const ProfileDetailsModal = () => {
     const handleBlockUser = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/user/block-user/${data?._id}`
+                WAVE_CHAT_API.blockUser(data?._id)
             );
             if (res.data.status === 200) {
                 setIsBlocked(true);
@@ -135,7 +136,7 @@ const ProfileDetailsModal = () => {
     const handleUnBlockUser = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/user/remove-block-user/${data?._id}`
+                WAVE_CHAT_API.removeBlockUser(data?._id)
             );
             if (res.data.status === 200) {
                 setIsBlocked(false);
@@ -153,7 +154,7 @@ const ProfileDetailsModal = () => {
             await handleRemoveFriend();
         } else if (status === 1) {
             const res = await axiosPrivate.post(
-                `/friend/send?_id=${data?._id}`
+                WAVE_CHAT_API.sendFriendRequest(data?._id)
             );
             if (res.data.status === 200) {
                 toast.success("Đã gửi lời mời kết bạn");
@@ -166,7 +167,7 @@ const ProfileDetailsModal = () => {
         } else if (status === 2) {
             try {
                 const res = await axiosPrivate.post(
-                    `/friend/remove-request?_id=${data?._id}`
+                    WAVE_CHAT_API.recallSentRequest(data?._id)
                 );
                 if (res.data.status === 200) {
                     toast.success("Đã thu hồi lời mời kết bạn");
@@ -180,11 +181,11 @@ const ProfileDetailsModal = () => {
         } else if (status === 3) {
             try {
                 const res = await axiosPrivate.post(
-                    `/friend/accept?_id=${data?._id}`
+                    WAVE_CHAT_API.acceptFriendRequest(data?._id)
                 );
                 if (res.data.status === 200) {
                     const response = await axiosPrivate.post(
-                        "/conversation/create",
+                        WAVE_CHAT_API.createConversation(),
                         {
                             member_id: data?._id,
                         }

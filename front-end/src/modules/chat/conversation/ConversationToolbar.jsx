@@ -8,6 +8,7 @@ import useS3ImageConversation from "../../../hooks/useS3ImageConversation";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { WAVE_CHAT_API } from "../../../api/constants";
 
 const ConversationToolbar = ({ socket, user_id, blockType }) => {
     const { setValue, getValues } = useForm();
@@ -71,9 +72,12 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
 
     useEffect(() => {
         async function createConversation() {
-            const res = await axiosPrivate.post("/conversation/create", {
-                member_id: user_id,
-            });
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.createConversation(),
+                {
+                    member_id: user_id,
+                }
+            );
             setConversationId(res.data.data.conversation_id);
         }
         if (!conversationId || !isGroupChat) {
@@ -86,9 +90,12 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
     const handleSendImage = async (listFormatMessage) => {
         if (!socket) return;
         if (!conversationId && !isGroupChat) {
-            const res = await axiosPrivate.post("/conversation/create", {
-                member_id: user_id,
-            });
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.createConversation(),
+                {
+                    member_id: user_id,
+                }
+            );
             setConversationId(res.data.data.conversation_id);
             const clientImage = {
                 conversation_id: res.data.data.conversation_id,
@@ -114,9 +121,12 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
         const typed = fileType.split("/")[0];
         if (!socket) return;
         if (!conversationId && !isGroupChat) {
-            const res = await axiosPrivate.post("/conversation/create", {
-                member_id: user_id,
-            });
+            const res = await axiosPrivate.post(
+                WAVE_CHAT_API.createConversation(),
+                {
+                    member_id: user_id,
+                }
+            );
             setConversationId(res.data.data.conversation_id);
             const clientFile = {
                 conversation_id: res.data.data.conversation_id,

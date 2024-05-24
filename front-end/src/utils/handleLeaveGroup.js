@@ -7,6 +7,7 @@ import {
     setShowConversationInfo,
 } from "../store/commonSlice";
 import { setId } from "../store/conversationSlice";
+import { WAVE_CHAT_API } from "../api/constants";
 
 const handleLeaveGroup = async (
     dispatch,
@@ -17,7 +18,7 @@ const handleLeaveGroup = async (
     try {
         if (!isAdmin) {
             const res = await axiosPrivate.post(
-                `/conversation-group/leave?conversation_id=${conversationId}`
+                WAVE_CHAT_API.leaveGroup(conversationId)
             );
             if (res.data.status === 200) {
                 toast.success(`Bạn đã rời nhóm`);

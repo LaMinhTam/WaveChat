@@ -1,5 +1,5 @@
 import { axiosPrivate } from "../api/axios";
-import { CONVERSATION_MEMBER_PERMISSION } from "../api/constants";
+import { CONVERSATION_MEMBER_PERMISSION, WAVE_CHAT_API } from "../api/constants";
 import { toast } from "react-toastify";
 
 export default async function handleGrantPermission(
@@ -11,7 +11,7 @@ export default async function handleGrantPermission(
 ) {
     try {
         const res = await axiosPrivate.post(
-            `/conversation-group/update-permission?conversation_id=${conversationId}`,
+            WAVE_CHAT_API.updatePermission(conversationId),
             {
                 user_id: userId,
                 permission: permissionType,

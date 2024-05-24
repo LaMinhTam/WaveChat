@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import sortedPersonToAlphabet from "../../../../utils/sortedPersonToAlphabet";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
+import { WAVE_CHAT_API } from "../../../../api/constants";
 
 const SearchPerson = ({ type }) => {
     const [removedInputId, setRemovedInputId] = useState("");
@@ -123,7 +124,7 @@ const SearchPerson = ({ type }) => {
         async function fetchUserByPhone() {
             try {
                 const response = await axiosPrivate.get(
-                    `/user/find-phone?phone=${searchValue}`
+                    WAVE_CHAT_API.findUserByPhone(searchValue)
                 );
                 const data = response.data.data.user;
                 if (data) {

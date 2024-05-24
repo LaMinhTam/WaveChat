@@ -14,6 +14,7 @@ import {
     setShowConversationPermission,
     setShowListMemberInGroup,
 } from "../../../../store/commonSlice";
+import { WAVE_CHAT_API } from "../../../../api/constants";
 
 const InfoGroupSetting = () => {
     const { control } = useForm();
@@ -47,7 +48,7 @@ const InfoGroupSetting = () => {
     const handleMembershipApproval = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation/is_confirm_member?conversation_id=${conversationId}`
+                WAVE_CHAT_API.updateConfirmNewMember(conversationId)
             );
             if (res.data.status === 200) {
                 dispatch(setIsConfirmNewMember(!isConfirmNewMember));
@@ -60,7 +61,7 @@ const InfoGroupSetting = () => {
     const handleJoinGroupWithLink = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation-group/join-link?conversation_id=${conversationId}`
+                WAVE_CHAT_API.updateIsJoinWithLink(conversationId)
             );
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
@@ -73,7 +74,7 @@ const InfoGroupSetting = () => {
     const handleDeleteGroup = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/conversation-group/disband?conversation_id=${conversationId}`
+                WAVE_CHAT_API.disbandGroup(conversationId)
             );
             if (res.data.status === 200) {
                 toast.success("Đã giải tán nhóm");

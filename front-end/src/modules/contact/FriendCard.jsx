@@ -5,17 +5,18 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setRender } from "../../store/friendSlice";
 import { setId } from "../../store/conversationSlice";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const FriendCard = ({ data, type }) => {
     const dispatch = useDispatch();
     const handleAccept = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/friend/accept?_id=${data?.user_id}`
+                WAVE_CHAT_API.acceptFriendRequest(data?.user_id)
             );
             if (res.data.status === 200) {
                 const response = await axiosPrivate.post(
-                    "/conversation/create",
+                    WAVE_CHAT_API.createConversation(),
                     {
                         member_id: data?.user_id,
                     }
@@ -33,7 +34,7 @@ const FriendCard = ({ data, type }) => {
     const handleReCall = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/friend/remove-request?_id=${data?.user_id}`
+                WAVE_CHAT_API.recallSentRequest(data?.user_id)
             );
             if (res.data.status === 200) {
                 dispatch(setRender(Math.random() * 1000));
@@ -49,7 +50,7 @@ const FriendCard = ({ data, type }) => {
     const handleReject = async () => {
         try {
             const res = await axiosPrivate.post(
-                `/friend/remove-friend?_id=${data?.user_id}`
+                WAVE_CHAT_API.rejectFriendRequest(data?.user_id)
             );
             if (res.data.status === 200) {
                 dispatch(setRender(Math.random() * 1000));

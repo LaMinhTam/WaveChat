@@ -14,6 +14,7 @@ import { axiosPrivate } from "../../api/axios";
 import { setUserProfile } from "../../store/userSlice";
 import s3ImageUrl from "../../utils/s3ImageUrl";
 import PropTypes from "prop-types";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const ChangeImageModal = ({ type }) => {
     const { progress, image, handleSelectImage, setImage, handleResetUpload } =
@@ -68,7 +69,7 @@ const ChangeImageModal = ({ type }) => {
                 cover = image;
             }
 
-            const res = await axiosPrivate.post("/user/update", {
+            const res = await axiosPrivate.post(WAVE_CHAT_API.updateProfile(), {
                 ...userProfile,
                 avatar,
                 cover,

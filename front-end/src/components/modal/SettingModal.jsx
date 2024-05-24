@@ -16,6 +16,7 @@ import {
     setListFriendRequest,
     setListFriendSendRequest,
 } from "../../store/friendSlice";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const SettingModal = () => {
     const {
@@ -54,7 +55,9 @@ const SettingModal = () => {
             cancelButtonText: "Hủy",
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const res = await axiosPrivate.post("/user/remove-account");
+                const res = await axiosPrivate.post(
+                    WAVE_CHAT_API.deleteAccount()
+                );
                 if (res.data.status === 200) {
                     Swal.fire(
                         "Đã xóa!",

@@ -10,6 +10,7 @@ import { formatBirthDay } from "../../utils/formatDate";
 import { axiosPrivate } from "../../api/axios";
 import { toast } from "react-toastify";
 import { setUserProfile } from "../../store/userSlice";
+import { WAVE_CHAT_API } from "../../api/constants";
 
 const UpdateProfileModal = () => {
     const userProfile = useSelector((state) => state.user.userProfile);
@@ -40,7 +41,7 @@ const UpdateProfileModal = () => {
             toast.error("Tên hiển thị không được để trống");
             return;
         } else {
-            const res = await axiosPrivate.post("/user/update", {
+            const res = await axiosPrivate.post(WAVE_CHAT_API.updateProfile(), {
                 ...userProfile,
                 nick_name: nickName,
                 gender: gender,
