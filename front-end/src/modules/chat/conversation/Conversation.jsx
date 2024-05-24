@@ -122,7 +122,6 @@ const Conversation = () => {
             }
         }
         if (isGroupChat && conversationId) {
-            console.log("run fetchMemberInConversation");
             fetchMemberInConversation();
         }
     }, [

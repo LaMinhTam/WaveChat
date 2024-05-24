@@ -62,6 +62,7 @@ const InfoGroupSetting = () => {
             const res = await axiosPrivate.post(
                 `/conversation-group/join-link?conversation_id=${conversationId}`
             );
+            console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
             }

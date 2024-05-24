@@ -62,6 +62,7 @@ const LoginPage = () => {
             phone: newPhone,
             password: values.password,
         });
+        console.log("handleSignIn ~ res:", res);
         if (res.data.status === 200) {
             saveUserId(res.data.data?._id);
             saveToken(res.data.data?.access_token);

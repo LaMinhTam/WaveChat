@@ -7,15 +7,6 @@ import Swal from "sweetalert2";
 import { axiosPrivate } from "../../api/axios";
 import { useDispatch } from "react-redux";
 import { setShowConversation } from "../../store/commonSlice";
-import {
-    setConversations,
-    setListMemberOfConversation,
-} from "../../store/conversationSlice";
-import { setListBlockUser, setListFriend } from "../../store/userSlice";
-import {
-    setListFriendRequest,
-    setListFriendSendRequest,
-} from "../../store/friendSlice";
 
 const SettingModal = () => {
     const {
@@ -33,12 +24,6 @@ const SettingModal = () => {
         saveUserId();
         setShowSettingModal(false);
         dispatch(setShowConversation(false));
-        dispatch(setConversations([]));
-        dispatch(setListMemberOfConversation([]));
-        dispatch(setListFriend([]));
-        dispatch(setListBlockUser([]));
-        dispatch(setListFriendRequest([]));
-        dispatch(setListFriendSendRequest([]));
         toast.success("Đăng xuất thành công");
         navigate("/login");
     };
