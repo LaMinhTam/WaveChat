@@ -71,20 +71,14 @@ const MessageFile = ({item}) => {
   const downloadFile = async () => {
     const destinationPath = `${RNFS.DownloadDirectoryPath}/wavechat`;
     const filePath = `${destinationPath}/${item.media[0].split(';')[1]}`;
-    console.log(
-      `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-        item.conversation_id
-      }/files/${item.media[0].split(';')[1]}`,
-    );
+    console.log(`${item.media[0].split(';')[3]}`);
     if (downloaded) {
       const data = FileViewer.open(filePath).then(() => {});
       console.log(filePath);
     } else {
       await RNFS.mkdir(destinationPath);
       const res = await RNFS.downloadFile({
-        fromUrl: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-          item.conversation_id
-        }/files/${item.media[0].split(';')[1]}`,
+        fromUrl: `${item.media[0].split(';')[3]}`,
         toFile: filePath,
       }).promise;
       setFileInfo({...fileInfo, size: res.bytesWritten});

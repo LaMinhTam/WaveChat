@@ -85,9 +85,7 @@ const ChatControlPanel = ({navigation}) => {
       {item.startsWith('image') && (
         <Image
           source={{
-            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-              currentConversation._id
-            }/images/${item.split(';')[1]}`,
+            uri: `${item.split(';')[3]}`,
           }}
           style={styles.image}
         />

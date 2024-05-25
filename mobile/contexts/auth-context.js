@@ -65,6 +65,7 @@ export function UserDataProvider(props) {
 
   const handleLoginSuccess = async user => {
     profile = await getProfile(user._id, user.access_token);
+    console.log(profile);
     user = {
       ...user,
       ...profile.data,

@@ -41,7 +41,7 @@ export const SocketProvider = ({children}) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const newSocket = io(`ws://${HOST_IP}:3000`, {
+    const newSocket = io(`wss://locph.phungmup.online`, {
       extraHeaders: {
         Authorization: accessTokens,
       },
@@ -77,8 +77,8 @@ export const SocketProvider = ({children}) => {
       const {message} = incomingMessage;
       console.log('incomingMessage', message);
       const value = await AsyncStorage.getItem('conversation_id');
-
-      if (value === message.conversation_id || value) {
+      console.log(value, message.conversation_id);
+      if (value === message.conversation_id) {
         setMessages(prevMessages => [message, ...prevMessages]);
       }
       handleConversationOnIncomingMessage(message);
@@ -191,7 +191,7 @@ export const SocketProvider = ({children}) => {
             count = conversation.unread_count
               ? conversation.unread_count + 1
               : 1;
-            updateUnreadTrack(userInfo._id, conversation._id, count);
+            // updateUnreadTrack(userInfo._id, conversation._id, count);
           }
           return {
             ...conversation,

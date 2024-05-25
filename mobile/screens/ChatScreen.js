@@ -262,7 +262,7 @@ const ChatScreen = ({navigation, route}) => {
         data={messages}
         keyExtractor={item => item._id}
         renderItem={({item}) => {
-          if ([10, 13, 20, 25, 12].includes(item.type)) {
+          if ([10, 13, 18, 20, 24, 25, 12].includes(item.type)) {
             return (
               <Text
                 style={{

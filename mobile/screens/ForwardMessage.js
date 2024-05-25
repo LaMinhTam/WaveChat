@@ -56,6 +56,7 @@ const ForwardMessage = ({navigation, route}) => {
           backgroundColor: BACKGROUND_COLOR,
         }}
         placeholder="Tìm tên"
+        placeholderTextColor={'#000'}
         value={searchText}
         onChangeText={setSearchText}
       />
@@ -71,7 +72,11 @@ const ForwardMessage = ({navigation, route}) => {
             }}
             onPress={() => handleConversationSelection(item)}>
             <Image
-              source={{uri: item.avatar}}
+              source={{
+                uri:
+                  item.avatar ||
+                  'https://wavechat.s3.ap-southeast-1.amazonaws.com/default-group-icon-dark.webp',
+              }}
               style={{
                 width: 50,
                 height: 50,
