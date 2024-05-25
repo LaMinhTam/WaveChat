@@ -35,7 +35,6 @@ const CreateGroupScreen = ({navigation}) => {
       data.data.conversation_id,
       accessTokens,
     );
-    console.log('new currentConversation', currentConversation);
     virtual_members = await getListMember(
       currentConversation.data.conversation_id,
       accessTokens,

@@ -95,7 +95,10 @@ const ConversationContent = ({ message, socket }) => {
                                     7, 8, 9, 10, 11, 12, 13, 15, 17, 18, 19, 20,
                                     21, 22, 23, 24, 25,
                                 ].includes(msg.type);
-                                if (!check) {
+                                const isDeleted = msg?.user_deleted?.includes(
+                                    msg?.user?._id
+                                );
+                                if (!check && !isDeleted) {
                                     return (
                                         <div
                                             ref={messageRefs[msg._id]}

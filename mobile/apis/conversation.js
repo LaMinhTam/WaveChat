@@ -200,7 +200,6 @@ export async function deleteMessage(message_id) {
 }
 
 export async function forwardMessage(message_id, conversation_ids, token) {
-  console.log('Forward message: ', token);
   const res = await axios.post(
     waveChatApi.forwardMessage(),
     {

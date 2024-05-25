@@ -61,7 +61,6 @@ const InfoListMember = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const handleRemoveMember = async (id) => {
-        console.log("handleRemoveMember ~ id:", id);
         try {
             const res = await axiosPrivate.post(
                 WAVE_CHAT_API.removeMemberFromGroup(conversationId),
@@ -69,7 +68,6 @@ const InfoListMember = () => {
                     user_id: id,
                 }
             );
-            console.log("handleRemoveMember ~ res:", res);
             if (res.data.status === 200) {
                 let newListMember = listMemberOfConversation.filter(
                     (member) => member.user_id !== id
@@ -95,7 +93,6 @@ const InfoListMember = () => {
                     type,
                 }
             );
-            console.log("handleApprovalMember ~ res:", res);
             if (res.data.status === 200) {
                 if (type === 1) {
                     let listNewMember = waitingList.filter((member) =>

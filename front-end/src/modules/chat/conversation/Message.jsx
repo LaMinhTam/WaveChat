@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import { IconLike } from "../../../components/icons";
 import Viewer from "react-viewer";
 import { useEffect, useState } from "react";
-import s3ConversationUrl from "../../../utils/s3ConversationUrl";
 import { useDispatch, useSelector } from "react-redux";
 import useHover from "../../../hooks/useHover";
 import { toast } from "react-toastify";
@@ -158,8 +157,8 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
     useEffect(() => {
         if (msg.type === 2 && msg?.media?.length > 0) {
             let imageList = msg.media.map((media) => {
-                let fileName = media.split(";")[1];
-                return s3ConversationUrl(fileName, msg.conversation_id);
+                let fileName = media.split(";")[3];
+                return fileName;
             });
             setImageList(imageList);
         }
@@ -256,7 +255,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                         media={media}
                                         progress={progress}
                                         currentFileName={currentFileName}
-                                        conversation_id={msg.conversation_id}
                                     />
                                 ))}
                             {msg.type === 3 &&
@@ -265,7 +263,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                     <MessageVideo
                                         key={uuidv4()}
                                         media={media}
-                                        conversation_id={msg.conversation_id}
                                         progress={progress}
                                         currentFileName={currentFileName}
                                     />
@@ -276,9 +273,6 @@ const Message = ({ msg, type, socket, onDeleteMessage }) => {
                                         <MessageImage
                                             key={uuidv4()}
                                             media={media}
-                                            conversation_id={
-                                                msg.conversation_id
-                                            }
                                             setIsOpenImage={setIsOpenImage}
                                         />
                                     ))}

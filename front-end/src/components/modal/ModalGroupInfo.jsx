@@ -8,9 +8,11 @@ import {
     setShowConversationInfo,
     setShowListMemberInGroup,
 } from "../../store/commonSlice";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 const ModalGroupInfo = () => {
-    const { setShowModalGroupInfo, modalGroupInfoRef } = useChat();
+    const { setShowModalGroupInfo, modalGroupInfoRef, conversationId } =
+        useChat();
     const { currentConversation } = useChat();
     const linkJoinGroup = useSelector(
         (state) => state.conversation.linkJoinGroup
@@ -19,16 +21,6 @@ const ModalGroupInfo = () => {
     const showConversationInfo = useSelector(
         (state) => state.common.showConversationInfo
     );
-    const handleCopyLink = () => {
-        let link = "";
-
-        if (linkJoinGroup) {
-            link = `wavechat.me/g/conversation/${currentConversation.conversation_id}?link_join=${linkJoinGroup}`;
-        }
-        link = "https://" + link;
-        navigator.clipboard.writeText(link);
-        toast.success("Đã sao chép");
-    };
     const handleViewMember = () => {
         setShowModalGroupInfo(false);
         if (showConversationInfo) {
@@ -74,12 +66,14 @@ const ModalGroupInfo = () => {
                 </span>
                 <div className="flex items-center justify-between bg-secondary bg-opacity-10 px-3 h-[40px] rounded text-secondary">
                     <span>{linkJoinGroup}</span>
-                    <button
-                        className="flex items-center justify-center w-8 h-8"
-                        onClick={handleCopyLink}
+                    <CopyToClipboard
+                        text={`https://wavechat.me/g/conversation/${conversationId}?link_join=${linkJoinGroup}`}
+                        onCopy={() => toast.success("Đã sao chép")}
                     >
-                        <IconCopy />
-                    </button>
+                        <button className="flex items-center justify-center w-8 h-8">
+                            <IconCopy />
+                        </button>
+                    </CopyToClipboard>
                 </div>
                 <div className="flex flex-col items-start justify-center mt-2 gap-y-3">
                     <span className="mt-2 text-sm font-normal text-text7">

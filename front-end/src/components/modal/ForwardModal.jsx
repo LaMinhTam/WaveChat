@@ -21,15 +21,20 @@ const ForwardModal = () => {
             try {
                 let listConversationId = [];
                 await selectedList.forEach(async (element) => {
-                    const resConversation = await axiosPrivate.post(
-                        WAVE_CHAT_API.createConversation(),
-                        {
-                            member_id: element.user_id,
-                        }
-                    );
-                    listConversationId.push(
-                        resConversation.data.data.conversation_id
-                    );
+                    if (!element?.group) {
+                        const resConversation = await axiosPrivate.post(
+                            WAVE_CHAT_API.createConversation(),
+                            {
+                                member_id: element.user_id,
+                            }
+                        );
+
+                        listConversationId.push(
+                            resConversation.data.data.conversation_id
+                        );
+                    } else {
+                        listConversationId.push(element.user_id);
+                    }
                 });
                 setListConversationId(listConversationId);
             } catch (error) {

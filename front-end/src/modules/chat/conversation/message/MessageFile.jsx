@@ -10,16 +10,12 @@ import {
 } from "../../../../components/icons";
 import formatSize from "../../../../utils/formatSize";
 import handleDownloadFile from "../../../../utils/handleDownLoadFile";
-const MessageFile = ({
-    media,
-    progress = 0,
-    currentFileName = "",
-    conversation_id,
-}) => {
+const MessageFile = ({ media, progress = 0, currentFileName = "" }) => {
     let fileName = media.split(";")[1];
     let file_name = fileName.split("-")[1];
     let fileExtension = fileName.split(".")[1];
     let size = media.split(";")[2];
+    let url = media.split(";")[3];
     return (
         <div>
             <div className="flex flex-col items-center gap-y-2 w-[376px]">
@@ -61,9 +57,7 @@ const MessageFile = ({
                     <button
                         className="flex items-center justify-center ml-auto rounded w-7 h-7 bg-lite"
                         disabled={progress > 0}
-                        onClick={() =>
-                            handleDownloadFile(fileName, conversation_id)
-                        }
+                        onClick={() => handleDownloadFile(fileName, url)}
                     >
                         <IconDownload />
                     </button>
@@ -77,7 +71,6 @@ MessageFile.propTypes = {
     media: PropTypes.string,
     progress: PropTypes.number,
     currentFileName: PropTypes.string,
-    conversation_id: PropTypes.string,
 };
 
 export default MessageFile;

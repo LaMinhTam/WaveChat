@@ -356,6 +356,7 @@ export function SocketProvider(props) {
         });
 
         newSocket.on("request-call-video", (data) => {
+            console.log("newSocket.on ~ data:", data);
             setReceiveCalledVideo(true);
             setRequestVideoCallData(data);
             setCallAccepted(false);

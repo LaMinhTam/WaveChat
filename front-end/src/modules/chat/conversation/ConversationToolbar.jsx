@@ -38,7 +38,8 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
                 return;
             } else {
                 handleUploadFile(file, timestamp);
-                await handleSendFile(fileName, type, size, timestamp);
+                let file = `https://wavechat.s3-ap-southeast-1.amazonaws.com/conversation/${conversationId}/files/${timestamp}-${file.name}`;
+                await handleSendFile(fileName, type, size, timestamp, file);
             }
             e.target.value = null;
         });
@@ -58,8 +59,9 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
             const size = file.size;
             if (fileType === "image") {
                 handleUploadImage(file, timestamp);
+                let image = `https://wavechat.s3-ap-southeast-1.amazonaws.com/conversation/${conversationId}/images/${timestamp}-${file.name}`;
                 listFormatMessage.push(
-                    `${type};${timestamp}-${fileName};${size}`
+                    `${type};${timestamp}-${fileName};${size};${image}`
                 );
             } else {
                 toast.error("Please select an image");
@@ -117,7 +119,13 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
         }
     };
 
-    const handleSendFile = async (fileName, fileType, size = 0, timestamp) => {
+    const handleSendFile = async (
+        fileName,
+        fileType,
+        size = 0,
+        timestamp,
+        file
+    ) => {
         const typed = fileType.split("/")[0];
         if (!socket) return;
         if (!conversationId && !isGroupChat) {
@@ -132,7 +140,7 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
                 conversation_id: res.data.data.conversation_id,
                 type: typed === "video" ? 3 : 5,
                 message: "",
-                media: `${fileType};${timestamp}-${fileName};${size}`,
+                media: `${fileType};${timestamp}-${fileName};${size};${file}`,
                 created_at: "",
             };
             socket.emit("message", clientFile);
@@ -141,7 +149,7 @@ const ConversationToolbar = ({ socket, user_id, blockType }) => {
                 conversation_id: conversationId,
                 type: typed === "video" ? 3 : 5,
                 message: "",
-                media: `${fileType};${timestamp}-${fileName};${size}`,
+                media: `${fileType};${timestamp}-${fileName};${size};${file}`,
                 created_at: "",
             };
             socket.emit("message", clientFile);

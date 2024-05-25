@@ -15,6 +15,7 @@ import {
     setShowListMemberInGroup,
 } from "../../../../store/commonSlice";
 import { WAVE_CHAT_API } from "../../../../api/constants";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const InfoGroupSetting = () => {
     const { control } = useForm();
@@ -34,17 +35,6 @@ const InfoGroupSetting = () => {
         handleToggleValue: handleToggleReadRecentMessage,
     } = useToggleValue(true);
 
-    const handleCopyLink = () => {
-        let link = "";
-
-        if (linkJoinGroup) {
-            link = `wavechat.me/g/conversation/${conversationId}?link_join=${linkJoinGroup}`;
-        }
-        link = "https://" + link;
-        navigator.clipboard.writeText(link);
-        toast.success("Đã sao chép");
-    };
-
     const handleMembershipApproval = async () => {
         try {
             const res = await axiosPrivate.post(
@@ -63,7 +53,6 @@ const InfoGroupSetting = () => {
             const res = await axiosPrivate.post(
                 WAVE_CHAT_API.updateIsJoinWithLink(conversationId)
             );
-            console.log("handleJoinGroupWithLink ~ res:", res);
             if (res.data.status === 200) {
                 dispatch(setLinkJoinGroup(res.data.data.link_join));
             }
@@ -161,12 +150,14 @@ const InfoGroupSetting = () => {
                 />
                 <div className="flex items-center justify-between bg-secondary bg-opacity-10 px-3 h-[40px] rounded text-secondary">
                     <span>{linkJoinGroup}</span>
-                    <button
-                        className="flex items-center justify-center w-8 h-8"
-                        onClick={handleCopyLink}
+                    <CopyToClipboard
+                        text={`https://wavechat.me/g/conversation/${conversationId}?link_join=${linkJoinGroup}`}
+                        onCopy={() => toast.success("Đã sao chép")}
                     >
-                        <IconCopy />
-                    </button>
+                        <button className="flex items-center justify-center w-8 h-8">
+                            <IconCopy />
+                        </button>
+                    </CopyToClipboard>
                 </div>
             </div>
             <div className="flex flex-col border-t-8 gap-y-3 border-text6">

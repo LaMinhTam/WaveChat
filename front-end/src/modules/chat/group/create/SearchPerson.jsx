@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import sortedPersonToAlphabet from "../../../../utils/sortedPersonToAlphabet";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
-import { WAVE_CHAT_API } from "../../../../api/constants";
+import { WAVE_CHAT_API, groupAvatarDefault } from "../../../../api/constants";
 
 const SearchPerson = ({ type }) => {
     const [removedInputId, setRemovedInputId] = useState("");
@@ -33,6 +33,7 @@ const SearchPerson = ({ type }) => {
     useEffect(() => {
         let recentChatList = conversations?.map((item) => {
             if (item.type === 2) {
+                console.log("item:", item);
                 const otherId = item.members.find(
                     (member) => member !== currentUserId
                 );
@@ -42,11 +43,19 @@ const SearchPerson = ({ type }) => {
                     avatar: item.avatar,
                 };
             } else {
-                return null;
+                if (type === "forward") {
+                    return {
+                        user_id: item._id,
+                        full_name: item.name,
+                        avatar: groupAvatarDefault,
+                        group: true,
+                    };
+                }
             }
         });
         // remove the null value in recentChatList
         recentChatList = recentChatList?.filter((item) => item !== null);
+        recentChatList = recentChatList?.filter((item) => item !== undefined);
 
         const PersonList = [
             {
@@ -224,18 +233,18 @@ const SearchPerson = ({ type }) => {
                                             <li key={uuidv4()}>
                                                 <Person
                                                     inputName={
-                                                        user.user_id + index
+                                                        user?.user_id + index
                                                     } // append index to user_id
-                                                    fullName={user.full_name}
+                                                    fullName={user?.full_name}
                                                     onClick={() =>
                                                         handleSelectPerson(user)
                                                     }
                                                     isChecked={selectedList.some(
                                                         (item) =>
-                                                            item.user_id ===
-                                                            user.user_id
+                                                            item?.user_id ===
+                                                            user?.user_id
                                                     )}
-                                                    avatarName={user.avatar}
+                                                    avatarName={user?.avatar}
                                                 />
                                             </li>
                                         ))}
