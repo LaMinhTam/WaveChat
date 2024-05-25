@@ -73,16 +73,19 @@ const ChatTextInput = ({
             Alert.alert('Lỗi', 'File size is too large');
             return;
           }
-          media.push(
-            `${image.mime};${timestamp}-${image.path.split('/').pop()};${
-              image.size
-            }`,
-          );
           sendImageMessage(
             image,
             conversationID,
             `${timestamp}-${image.path.split('/').pop()}`,
           );
+          media.push(
+            `${image.mime};${timestamp}-${image.path.split('/').pop()};${
+              image.size
+            };https://wavechat.s3.amazonaws.com/conversation/${conversationID}/images/${timestamp}-${image.path
+              .split('/')
+              .pop()}`,
+          );
+          console.log('sending...', media);
         });
         handleMessage(conversationID, '', 2, media);
       })
@@ -105,8 +108,13 @@ const ChatTextInput = ({
         let type = handleFileType(file.name);
         let conversationID = await getConversationId(accessTokens);
         uploadFileToS3(file, conversationID, `${timestamp}-${file.name}`);
-        const media = `${file.type};${timestamp}-${file.name};${file.size}`;
+        const media = `${file.type};${timestamp}-${file.name};${file.size};
+        https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${conversationID}/files/${timestamp}-${file.name}`;
         handleMessage(conversationID, '', type, media);
+        console.log(
+          'this is file url ',
+          `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${conversationID}/files/${timestamp}-${file.name}`,
+        );
       });
     } catch (error) {
       if (DocumentPicker.isCancel(error)) {

@@ -24,7 +24,6 @@ export default function ForgotPasswordScreen({navigation}) {
   const handleConfirmOTP = async otp => {
     // if (confirm.code === otp) {
     navigation.navigate('ResetPassword', {phoneNumber: phone});
-    //   handleSignUp();
     // } else {
     //   Alert.alert('Lỗi', 'Mã OTP không đúng');
     // }

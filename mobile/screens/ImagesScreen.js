@@ -60,19 +60,13 @@ const ImagesScreen = ({navigate, route}) => {
                   key={messageIndex}
                   onPress={() => {
                     if (message.type === 2) {
-                      handleImagePress(
-                        `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-                          message.conversation_id
-                        }/images/${message.media.split(';')[1]}`,
-                      );
+                      handleImagePress(`${message.media.split(';')[3]}`);
                     }
                   }}>
                   {message.type === 2 && (
                     <Image
                       source={{
-                        uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-                          message.conversation_id
-                        }/images/${message.media.split(';')[1]}`,
+                        uri: `${message.media.split(';')[3]}`,
                       }}
                       style={styles.image}
                     />
@@ -81,9 +75,7 @@ const ImagesScreen = ({navigate, route}) => {
                     <VideoPlayer
                       style={styles.image}
                       video={{
-                        uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-                          message.conversation_id
-                        }/files/${message.media.split(';')[1]}`,
+                        uri: `${message.media.split(';')[3]}`,
                       }}></VideoPlayer>
                   )}
                 </TouchableOpacity>

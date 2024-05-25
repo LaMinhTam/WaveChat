@@ -28,7 +28,7 @@ const HomeScreen = ({navigation}) => {
     const type = lastMessage.type;
     if (type == 15) {
       return 'Nhóm mới được tạo';
-    } else if (![1, 10, 11, 14, 13, 16, 20, 25].includes(type)) {
+    } else if (![1, 10, 11, 14, 13, 16, 18, 20, 24, 25].includes(type)) {
       if (type === 2) {
         return `[${FILE_TYPE[type]}]`;
       } else {

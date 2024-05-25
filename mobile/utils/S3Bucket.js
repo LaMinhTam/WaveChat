@@ -28,7 +28,6 @@ export const sendImageMessage = async (image, conversationID, fileName) => {
 
   try {
     const response = await RNS3.put(file, config);
-    console.log(response.body.postResponse.location);
     return response.body.postResponse.location;
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -50,6 +49,7 @@ export const uploadFileToS3 = async (uploadFile, conversationID, fileName) => {
     accessKey: accessKey,
     secretKey: secretKey,
   };
+  console.log(bucket, region, accessKey, secretKey);
 
   try {
     const response = await RNS3.put(file, config);
@@ -66,6 +66,7 @@ export const uploadImageToS3 = async (image, keyPrefix) => {
     name: image.name,
     type: image.mime,
   };
+  console.log(bucket, region, accessKey, secretKey);
 
   const config = {
     keyPrefix: keyPrefix,

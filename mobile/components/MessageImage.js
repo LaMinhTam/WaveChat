@@ -25,18 +25,13 @@ const MessageImage = ({item}) => {
   const renderImageItem = ({item: image, index}) => {
     return (
       <TouchableOpacity
-        onPress={() =>
-          handleImagePress(
-            `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-              item.conversation_id
-            }/images/${image.split(';')[1]}`,
-          )
-        }>
+        onPress={() => {
+          console.log(`${image.split(';')[3]}`);
+          return handleImagePress(image.split(';')[3]);
+        }}>
         <Image
           source={{
-            uri: `https://wavechat.s3.ap-southeast-1.amazonaws.com/conversation/${
-              item.conversation_id
-            }/images/${image.split(';')[1]}`,
+            uri: `${image.split(';')[3]}`,
           }}
           style={
             item.media.length === 1 ? singleImageStyle : multipleImageStyle

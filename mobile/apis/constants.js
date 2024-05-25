@@ -1,5 +1,5 @@
 import HOST_IP from './host';
-const waveChatEndpoint = `http://${HOST_IP}:3000`;
+const waveChatEndpoint = `https://locph.phungmup.online`;
 
 export const waveChatApi = {
   signUp: () => `${waveChatEndpoint}/auth/sign-up`,
